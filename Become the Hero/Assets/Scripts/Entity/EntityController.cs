@@ -38,11 +38,12 @@ public class EntityController : EntityBase, IComparable<EntityController>
 
 
     // Start is called before the first frame update
-    new void Awake()
+    protected override void Awake()
     {
         base.Awake();
 
         InitEntityController();
+        Debug.Log(gameObject.name);
     }
 
 

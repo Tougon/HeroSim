@@ -17,8 +17,8 @@ public class PlayerController : EntityController
     [SerializeField]
     private int amountMPGainPerTurn = 5;
 
-    
-    new void Awake()
+
+    protected override void Awake()
     {
         base.Awake();
 

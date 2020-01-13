@@ -12,7 +12,7 @@ public class EntityBase : MonoBehaviour
     protected SpriteRenderer sprite;
 
     // Start is called before the first frame update
-    protected void Awake()
+    protected virtual void Awake()
     {
         anim = GetComponent<Animator>();
         sprite = GetComponentInChildren<SpriteRenderer>();
