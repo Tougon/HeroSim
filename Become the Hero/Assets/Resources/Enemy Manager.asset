@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1f2d6e88d1860d45ab730e0d1bb61ad, type: 3}
+  m_Name: Enemy Manager
+  m_EditorClassIdentifier: 
+  enemyOdds:
+  - enemy: {fileID: 11400000, guid: f13c8f50db803a44fb15b77e0823ce58, type: 2}
+    relativeOdds: 1
