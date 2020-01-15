@@ -18,6 +18,8 @@ public static class EventConstants
     public const string BEGIN_SEQUENCE = "BeginSequence";
     public const string ATTACK_SELECTED = "AttackSelected";
     public const string DEFEND_SELECTED = "DefendSelected";
+    public const string ON_BUTTON_RELEASED = "OnButtonReleased";
+    public const string DESELECT_BUTTON = "DeselectButton";
     #endregion
 
     #region Bool Event Constants
@@ -33,6 +35,7 @@ public static class EventConstants
     #endregion
 
     #region GameObject Event Constants
+    public const string ON_BUTTON_PRESSED = "OnButtonPressed";
     #endregion
 
     #region Entity Controller Event Constants

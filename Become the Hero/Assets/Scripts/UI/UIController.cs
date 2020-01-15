@@ -98,16 +98,20 @@ public class UIController : MonoBehaviour
 
     #region Button Functions
 
-    public void SpellButtonClick()
+    public void SpellButtonClick(UISpellButton source)
     {
+        if (!source.b.interactable || !source.selected) return;
+
         spellOpen = true;
         SetInputState(false);
         playerMenuRect.DOAnchorPosY(-activePosY, 0.5f).
             OnComplete(OpenSpellMenu).SetEase(Ease.InSine);
     }
 
-    public void BackButtonClick()
+    public void BackButtonClick(UISpellButton source)
     {
+        if (!source.b.interactable || !source.selected) return;
+
         spellOpen = false;
         SetInputState(false);
         spellMenuRect.DOAnchorPosY(-activePosY, 0.5f).

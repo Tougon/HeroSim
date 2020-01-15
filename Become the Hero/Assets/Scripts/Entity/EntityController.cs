@@ -43,7 +43,6 @@ public class EntityController : EntityBase, IComparable<EntityController>
         base.Awake();
 
         InitEntityController();
-        Debug.Log(gameObject.name);
     }
 
 

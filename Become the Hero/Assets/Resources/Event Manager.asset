@@ -21,12 +21,15 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 07a03e4dea3404149b5ee9643959bf94, type: 2}
   - {fileID: 11400000, guid: 4149085b8e7a38342807582756226407, type: 2}
   - {fileID: 11400000, guid: 75ecf4c38649dbb4591d22b58900c6cd, type: 2}
+  - {fileID: 11400000, guid: 329c73d625fc52a4ba40c8e639260a29, type: 2}
+  - {fileID: 11400000, guid: b8d9a8b04009af24b94f8643e6efb7cf, type: 2}
   boolEvents: []
   intEvents:
   - {fileID: 11400000, guid: d798f78b05bc05547b4eb1116a43a4cd, type: 2}
   stringEvents:
   - {fileID: 11400000, guid: cdd0cbf797edc8447ade98e44d354157, type: 2}
-  gameObjectEvents: []
+  gameObjectEvents:
+  - {fileID: 11400000, guid: a64da83bb5bd2ca44978baf187d3c9b9, type: 2}
   entityControllerEvents:
   - {fileID: 11400000, guid: bf0917490f8cd6046b1367cab586c97d, type: 2}
   - {fileID: 11400000, guid: 68d42a637a1fef34484bae74fa2d8cfd, type: 2}
