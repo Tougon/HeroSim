@@ -131,7 +131,17 @@ public class EntityController : EntityBase, IComparable<EntityController>
     /// </summary>
     protected virtual void OnDeath()
     {
-        // Play some kind of animation idk
+        // Play a death animation that will just be a dissolve or something
+
+        // Remove all volitile effects (pretty much all non-revive effects)
+        for(int i=0; i<effects.Count; i++)
+        {
+            if (effects[i].effect.type == Effect.EffectType.Volitile)
+            {
+                effects.Remove(effects[i]);
+                i--;
+            }
+        }
     }
 
 
@@ -182,7 +192,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
     public float GetAttackModifier() { return GetStatModifier(atkStage); }
 
 
-    public int GetDefense() { return param.entityAtk; }
+    public int GetDefense() { return param.entityDef; }
     public float GetDefenseModifier() { return GetStatModifier(defStage); }
 
 
@@ -312,6 +322,8 @@ public class EntityController : EntityBase, IComparable<EntityController>
         }
         else if(!effects.Exists(f => f.effect.effectName == eff.effect.effectName))
             effects.Add(eff);
+
+        effects.Sort();
     }
 
 

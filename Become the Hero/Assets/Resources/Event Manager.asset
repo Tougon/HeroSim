@@ -23,6 +23,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 75ecf4c38649dbb4591d22b58900c6cd, type: 2}
   - {fileID: 11400000, guid: 329c73d625fc52a4ba40c8e639260a29, type: 2}
   - {fileID: 11400000, guid: b8d9a8b04009af24b94f8643e6efb7cf, type: 2}
+  - {fileID: 11400000, guid: b9fd995d7f497f5488030b0e44781661, type: 2}
+  - {fileID: 11400000, guid: 4b9d2491a6cb037438f88140702f6bf9, type: 2}
+  - {fileID: 11400000, guid: 2a98b48dd76e99b43a7299d38bbac8a5, type: 2}
+  - {fileID: 11400000, guid: 6d9dcd561098c184780c6bc7bc99263c, type: 2}
   boolEvents: []
   intEvents:
   - {fileID: 11400000, guid: d798f78b05bc05547b4eb1116a43a4cd, type: 2}

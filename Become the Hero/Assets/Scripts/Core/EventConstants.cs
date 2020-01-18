@@ -20,6 +20,10 @@ public static class EventConstants
     public const string DEFEND_SELECTED = "DefendSelected";
     public const string ON_BUTTON_RELEASED = "OnButtonReleased";
     public const string DESELECT_BUTTON = "DeselectButton";
+    public const string BEGIN_TRANSITION_IN = "BeginTransitionIn";
+    public const string ON_TRANSITION_IN_COMPLETE = "OnTransitionInComplete";
+    public const string BEGIN_TRANSITION_OUT = "BeginTransitionOut";
+    public const string ON_TRANSITION_OUT_COMPLETE = "OnTransitionOutComplete";
     #endregion
 
     #region Bool Event Constants

@@ -14,10 +14,14 @@ public class TurnManager : MonoBehaviour
     {
         sequencer = GetComponent<Sequencer>();
 
+        EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_IN_COMPLETE).AddListener(StartGame);
         EventManager.Instance.GetGameEvent(EventConstants.ON_BATTLE_BEGIN).AddListener(OnBattleBegin);
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).AddListener(OnTurnBegin);
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_END).AddListener(OnTurnEnd);
         EventManager.Instance.GetGameEvent(EventConstants.ON_MOVE_SELECTED).AddListener(OnMoveSelected);
+
+        // Placeholder. The TurnManager WILL NOT handle scene transitions in the final game.
+        EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_OUT_COMPLETE).AddListener(Reload);
 
         EventManager.Instance.GetSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE).AddListener(QueueSequence);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_INITIALIZE).AddListener(AddEnemy);
@@ -25,11 +29,17 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_DEFEAT).AddListener(EnemyDefeated);
     }
 
-    // Start is called before the first frame update
-    void Start()
+    
+    public void StartGame()
     {
         // Begin Battle through event
         EventManager.Instance.RaiseGameEvent(EventConstants.ON_BATTLE_BEGIN);
+    }
+
+    // Placeholder function
+    public void Reload()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 
 
@@ -276,9 +286,6 @@ public class TurnManager : MonoBehaviour
         // Do turn end things
         foreach (EntityController ec in entities)
         {
-            if (ec.dead)
-                continue;
-
             // Remove effects that need to be removed
             ec.ExecuteRemainActiveCheck();
 
@@ -296,7 +303,7 @@ public class TurnManager : MonoBehaviour
         {
             // This will trigger a Game Over sequence on the UI controller. For now, I'm just going to reload the scene.
             EventManager.Instance.RaiseGameEvent(EventConstants.ON_PLAYER_DEFEAT);
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            EventManager.Instance.RaiseGameEvent(EventConstants.BEGIN_TRANSITION_OUT);
         }
         else
         {
@@ -343,6 +350,7 @@ public class TurnManager : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
+        EventManager.Instance.GetGameEvent(EventConstants.BEGIN_TRANSITION_IN).RemoveListener(StartGame);
         EventManager.Instance.GetGameEvent(EventConstants.ON_BATTLE_BEGIN).RemoveListener(OnBattleBegin);
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).RemoveListener(OnTurnBegin);
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_END).RemoveListener(OnTurnEnd);

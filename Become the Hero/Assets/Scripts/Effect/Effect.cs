@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,6 +10,9 @@ using UnityEngine.Events;
 [CreateAssetMenu(fileName = "NewEffect", menuName = "Effect", order = 3)]
 public class Effect : ScriptableObject
 {
+    // Indicates if the effect should be removed on death
+    public enum EffectType { Volitile, NonVolitile }
+
     [SerializeField]
     private bool stackable;
     public bool castSuccess { get; private set; }
@@ -16,9 +20,10 @@ public class Effect : ScriptableObject
     // Current instance of effect calculations should be ran on
     public EffectInstance current;
 
-    public AnimationSequenceObject activationAnimation;
-    public AnimationSequenceObject deactivationAnimation;
-    public AnimationSequenceObject miscAnimation;
+    // Order effects should execute at the end of a turn. Higher priorities execute sooner.
+    [SerializeField] [Range(0, 9)]
+    private int priority = 3;
+    public EffectType type = EffectType.Volitile;
 
     // Used for function callbacks
     public UnityEvent CheckSuccess;
@@ -43,6 +48,15 @@ public class Effect : ScriptableObject
         e.spell = s;
         e.effect = this;
         return e;
+    }
+
+
+    /// <summary>
+    /// Returns the priority of this effect.
+    /// </summary>
+    public int GetPriority()
+    {
+        return priority;
     }
 
 
@@ -343,7 +357,7 @@ public class Effect : ScriptableObject
 /// <summary>
 /// Represents an instance of an <see cref="Effect"/>
 /// </summary>
-public class EffectInstance
+public class EffectInstance: IComparable<EffectInstance>
 {
     public int numTurnsActive;
     public bool castSuccess { get; private set; }
@@ -425,6 +439,28 @@ public class EffectInstance
             effect.current = this;
             effect.OnTurnEnd.Invoke();
         }
+    }
+
+    #endregion
+
+    #region Compare
+
+    /// <summary>
+    /// Compares the priority of two instances
+    /// </summary>
+    /// <param name="other">Effect to compare to</param>
+    /// <returns>1 if this instance has a greater priority, -1 if this it has lower, 0 otherwise.</returns>
+    public int CompareTo(EffectInstance other)
+    {
+        int pA = effect.GetPriority();
+        int pB = other.effect.GetPriority();
+
+        if (pA > pB)
+            return -1;
+        else if (pB > pA)
+            return 1;
+        else
+            return 0;
     }
 
     #endregion

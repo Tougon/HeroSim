@@ -68,6 +68,8 @@ public class PlayerController : EntityController
     /// </summary>
     protected override void OnDeath()
     {
+        base.OnDeath();
+
         string dialogueSeq = param.entityName + " falls...";
         EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, dialogueSeq);
     }

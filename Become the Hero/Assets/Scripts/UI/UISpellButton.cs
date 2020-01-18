@@ -98,7 +98,8 @@ public class UISpellButton : MonoBehaviour
             Debug.Log("Attack data");
             // Display the thing
         }
-        
+
+        OnButtonRelease();
         buttonDownTime = 0.0f;
     }
 

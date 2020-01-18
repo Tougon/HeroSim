@@ -14,6 +14,8 @@ public class EnemyController : EntityController
 
     protected override void OnDeath()
     {
+        base.OnDeath();
+
         EventManager.Instance.RaiseEntityControllerEvent(EventConstants.ON_ENEMY_DEFEAT, this);
     }
 }

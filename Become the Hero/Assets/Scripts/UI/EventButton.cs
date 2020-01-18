@@ -5,13 +5,16 @@ using UnityEngine.UI;
 
 public class EventButton : Button
 {
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
+        base.Start();
 
         //  Assign event listeners
-        EventManager.Instance.GetGameEvent(EventConstants.ON_BUTTON_RELEASED).AddListener(OnButtonReleased);
-        EventManager.Instance.GetGameObjectEvent(EventConstants.ON_BUTTON_PRESSED).AddListener(OnButtonPressed);
+        if(EventManager.Instance != null)
+        {
+            EventManager.Instance.GetGameEvent(EventConstants.ON_BUTTON_RELEASED).AddListener(OnButtonReleased);
+            EventManager.Instance.GetGameObjectEvent(EventConstants.ON_BUTTON_PRESSED).AddListener(OnButtonPressed);
+        }
     }
 
 
@@ -33,8 +36,11 @@ public class EventButton : Button
 
     protected override void OnDestroy()
     {
-        EventManager.Instance.GetGameEvent(EventConstants.ON_BUTTON_RELEASED).RemoveListener(OnButtonReleased);
-        EventManager.Instance.GetGameObjectEvent(EventConstants.ON_BUTTON_PRESSED).RemoveListener(OnButtonPressed);
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.GetGameEvent(EventConstants.ON_BUTTON_RELEASED).RemoveListener(OnButtonReleased);
+            EventManager.Instance.GetGameObjectEvent(EventConstants.ON_BUTTON_PRESSED).RemoveListener(OnButtonPressed);
+        }
 
         base.OnDestroy();
     }
