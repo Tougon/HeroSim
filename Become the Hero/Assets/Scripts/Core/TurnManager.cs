@@ -350,11 +350,14 @@ public class TurnManager : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
-        EventManager.Instance.GetGameEvent(EventConstants.BEGIN_TRANSITION_IN).RemoveListener(StartGame);
+        EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_IN_COMPLETE).RemoveListener(StartGame);
         EventManager.Instance.GetGameEvent(EventConstants.ON_BATTLE_BEGIN).RemoveListener(OnBattleBegin);
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).RemoveListener(OnTurnBegin);
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_END).RemoveListener(OnTurnEnd);
         EventManager.Instance.GetGameEvent(EventConstants.ON_MOVE_SELECTED).RemoveListener(OnMoveSelected);
+
+        // Placeholder. The TurnManager WILL NOT handle scene transitions in the final game.
+        EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_OUT_COMPLETE).AddListener(Reload);
 
         EventManager.Instance.GetSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE).RemoveListener(QueueSequence);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_INITIALIZE).RemoveListener(AddEnemy);

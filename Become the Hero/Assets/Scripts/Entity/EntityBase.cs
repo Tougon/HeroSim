@@ -35,7 +35,10 @@ public class EntityBase : MonoBehaviour
     /// </summary>
     public void SetAnimationState(string val, bool b)
     {
-        anim.SetBool(val, b);
+        if (val.Equals("Visible"))
+            sprite.enabled = b;
+        else
+            anim.SetBool(val, b);
     }
 
 
