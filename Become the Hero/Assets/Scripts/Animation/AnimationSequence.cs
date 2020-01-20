@@ -10,7 +10,6 @@ using Hero.Core;
 /// </summary>
 public class AnimationSequence : Hero.Core.Sequence
 {
-
     /// <summary>
     /// Represents an action that should be taken on a frame of animation
     /// </summary>
@@ -440,7 +439,8 @@ public class AnimationSequence : Hero.Core.Sequence
 
             case AnimationSequenceAction.Action.ApplyDamage:
                 // Applies damage
-                target.ApplyDamage(spell.GetDamageOfCurrentHit());
+                target.ApplyDamage(spell.GetDamageOfCurrentHit(), spell.GetIsCurrentHitCritical());
+                spell.IncrementHit();
                 break;
 
             case AnimationSequenceAction.Action.PlaySound:

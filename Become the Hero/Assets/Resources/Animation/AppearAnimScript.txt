@@ -1,0 +1,4 @@
+1|Color|User,1, 1.0, 1.0, 1.0, 0.0
+3|ChangeAnimationState|User,Visible,true
+60|Color|User,15, 1.0, 1.0, 1.0, 1.0
+120|TerminateAnimation

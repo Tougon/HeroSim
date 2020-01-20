@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class UISpellButton : MonoBehaviour
@@ -11,7 +12,10 @@ public class UISpellButton : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI text;
+    [SerializeField]
+    private TextMeshProUGUI cost;
     public Button b { get; private set; }
+    public EventTrigger e { get; private set; }
 
     private int index;
     public bool selected { get; private set; }
@@ -22,15 +26,18 @@ public class UISpellButton : MonoBehaviour
     void Awake()
     {
         b = GetComponent<Button>();
+        e = GetComponent<EventTrigger>();
     }
 
 
     public void InitializeButton(Spell s, int i, int mp)
     {
         text.text = s.spellName;
+        cost.text = s.spellCost.ToString();
         index = i;
 
         b.enabled = s.spellCost <= mp ? true : false;
+        e.enabled = b.enabled;
     }
 
 

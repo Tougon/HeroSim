@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 /// <summary>
 /// Houses an <see cref="Entity"/> and allows for gameplay operations to be performed on it.
@@ -34,7 +35,10 @@ public class EntityController : EntityBase, IComparable<EntityController>
     private Dictionary<string, float> defenseModifiers = new Dictionary<string, float>();
     private Dictionary<string, float> accuracyModifiers = new Dictionary<string, float>();
     private List<EffectInstance> effects = new List<EffectInstance>();
-    private List<EffectInstance> properties = new List<EffectInstance>(); 
+    private List<EffectInstance> properties = new List<EffectInstance>();
+
+    protected static AnimationSequenceObject spawn;
+    protected static AnimationSequenceObject defeat;
 
 
     // Start is called before the first frame update
@@ -43,6 +47,12 @@ public class EntityController : EntityBase, IComparable<EntityController>
         base.Awake();
 
         InitEntityController();
+
+        if(spawn == null)
+            spawn = (Resources.Load("Animation/Appear", typeof(AnimationSequenceObject))) as AnimationSequenceObject;
+
+        if (defeat == null)
+            defeat = (Resources.Load("Animation/Defeat", typeof(AnimationSequenceObject))) as AnimationSequenceObject;
     }
 
 
@@ -89,13 +99,16 @@ public class EntityController : EntityBase, IComparable<EntityController>
         current = e;
         InitEntityController();
         dead = false;
+
+        Hero.Core.Sequence spawnSeq = new AnimationSequence(spawn, this, this);
+        EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, spawnSeq);
     }
 
 
     /// <summary>
     /// Apply damage to this entity
     /// </summary>
-    public void ApplyDamage(int val)
+    public void ApplyDamage(int val, bool crit)
     {
         // If dead, do not apply damage
         if (dead) return;
@@ -107,6 +120,11 @@ public class EntityController : EntityBase, IComparable<EntityController>
             OnDeath();
             dead = true;
         }
+
+        if(crit || dead)
+            sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.59f, 0.0f, 0.0f), 300, 90, false, false);
+        else
+            sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.34f, 0.0f, 0.0f), 200, 90, false, false);
     }
 
 
@@ -132,9 +150,11 @@ public class EntityController : EntityBase, IComparable<EntityController>
     protected virtual void OnDeath()
     {
         // Play a death animation that will just be a dissolve or something
+        Hero.Core.Sequence defSeq = new AnimationSequence(defeat, this, this);
+        EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, defSeq);
 
         // Remove all volitile effects (pretty much all non-revive effects)
-        for(int i=0; i<effects.Count; i++)
+        for (int i=0; i<effects.Count; i++)
         {
             if (effects[i].effect.type == Effect.EffectType.Volitile)
             {

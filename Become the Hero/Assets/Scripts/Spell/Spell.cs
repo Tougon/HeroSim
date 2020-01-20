@@ -101,7 +101,7 @@ public class Spell : ScriptableObject
             user.ModifyMP(-spellCost);
             return true;
         }
-
+        Debug.LogError("Inadequate MP");
         return false;
     }
 
@@ -199,10 +199,19 @@ public class SpellCast
     {
         int result = GetDamage(currentHit);
 
-        currentHit = currentHit < damage.Length ? currentHit + 1 : 0;
+        return result;
+    }
+
+
+    public virtual bool GetIsCurrentHitCritical()
+    {
+        bool result = crits[currentHit];
 
         return result;
     }
+
+
+    public virtual void IncrementHit() { currentHit = currentHit < damage.Length ? currentHit + 1 : 0; }
 
 
     /// <summary>

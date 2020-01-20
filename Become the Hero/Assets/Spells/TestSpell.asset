@@ -12,14 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 955669ae195bf9043b837837b0adc9c9, type: 3}
   m_Name: TestSpell
   m_EditorClassIdentifier: 
-  spellName: Test
-  spellCost: 80
+  spellName: Testing Spell
+  spellCost: 60
   spellAnimation: {fileID: 11400000, guid: 222bc7b9e3410154ca16828926f21790, type: 2}
   spellEffects: []
   spellProperties: []
-  spellPower: 0
+  spellPower: 20
   checkAccuracy: 1
   spellAccuracy: 85
   minNumberOfHits: 1
   maxNumberOfHits: 1
   varyHitCount: 0
+  canCritical: 1
+  criticalHitChance: 16
