@@ -12,6 +12,8 @@ public class Spell : ScriptableObject
 
     public string spellName;
     public int spellCost;
+    public string spellDescription;
+    public string spellCastMessage = "[user] casts [name]!";
     public AnimationSequenceObject spellAnimation;
     public List<SpellEffectChance> spellEffects; // Effects that can be invoked by the spell itself
     public List<Effect> spellProperties; // Used to modify the damage roll
@@ -101,7 +103,7 @@ public class Spell : ScriptableObject
             user.ModifyMP(-spellCost);
             return true;
         }
-        Debug.LogError("Inadequate MP");
+
         return false;
     }
 
@@ -133,6 +135,18 @@ public class Spell : ScriptableObject
         bool[] critical = { true };
         cast.SetDamage(result);
         cast.SetCritical(critical);
+    }
+
+
+    public virtual int GetPower()
+    {
+        return -1;
+    }
+
+
+    public virtual int GetAccuracy()
+    {
+        return -1;
     }
 }
 
@@ -309,6 +323,17 @@ public class SpellCast
     public virtual List<EffectInstance> GetEffects()
     {
         return effects;
+    }
+
+
+    public string GetCastMessage()
+    {
+        string result = spell.spellCastMessage;
+        result = result.Replace("[user]", user.GetEntity().vals.entityName);
+        result = result.Replace("[target]", target.GetEntity().vals.entityName);
+        result = result.Replace("[name]", spell.spellName);
+
+        return result;
     }
 }
 

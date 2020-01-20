@@ -36,5 +36,14 @@ public class StatusSpell : Spell
 
         return Random.value <= hit;
     }
+
+
+    public override int GetAccuracy()
+    {
+        if (!checkAccuracy)
+            return -1;
+
+        return (int)spellAccuracy;
+    }
 }
 

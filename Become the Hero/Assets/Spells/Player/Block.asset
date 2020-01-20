@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellName: Block
   spellCost: 0
+  spellCastMessage: '[user] guards against incoming attacks!'
   spellAnimation: {fileID: 11400000, guid: 222bc7b9e3410154ca16828926f21790, type: 2}
   spellEffects:
   - chance: 1

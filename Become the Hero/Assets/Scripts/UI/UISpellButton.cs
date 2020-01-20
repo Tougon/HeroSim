@@ -8,7 +8,7 @@ using TMPro;
 public class UISpellButton : MonoBehaviour
 {
     // Time the button must be held down before info is displayed
-    private const float infoHoldTime = 1.0f;
+    private const float infoHoldTime = 0.75f;
 
     [SerializeField]
     private TextMeshProUGUI text;
@@ -22,6 +22,9 @@ public class UISpellButton : MonoBehaviour
     private float buttonDownTime = 0.0f;
     private IEnumerator buttonHold;
 
+    [SerializeField]
+    private Spell current;
+
 
     void Awake()
     {
@@ -32,6 +35,7 @@ public class UISpellButton : MonoBehaviour
 
     public void InitializeButton(Spell s, int i, int mp)
     {
+        current = s;
         text.text = s.spellName;
         cost.text = s.spellCost.ToString();
         index = i;
@@ -102,8 +106,7 @@ public class UISpellButton : MonoBehaviour
             SelectSpell();
         else
         {
-            Debug.Log("Attack data");
-            // Display the thing
+            EventManager.Instance.RaiseSpellGameEvent(EventConstants.SPELL_INFO_DISPLAY, current);
         }
 
         OnButtonRelease();

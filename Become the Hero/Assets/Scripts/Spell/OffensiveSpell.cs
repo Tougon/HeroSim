@@ -121,4 +121,19 @@ public class OffensiveSpell : Spell
         cast.SetDamage(result);
         cast.SetCritical(crits);
     }
+
+
+    public override int GetPower()
+    {
+        return (int)spellPower;
+    }
+
+
+    public override int GetAccuracy()
+    {
+        if (!checkAccuracy)
+            return -1;
+
+        return (int)spellAccuracy;
+    }
 }

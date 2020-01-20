@@ -52,6 +52,11 @@ public class EventManager : ScriptableObject
     [Tooltip("Add all Sequence Events to this list.")]
     private List<SequenceGameEvent> sequenceEvents;
 
+    [SerializeField]
+    [Header("Spell Events")]
+    [Tooltip("Add all Spell Events to this list.")]
+    private List<SpellGameEvent> spellEvents;
+
     //Singleton PURELY to alleviate EventManager references in other scripts.
     public static EventManager Instance;
     #endregion
@@ -64,6 +69,7 @@ public class EventManager : ScriptableObject
     private Dictionary<string, GameObjectGameEvent> gameObjectEventMap;
     private Dictionary<string, EntityControllerGameEvent> entityControllerEventMap;
     private Dictionary<string, SequenceGameEvent> sequenceEventMap;
+    private Dictionary<string, SpellGameEvent> spellEventMap;
     #endregion
 
     #region Raise Events
@@ -205,6 +211,26 @@ public class EventManager : ScriptableObject
             this.GetSequenceGameEvent(eventName).Raise(value);
         }
     }
+
+
+    /// <summary>
+    /// Raises the passed in <see cref="SpellGameEvent"/>, after confirming
+    /// the name is valid.
+    /// </summary>
+    /// <param name="eventName">The name of the event.</param>
+    public void RaiseSpellGameEvent(string eventName, Spell value)
+    {
+        //Raise the game event if not null, else print an error.
+        SpellGameEvent spellGameEvent = this.GetSpellGameEvent(eventName);
+        if (!spellGameEvent)
+        {
+            Debug.LogError("ERROR: Invalid Spell Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
+        }
+        else
+        {
+            this.GetSpellGameEvent(eventName).Raise(value);
+        }
+    }
     #endregion
 
     #region Event Accessors
@@ -334,6 +360,25 @@ public class EventManager : ScriptableObject
         }
         return null;
     }
+
+
+    /// <summary>
+    /// Gets a <see cref="SpellGameEvent"/> from our <see cref="spellEventMap"/>.
+    /// If no event by string name exists, returns null.
+    /// </summary>
+    /// <param name="eventName">The string name of the event.</param>
+    /// <returns>The spell game event associated with the passed in string, if any.</returns>
+    public SpellGameEvent GetSpellGameEvent(string eventName)
+    {
+        SpellGameEvent spellEvent;
+
+        //searches our dictionary for the event, outputs it, and returns it
+        if (spellEventMap.TryGetValue(eventName.ToLower(), out spellEvent))
+        {
+            return spellEvent;
+        }
+        return null;
+    }
     #endregion
 
     #region Populate Event Map + Overloads
@@ -433,6 +478,20 @@ public class EventManager : ScriptableObject
             sequenceEventMap.Add(sequenceEvent.name.ToLower(), sequenceEvent);
         }
     }
+
+
+    /// <summary>
+    /// Maps each spell event's name to the game event itself, after 
+    /// filling <see cref="spellEvents"/> via inspector.
+    /// </summary>
+    private void PopulateSpellEventMap()
+    {
+        spellEventMap = new Dictionary<string, SpellGameEvent>();
+        foreach (SpellGameEvent spellEvent in this.spellEvents)
+        {
+            spellEventMap.Add(spellEvent.name.ToLower(), spellEvent);
+        }
+    }
     #endregion
 
     #region On Enable
@@ -448,6 +507,7 @@ public class EventManager : ScriptableObject
         this.PopulateGameObjectEventMap();
         this.PopulateEntityControllerEventMap();
         this.PopulateSequenceEventMap();
+        this.PopulateSpellEventMap();
 
         if (!Instance)
         {

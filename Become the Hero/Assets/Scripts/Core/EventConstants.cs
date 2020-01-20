@@ -52,4 +52,8 @@ public static class EventConstants
     #region Sequence Event Constants
     public const string ON_SEQUENCE_QUEUE = "OnSequenceQueue";
     #endregion
+
+    #region Spell Event Constants
+    public const string SPELL_INFO_DISPLAY = "SpellInfoDisplay";
+    #endregion
 }

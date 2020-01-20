@@ -203,8 +203,7 @@ public class TurnManager : MonoBehaviour
             ec.target.IncreaseDamageTaken(spellCast.GetDamageApplied());
 
             // NOTE: Replace with a spell specific method later because "Player casts attack!" sounds awful.
-            string dialogueSeq = ec.param.entityName + " casts " + spellCast.spell.name + 
-                " on " + ec.target.param.entityName + "!";
+            string dialogueSeq = spellCast.GetCastMessage();
             EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, dialogueSeq);
 
             // If spell is successful, queue up its animation
