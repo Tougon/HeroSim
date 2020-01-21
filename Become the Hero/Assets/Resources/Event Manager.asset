@@ -43,3 +43,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8e2d69ee356bf8d4097eb6644d8085a2, type: 2}
   spellEvents:
   - {fileID: 11400000, guid: 362e884b3a9732b47b34ad30b6bad41a, type: 2}
+  rectTransformEvents:
+  - {fileID: 11400000, guid: 83f5b3d4e5acf184a9ec971fb0538b77, type: 2}

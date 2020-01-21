@@ -56,4 +56,8 @@ public static class EventConstants
     #region Spell Event Constants
     public const string SPELL_INFO_DISPLAY = "SpellInfoDisplay";
     #endregion
+
+    #region Rect Transform Constants
+    public const string ON_SPELL_INFO_APPEAR = "OnSpellInfoAppear";
+    #endregion
 }

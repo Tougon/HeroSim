@@ -57,6 +57,12 @@ public class EventManager : ScriptableObject
     [Tooltip("Add all Spell Events to this list.")]
     private List<SpellGameEvent> spellEvents;
 
+    [SerializeField]
+    [Header("RectTransform Events")]
+    [Tooltip("Add all RectTransform Events to this list.")]
+    private List<RectTransformGameEvent> rectTransformEvents;
+
+
     //Singleton PURELY to alleviate EventManager references in other scripts.
     public static EventManager Instance;
     #endregion
@@ -70,6 +76,7 @@ public class EventManager : ScriptableObject
     private Dictionary<string, EntityControllerGameEvent> entityControllerEventMap;
     private Dictionary<string, SequenceGameEvent> sequenceEventMap;
     private Dictionary<string, SpellGameEvent> spellEventMap;
+    private Dictionary<string, RectTransformGameEvent> rectTransformEventMap;
     #endregion
 
     #region Raise Events
@@ -231,6 +238,26 @@ public class EventManager : ScriptableObject
             this.GetSpellGameEvent(eventName).Raise(value);
         }
     }
+
+
+    /// <summary>
+    /// Raises the passed in <see cref="RectTransformGameEvent"/>, after confirming
+    /// the name is valid.
+    /// </summary>
+    /// <param name="eventName">The name of the event.</param>
+    public void RaiseRectTransformGameEvent(string eventName, RectTransform value)
+    {
+        //Raise the game event if not null, else print an error.
+        RectTransformGameEvent rtGameEvent = this.GetRectTransformGameEvent(eventName);
+        if (!rtGameEvent)
+        {
+            Debug.LogError("ERROR: Invalid RectTransform Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
+        }
+        else
+        {
+            this.GetRectTransformGameEvent(eventName).Raise(value);
+        }
+    }
     #endregion
 
     #region Event Accessors
@@ -379,6 +406,25 @@ public class EventManager : ScriptableObject
         }
         return null;
     }
+
+
+    /// <summary>
+    /// Gets a <see cref="RectTransformGameEvent"/> from our <see cref="rectTransformEventMap"/>.
+    /// If no event by string name exists, returns null.
+    /// </summary>
+    /// <param name="eventName">The string name of the event.</param>
+    /// <returns>The recttransform game event associated with the passed in string, if any.</returns>
+    public RectTransformGameEvent GetRectTransformGameEvent(string eventName)
+    {
+        RectTransformGameEvent rtEvent;
+
+        //searches our dictionary for the event, outputs it, and returns it
+        if (rectTransformEventMap.TryGetValue(eventName.ToLower(), out rtEvent))
+        {
+            return rtEvent;
+        }
+        return null;
+    }
     #endregion
 
     #region Populate Event Map + Overloads
@@ -492,6 +538,20 @@ public class EventManager : ScriptableObject
             spellEventMap.Add(spellEvent.name.ToLower(), spellEvent);
         }
     }
+
+
+    /// <summary>
+    /// Maps each spell event's name to the game event itself, after 
+    /// filling <see cref="rectTransformEvents"/> via inspector.
+    /// </summary>
+    private void PopulateRectTransformEventMap()
+    {
+        rectTransformEventMap = new Dictionary<string, RectTransformGameEvent>();
+        foreach (RectTransformGameEvent rtEvent in this.rectTransformEvents)
+        {
+            rectTransformEventMap.Add(rtEvent.name.ToLower(), rtEvent);
+        }
+    }
     #endregion
 
     #region On Enable
@@ -508,6 +568,7 @@ public class EventManager : ScriptableObject
         this.PopulateEntityControllerEventMap();
         this.PopulateSequenceEventMap();
         this.PopulateSpellEventMap();
+        this.PopulateRectTransformEventMap();
 
         if (!Instance)
         {

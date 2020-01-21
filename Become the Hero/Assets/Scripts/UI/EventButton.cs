@@ -29,7 +29,7 @@ public class EventButton : Button
 
     public void OnButtonReleased()
     {
-        if(enabled && !interactable)
+        if(enabled)
         {
             interactable = true;
             DoStateTransition(SelectionState.Normal, false);

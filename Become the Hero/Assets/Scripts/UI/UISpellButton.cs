@@ -20,6 +20,7 @@ public class UISpellButton : MonoBehaviour
     private int index;
     public bool selected { get; private set; }
     private float buttonDownTime = 0.0f;
+    private RectTransform rect;
     private IEnumerator buttonHold;
 
     [SerializeField]
@@ -30,6 +31,7 @@ public class UISpellButton : MonoBehaviour
     {
         b = GetComponent<Button>();
         e = GetComponent<EventTrigger>();
+        rect = GetComponent<RectTransform>();
     }
 
 
@@ -84,6 +86,7 @@ public class UISpellButton : MonoBehaviour
 
         EventManager.Instance.RaiseGameEvent(EventConstants.ON_BUTTON_RELEASED);
         selected = false;
+        buttonDownTime = 0.0f;
     }
 
 
@@ -103,14 +106,15 @@ public class UISpellButton : MonoBehaviour
         if (buttonHold != null) StopCoroutine(buttonHold);
 
         if (buttonDownTime < infoHoldTime)
+        {
             SelectSpell();
+            OnButtonRelease();
+        }
         else
         {
             EventManager.Instance.RaiseSpellGameEvent(EventConstants.SPELL_INFO_DISPLAY, current);
+            EventManager.Instance.RaiseRectTransformGameEvent(EventConstants.ON_SPELL_INFO_APPEAR, rect);
         }
-
-        OnButtonRelease();
-        buttonDownTime = 0.0f;
     }
 
 
