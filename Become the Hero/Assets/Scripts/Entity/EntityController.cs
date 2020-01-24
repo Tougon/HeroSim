@@ -21,6 +21,8 @@ public class EntityController : EntityBase, IComparable<EntityController>
     public bool dead { get; protected set; }
     
     public int damageTaken { get; private set; }
+    // Used for UI interactions
+    public int lastHit { get; private set; }
     public int maxHP { get; private set; }
     public int maxMP { get; private set; }
 
@@ -39,6 +41,9 @@ public class EntityController : EntityBase, IComparable<EntityController>
 
     protected static AnimationSequenceObject spawn;
     protected static AnimationSequenceObject defeat;
+
+    [SerializeField]
+    protected EntityControllerUI entityUI;
 
 
     // Start is called before the first frame update
@@ -87,6 +92,9 @@ public class EntityController : EntityBase, IComparable<EntityController>
             offenseModifiers = new Dictionary<string, float>();
             defenseModifiers = new Dictionary<string, float>();
             accuracyModifiers = new Dictionary<string, float>();
+
+            if (entityUI != null)
+                entityUI.ResetUI(this, maxHP, maxMP);
         }
     }
 
@@ -114,6 +122,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
         if (dead) return;
 
         param.entityHP -= val;
+        lastHit = val;
 
         if (param.entityHP <= 0)
         {
@@ -141,6 +150,9 @@ public class EntityController : EntityBase, IComparable<EntityController>
         param.entityMP += amt;
 
         param.entityMP = Mathf.Clamp(param.entityMP, 0, maxMP);
+
+        if (entityUI != null && amt != 0)
+            entityUI.ChangeMP(amt);
     }
 
 
@@ -485,6 +497,18 @@ public class EntityController : EntityBase, IComparable<EntityController>
 
     #endregion
 
+    #region UI Functions
+
+    public void ShowUI() { if (entityUI != null) entityUI.ShowUI(); }
+    public void HideUI() { if (entityUI != null) entityUI.HideUI(); }
+
+    public void UpdateHPUI()
+    {
+        if (entityUI != null)
+            entityUI.ChangeHP(lastHit);
+    }
+
+    #endregion
 
     #region Compare
 

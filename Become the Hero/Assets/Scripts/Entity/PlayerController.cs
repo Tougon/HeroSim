@@ -32,6 +32,8 @@ public class PlayerController : EntityController
     // Start is called before the first frame update
     void Start()
     {
+        entityUI.ShowText();
+
         // initialize the player 
         EventManager.Instance.RaiseEntityControllerEvent(EventConstants.ON_PLAYER_INITIALIZE, this);
     }

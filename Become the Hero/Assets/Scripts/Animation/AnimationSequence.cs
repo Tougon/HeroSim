@@ -16,7 +16,8 @@ public class AnimationSequence : Hero.Core.Sequence
     public class AnimationSequenceAction
     {
         public enum Action { ChangeUserAnimation, ChangeTargetAnimation, TerminateAnimation, GenerateEffect, TerminateEffect,
-           Move, Rotate, Scale, Color, Vibrate, ChangeAnimationSpeed, ChangeAnimationState, PlaySound, BeginLoop, EndLoop, ApplyDamage }
+            Move, Rotate, Scale, Color, Vibrate, ChangeAnimationSpeed, ChangeAnimationState, PlaySound, BeginLoop, EndLoop, ApplyDamage,
+            UpdateHPUI, UpdateMPUI }
 
         public int frame;
         public Action action;
@@ -36,6 +37,7 @@ public class AnimationSequence : Hero.Core.Sequence
     private EntityController user;
     private EntityController target;
     private SpellCast spell;
+    private AnimationSequenceObject aso;
 
     #region Initial Values
     /// <summary>
@@ -85,6 +87,7 @@ public class AnimationSequence : Hero.Core.Sequence
     /// </summary>
     public void InitSequence(AnimationSequenceObject obj, EntityController u, EntityController t)
     {
+        aso = obj;
         user = u;
         target = t;
 
@@ -151,6 +154,9 @@ public class AnimationSequence : Hero.Core.Sequence
 
         active = true;
         running = true;
+
+        if (aso.disableUserUI) user.HideUI();
+        if (aso.disableTargetUI) target.HideUI();
     }
 
 
@@ -446,6 +452,16 @@ public class AnimationSequence : Hero.Core.Sequence
             case AnimationSequenceAction.Action.PlaySound:
                 // Plays a sound effect
                 PlaySound(param);
+                break;
+
+            case AnimationSequenceAction.Action.UpdateHPUI:
+
+                param = param.Trim();
+
+                if (param.Equals("User"))
+                    user.UpdateHPUI();
+                else if (param.Equals("Target"))
+                    target.UpdateHPUI();
                 break;
 
             case AnimationSequenceAction.Action.TerminateAnimation:
