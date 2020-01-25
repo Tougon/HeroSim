@@ -147,11 +147,13 @@ public class EntityController : EntityBase, IComparable<EntityController>
     /// </summary>
     public void ModifyMP(int amt)
     {
+        int deltaMP = param.entityMP;
         param.entityMP += amt;
 
         param.entityMP = Mathf.Clamp(param.entityMP, 0, maxMP);
+        deltaMP -= param.entityMP;
 
-        if (entityUI != null && amt != 0)
+        if (entityUI != null && deltaMP != 0)
             entityUI.ChangeMP(amt);
     }
 
@@ -164,6 +166,16 @@ public class EntityController : EntityBase, IComparable<EntityController>
         // Play a death animation that will just be a dissolve or something
         Hero.Core.Sequence defSeq = new AnimationSequence(defeat, this, this);
         EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, defSeq);
+
+        offenseModifiers.Clear();
+        defenseModifiers.Clear();
+        accuracyModifiers.Clear();
+
+        atkStage = 0;
+        defStage = 0;
+        spdStage = 0;
+        accuracyStage = 0;
+        evasionStage = 0;
 
         // Remove all volitile effects (pretty much all non-revive effects)
         for (int i=0; i<effects.Count; i++)
@@ -283,7 +295,6 @@ public class EntityController : EntityBase, IComparable<EntityController>
         for (int i = 0; i < effects.Count; i++)
         {
             EffectInstance eff = effects[i];
-            eff.numTurnsActive++;
             eff.OnTurnStart();
 
             // Prevent skipping over any effects if an effect is removed
@@ -317,6 +328,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
         {
             EffectInstance eff = effects[i];
             eff.CheckRemainActive();
+            Debug.Log(eff.numTurnsActive + " " + eff.effect.GetName());
 
             if (!eff.castSuccess)
             {
@@ -350,10 +362,27 @@ public class EntityController : EntityBase, IComparable<EntityController>
     {
         if (eff.effect.IsStackable())
         {
+            EffectInstance curr = effects.Find(f => f.effect.GetName() == eff.effect.GetName());
+
             // Handle stacking (reset duration/add buffs)
+            if (curr != null)
+            {
+                // We need an OnStack callback. This would allow stacking to be more customizable
+                curr.OnStack();
+            }
+            else
+            {
+                // On apply callback
+                effects.Add(eff);
+                eff.OnApply();
+            }
         }
-        else if(!effects.Exists(f => f.effect.effectName == eff.effect.effectName))
+        else if(!effects.Exists(f => f.effect.GetName() == eff.effect.GetName()))
+        {
+            // On apply callback
             effects.Add(eff);
+            eff.OnApply();
+        }
 
         effects.Sort();
     }
@@ -366,6 +395,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
     {
         if (effects.Contains(eff))
         {
+            Debug.Log(eff.effect.GetName());
             eff.OnDeactivate();
             effects.Remove(eff);
         }
@@ -377,7 +407,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
     /// </summary>
     public void RemoveEffect(string s)
     {
-        EffectInstance eff = effects.Find(f => f.effect.effectName == s);
+        EffectInstance eff = effects.Find(f => f.effect.GetName() == s);
 
         if (eff != null)
         {
@@ -389,11 +419,12 @@ public class EntityController : EntityBase, IComparable<EntityController>
 
     /// <summary>
     /// Removes an effect based on its name but does not call deactivation funcitons.
-    /// Used to remove effects forcibly, such as status removal. (Ex. Doomsday Clock)
+    /// Used to remove effects forcibly, such as status removal.
+    /// (Ex. Doomsday Clock's deactivate call kills the user)
     /// </summary>
     public void RemoveEffectNoDeactivate(string s)
     {
-        EffectInstance eff = effects.Find(f => f.effect.effectName == s);
+        EffectInstance eff = effects.Find(f => f.effect.GetName() == s);
 
         if (eff != null)
         {

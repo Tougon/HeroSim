@@ -168,9 +168,6 @@ public class TurnManager : MonoBehaviour
         foreach (EntityController ec in enemies)
             ec.target = players[Random.Range(0, players.Count)];
 
-        foreach (EntityController ec in entities)
-            ec.ExecuteMoveSelectedEffects();
-
         StartCoroutine(ActionSequence());
     }
 
@@ -196,6 +193,8 @@ public class TurnManager : MonoBehaviour
             // Tweak later so that the target can change
             if (ec.target.dead)
                 continue;
+
+            ec.ExecuteMoveSelectedEffects();
 
             // Cast the spell
             SpellCast spellCast = ec.action.Cast(ec, ec.target);
@@ -291,6 +290,9 @@ public class TurnManager : MonoBehaviour
             // turn end stuff
             ec.ExecuteTurnEndEffects();
         }
+
+        // Start the sequence
+        sequencer.StartSequence();
 
         while (sequencer.active)
             yield return null;

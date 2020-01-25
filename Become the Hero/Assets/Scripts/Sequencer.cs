@@ -27,7 +27,8 @@ public class Sequencer : MonoBehaviour
     /// </summary>
     public void StartSequence()
     {
-        StartCoroutine(RunSequence());
+        if(sequence.Count > 0)
+            StartCoroutine(RunSequence());
     }
 
 
