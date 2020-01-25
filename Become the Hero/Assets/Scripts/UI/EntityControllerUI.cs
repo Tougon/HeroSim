@@ -55,6 +55,7 @@ public class EntityControllerUI : MonoBehaviour
         visible = false;
 
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).AddListener(ShowUI);
+        EventManager.Instance.GetGameEvent(EventConstants.HIDE_UI).AddListener(HideUI);
     }
 
 
@@ -199,4 +200,11 @@ public class EntityControllerUI : MonoBehaviour
     private void SetUIInvisible() { visible = false; fadeOut = null; }
     private void OnHPAnimateFinish() { hpAnimating = false; }
     private void OnMPAnimateFinish() { mpAnimating = false; }
+
+
+    private void OnDestroy()
+    {
+        EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).RemoveListener(ShowUI);
+        EventManager.Instance.GetGameEvent(EventConstants.HIDE_UI).RemoveListener(HideUI);
+    }
 }

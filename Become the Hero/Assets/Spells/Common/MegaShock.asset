@@ -12,12 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 955669ae195bf9043b837837b0adc9c9, type: 3}
   m_Name: MegaShock
   m_EditorClassIdentifier: 
-  spellName: Mega Flare
-  spellCost: 11
+  spellName: Mega Shock
+  spellCost: 13
+  spellPriority: 0
   spellDescription: 
   spellCastMessage: '[user] casts [name]!'
   spellAnimation: {fileID: 11400000, guid: b0ce99ad59dbd9c41a165c86771109d7, type: 2}
-  spellEffects: []
+  spellEffects:
+  - chance: 0.1
+    effects:
+    - chance: 1
+      effect: {fileID: 11400000, guid: b1a76c56a64f8d647a76450857f0a289, type: 2}
   spellProperties: []
   spellPower: 90
   checkAccuracy: 1

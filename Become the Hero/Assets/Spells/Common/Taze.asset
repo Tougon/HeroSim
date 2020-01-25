@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Taze
   m_EditorClassIdentifier: 
   spellName: Taze
-  spellCost: 9
+  spellCost: 16
+  spellPriority: 0
   spellDescription: 
   spellCastMessage: '[user] casts [name]!'
   spellAnimation: {fileID: 11400000, guid: 222bc7b9e3410154ca16828926f21790, type: 2}
@@ -24,4 +25,4 @@ MonoBehaviour:
       effect: {fileID: 11400000, guid: b1a76c56a64f8d647a76450857f0a289, type: 2}
   spellProperties: []
   checkAccuracy: 1
-  spellAccuracy: 90
+  spellAccuracy: 100

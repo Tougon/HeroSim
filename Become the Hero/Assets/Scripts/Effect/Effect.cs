@@ -243,6 +243,15 @@ public class Effect : ScriptableObject
     }
 
 
+    /// <summary>
+    /// Resets the number of turns this effect has been active
+    /// </summary>
+    public void ResetTurnCounter()
+    {
+        current.numTurnsActive = 0;
+    }
+
+
     #region MP/HP Manipulation
 
 
@@ -408,6 +417,54 @@ public class Effect : ScriptableObject
     public void RemoveDefenseModifierFromTarget(string name)
     {
 
+    }
+
+
+    public void ApplySpeedModifierToUser(float amt)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.AddSpeedModifier(amt, GetName());
+    }
+
+
+    public void RemoveSpeedModifierFromUser()
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.RemoveDefenseModifier(GetName());
+    }
+
+
+    public void RemoveSpeedModifierFromUser(string name)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.RemoveDefenseModifier(name);
+    }
+
+
+    public void ApplySpeedModifierToTarget(float amt)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.AddSpeedModifier(amt, GetName());
+    }
+
+
+    public void RemoveSpeedModifierFromTarget()
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.RemoveDefenseModifier(GetName());
+    }
+
+
+    public void RemoveSpeedModifierFromTarget(string name)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.RemoveDefenseModifier(name);
     }
 
 

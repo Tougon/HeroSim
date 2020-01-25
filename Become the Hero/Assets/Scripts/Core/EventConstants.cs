@@ -24,6 +24,7 @@ public static class EventConstants
     public const string ON_TRANSITION_IN_COMPLETE = "OnTransitionInComplete";
     public const string BEGIN_TRANSITION_OUT = "BeginTransitionOut";
     public const string ON_TRANSITION_OUT_COMPLETE = "OnTransitionOutComplete";
+    public const string HIDE_UI = "HideUI";
     #endregion
 
     #region Bool Event Constants

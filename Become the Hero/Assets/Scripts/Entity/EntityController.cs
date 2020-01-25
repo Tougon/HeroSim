@@ -35,6 +35,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
 
     private Dictionary<string, float> offenseModifiers = new Dictionary<string, float>();
     private Dictionary<string, float> defenseModifiers = new Dictionary<string, float>();
+    private Dictionary<string, float> speedModifiers = new Dictionary<string, float>();
     private Dictionary<string, float> accuracyModifiers = new Dictionary<string, float>();
     private List<EffectInstance> effects = new List<EffectInstance>();
     private List<EffectInstance> properties = new List<EffectInstance>();
@@ -442,6 +443,9 @@ public class EntityController : EntityBase, IComparable<EntityController>
     /// </summary>
     public void AddOffenseModifier(float amt, string key)
     {
+        if (offenseModifiers.ContainsKey(key))
+            return;
+
         offenseModifiers.Add(key, amt);
     }
 
@@ -454,15 +458,18 @@ public class EntityController : EntityBase, IComparable<EntityController>
     }
 
     /// <summary>
-    /// Adds an defensive modifier with a given key
+    /// Adds a defensive modifier with a given key
     /// </summary>
     public void AddDefenseModifier(float amt, string key)
     {
+        if (defenseModifiers.ContainsKey(key))
+            return;
+
         defenseModifiers.Add(key, amt);
     }
 
     /// <summary>
-    /// Removes an defensive modifier with a given key
+    /// Removes a defensive modifier with a given key
     /// </summary>
     public void RemoveDefenseModifier(string key)
     {
@@ -470,10 +477,32 @@ public class EntityController : EntityBase, IComparable<EntityController>
     }
 
     /// <summary>
+    /// Adds a speed modifier with a given key
+    /// </summary>
+    public void AddSpeedModifier(float amt, string key)
+    {
+        if (speedModifiers.ContainsKey(key))
+            return;
+
+        speedModifiers.Add(key, amt);
+    }
+
+    /// <summary>
+    /// Removes a speed modifier with a given key
+    /// </summary>
+    public void RemoveSpeedModifier(string key)
+    {
+        speedModifiers.Remove(key);
+    }
+
+    /// <summary>
     /// Adds an accuracy modifier with a given key
     /// </summary>
     public void AddAccuracyModifier(float amt, string key)
     {
+        if (accuracyModifiers.ContainsKey(key))
+            return;
+
         accuracyModifiers.Add(key, amt);
     }
 
@@ -494,6 +523,11 @@ public class EntityController : EntityBase, IComparable<EntityController>
     public Dictionary<string, float>.ValueCollection GetDefenseModifiers()
     {
         return defenseModifiers.Values;
+    }
+
+    public Dictionary<string, float>.ValueCollection GetSpeedModifiers()
+    {
+        return speedModifiers.Values;
     }
 
     public Dictionary<string, float>.ValueCollection GetAccuracyModifiers()
@@ -550,8 +584,25 @@ public class EntityController : EntityBase, IComparable<EntityController>
     /// <returns>1 if this object is slower, -1 if this it is faster, random otherwise.</returns>
     public int CompareTo(EntityController other)
     {
-        int speedA = GetSpeed();
-        int speedB = other.GetSpeed();
+        int priorityA = action.spellPriority;
+        int priorityB = other.action.spellPriority;
+
+        if (priorityA > priorityB)
+            return -1;
+        else if (priorityB > priorityA)
+            return 1;
+
+        int speedA = Mathf.RoundToInt((float)GetSpeed() * GetSpeedModifier());
+        int speedB = Mathf.RoundToInt((float)other.GetSpeed() * other.GetSpeedModifier());
+
+        var speedModA = GetSpeedModifiers();
+        var speedModB = other.GetSpeedModifiers();
+
+        foreach (float mod in speedModA)
+            speedA = Mathf.RoundToInt((float)speedA * mod);
+
+        foreach (float mod in speedModB)
+            speedB = Mathf.RoundToInt((float)speedB * mod);
 
         if (speedA > speedB)
             return -1;

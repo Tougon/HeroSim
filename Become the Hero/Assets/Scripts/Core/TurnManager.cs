@@ -239,6 +239,8 @@ public class TurnManager : MonoBehaviour
                 yield return null;
 
             // apply effects from the spell if the target is still alive.
+            if (ec.target.dead)
+                continue;
 
             List<EffectInstance> effects = spellCast.GetEffects();
 

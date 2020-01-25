@@ -12,6 +12,8 @@ public class Spell : ScriptableObject
 
     public string spellName;
     public int spellCost;
+    [Range(-6, 6)]
+    public int spellPriority = 0;
     public string spellDescription;
     public string spellCastMessage = "[user] casts [name]!";
     public AnimationSequenceObject spellAnimation;
@@ -266,7 +268,10 @@ public class SpellCast
             {
                 Effect e = spell.spellEffects[i].GetEffect();
 
-                if (e != null && !effects.Exists(f => f.effect == e) || (effects.Exists(f => f.effect == e) && e.IsStackable()))
+                float proc = Random.value;
+                Debug.Log(proc);
+                if (proc < spell.spellEffects[i].chance &&
+                    (e != null && !effects.Exists(f => f.effect == e) || (effects.Exists(f => f.effect == e) && e.IsStackable())))
                 {
                     EffectInstance eff = e.CreateEventInstance(user, target, this);
                     eff.CheckSuccess();

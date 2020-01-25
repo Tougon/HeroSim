@@ -9,26 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 955669ae195bf9043b837837b0adc9c9, type: 3}
-  m_Name: Shock
+  m_Script: {fileID: 11500000, guid: f3d30bfc8ab023c4bbabeadf55721842, type: 3}
+  m_Name: Jolt
   m_EditorClassIdentifier: 
-  spellName: Shock
-  spellCost: 7
+  spellName: Taze
+  spellCost: 9
   spellPriority: 0
   spellDescription: 
   spellCastMessage: '[user] casts [name]!'
-  spellAnimation: {fileID: 11400000, guid: b0ce99ad59dbd9c41a165c86771109d7, type: 2}
+  spellAnimation: {fileID: 11400000, guid: 222bc7b9e3410154ca16828926f21790, type: 2}
   spellEffects:
-  - chance: 0.1
+  - chance: 1
     effects:
     - chance: 1
       effect: {fileID: 11400000, guid: b1a76c56a64f8d647a76450857f0a289, type: 2}
   spellProperties: []
-  spellPower: 60
   checkAccuracy: 1
-  spellAccuracy: 100
-  minNumberOfHits: 1
-  maxNumberOfHits: 1
-  varyHitCount: 0
-  canCritical: 1
-  criticalHitChance: 16
+  spellAccuracy: 75
