@@ -35,7 +35,6 @@ public class EntityController : EntityBase, IComparable<EntityController>
 
     private Dictionary<string, float> offenseModifiers = new Dictionary<string, float>();
     private Dictionary<string, float> defenseModifiers = new Dictionary<string, float>();
-    private Dictionary<string, float> speedModifiers = new Dictionary<string, float>();
     private Dictionary<string, float> accuracyModifiers = new Dictionary<string, float>();
     private List<EffectInstance> effects = new List<EffectInstance>();
     private List<EffectInstance> properties = new List<EffectInstance>();
@@ -148,13 +147,11 @@ public class EntityController : EntityBase, IComparable<EntityController>
     /// </summary>
     public void ModifyMP(int amt)
     {
-        int deltaMP = param.entityMP;
         param.entityMP += amt;
 
         param.entityMP = Mathf.Clamp(param.entityMP, 0, maxMP);
-        deltaMP -= param.entityMP;
 
-        if (entityUI != null && deltaMP != 0)
+        if (entityUI != null && amt != 0)
             entityUI.ChangeMP(amt);
     }
 
@@ -167,16 +164,6 @@ public class EntityController : EntityBase, IComparable<EntityController>
         // Play a death animation that will just be a dissolve or something
         Hero.Core.Sequence defSeq = new AnimationSequence(defeat, this, this);
         EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, defSeq);
-
-        offenseModifiers.Clear();
-        defenseModifiers.Clear();
-        accuracyModifiers.Clear();
-
-        atkStage = 0;
-        defStage = 0;
-        spdStage = 0;
-        accuracyStage = 0;
-        evasionStage = 0;
 
         // Remove all volitile effects (pretty much all non-revive effects)
         for (int i=0; i<effects.Count; i++)
@@ -296,6 +283,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
         for (int i = 0; i < effects.Count; i++)
         {
             EffectInstance eff = effects[i];
+            eff.numTurnsActive++;
             eff.OnTurnStart();
 
             // Prevent skipping over any effects if an effect is removed
@@ -329,7 +317,6 @@ public class EntityController : EntityBase, IComparable<EntityController>
         {
             EffectInstance eff = effects[i];
             eff.CheckRemainActive();
-            Debug.Log(eff.numTurnsActive + " " + eff.effect.GetName());
 
             if (!eff.castSuccess)
             {
@@ -363,27 +350,10 @@ public class EntityController : EntityBase, IComparable<EntityController>
     {
         if (eff.effect.IsStackable())
         {
-            EffectInstance curr = effects.Find(f => f.effect.GetName() == eff.effect.GetName());
-
             // Handle stacking (reset duration/add buffs)
-            if (curr != null)
-            {
-                // We need an OnStack callback. This would allow stacking to be more customizable
-                curr.OnStack();
-            }
-            else
-            {
-                // On apply callback
-                effects.Add(eff);
-                eff.OnApply();
-            }
         }
-        else if(!effects.Exists(f => f.effect.GetName() == eff.effect.GetName()))
-        {
-            // On apply callback
+        else if(!effects.Exists(f => f.effect.effectName == eff.effect.effectName))
             effects.Add(eff);
-            eff.OnApply();
-        }
 
         effects.Sort();
     }
@@ -396,7 +366,6 @@ public class EntityController : EntityBase, IComparable<EntityController>
     {
         if (effects.Contains(eff))
         {
-            Debug.Log(eff.effect.GetName());
             eff.OnDeactivate();
             effects.Remove(eff);
         }
@@ -408,7 +377,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
     /// </summary>
     public void RemoveEffect(string s)
     {
-        EffectInstance eff = effects.Find(f => f.effect.GetName() == s);
+        EffectInstance eff = effects.Find(f => f.effect.effectName == s);
 
         if (eff != null)
         {
@@ -420,12 +389,11 @@ public class EntityController : EntityBase, IComparable<EntityController>
 
     /// <summary>
     /// Removes an effect based on its name but does not call deactivation funcitons.
-    /// Used to remove effects forcibly, such as status removal.
-    /// (Ex. Doomsday Clock's deactivate call kills the user)
+    /// Used to remove effects forcibly, such as status removal. (Ex. Doomsday Clock)
     /// </summary>
     public void RemoveEffectNoDeactivate(string s)
     {
-        EffectInstance eff = effects.Find(f => f.effect.GetName() == s);
+        EffectInstance eff = effects.Find(f => f.effect.effectName == s);
 
         if (eff != null)
         {
@@ -443,9 +411,6 @@ public class EntityController : EntityBase, IComparable<EntityController>
     /// </summary>
     public void AddOffenseModifier(float amt, string key)
     {
-        if (offenseModifiers.ContainsKey(key))
-            return;
-
         offenseModifiers.Add(key, amt);
     }
 
@@ -458,18 +423,15 @@ public class EntityController : EntityBase, IComparable<EntityController>
     }
 
     /// <summary>
-    /// Adds a defensive modifier with a given key
+    /// Adds an defensive modifier with a given key
     /// </summary>
     public void AddDefenseModifier(float amt, string key)
     {
-        if (defenseModifiers.ContainsKey(key))
-            return;
-
         defenseModifiers.Add(key, amt);
     }
 
     /// <summary>
-    /// Removes a defensive modifier with a given key
+    /// Removes an defensive modifier with a given key
     /// </summary>
     public void RemoveDefenseModifier(string key)
     {
@@ -477,32 +439,10 @@ public class EntityController : EntityBase, IComparable<EntityController>
     }
 
     /// <summary>
-    /// Adds a speed modifier with a given key
-    /// </summary>
-    public void AddSpeedModifier(float amt, string key)
-    {
-        if (speedModifiers.ContainsKey(key))
-            return;
-
-        speedModifiers.Add(key, amt);
-    }
-
-    /// <summary>
-    /// Removes a speed modifier with a given key
-    /// </summary>
-    public void RemoveSpeedModifier(string key)
-    {
-        speedModifiers.Remove(key);
-    }
-
-    /// <summary>
     /// Adds an accuracy modifier with a given key
     /// </summary>
     public void AddAccuracyModifier(float amt, string key)
     {
-        if (accuracyModifiers.ContainsKey(key))
-            return;
-
         accuracyModifiers.Add(key, amt);
     }
 
@@ -523,11 +463,6 @@ public class EntityController : EntityBase, IComparable<EntityController>
     public Dictionary<string, float>.ValueCollection GetDefenseModifiers()
     {
         return defenseModifiers.Values;
-    }
-
-    public Dictionary<string, float>.ValueCollection GetSpeedModifiers()
-    {
-        return speedModifiers.Values;
     }
 
     public Dictionary<string, float>.ValueCollection GetAccuracyModifiers()
@@ -584,25 +519,8 @@ public class EntityController : EntityBase, IComparable<EntityController>
     /// <returns>1 if this object is slower, -1 if this it is faster, random otherwise.</returns>
     public int CompareTo(EntityController other)
     {
-        int priorityA = action.spellPriority;
-        int priorityB = other.action.spellPriority;
-
-        if (priorityA > priorityB)
-            return -1;
-        else if (priorityB > priorityA)
-            return 1;
-
-        int speedA = Mathf.RoundToInt((float)GetSpeed() * GetSpeedModifier());
-        int speedB = Mathf.RoundToInt((float)other.GetSpeed() * other.GetSpeedModifier());
-
-        var speedModA = GetSpeedModifiers();
-        var speedModB = other.GetSpeedModifiers();
-
-        foreach (float mod in speedModA)
-            speedA = Mathf.RoundToInt((float)speedA * mod);
-
-        foreach (float mod in speedModB)
-            speedB = Mathf.RoundToInt((float)speedB * mod);
+        int speedA = GetSpeed();
+        int speedB = other.GetSpeed();
 
         if (speedA > speedB)
             return -1;

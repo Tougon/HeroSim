@@ -1475,7 +1475,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   current: {fileID: 11400000, guid: bdc5366bdc9591e458e243736f5b8960, type: 2}
   entityUI: {fileID: 1782812865}
-  attack: {fileID: 11400000, guid: 519070b1adbe5744f8d4a6b23645b498, type: 2}
+  attack: {fileID: 11400000, guid: 8bd727b76a4ef6c4fae3e5ce1a837c19, type: 2}
   defend: {fileID: 11400000, guid: e4a36415df6477d4f8b10bd6175f4365, type: 2}
   spellList: {fileID: 11400000, guid: c97fc9e33fd59a044b211ce9a05d28df, type: 2}
   amountMPGainPerTurn: 5

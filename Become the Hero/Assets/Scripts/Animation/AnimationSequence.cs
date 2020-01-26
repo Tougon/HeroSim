@@ -155,8 +155,8 @@ public class AnimationSequence : Hero.Core.Sequence
         active = true;
         running = true;
 
-        if(aso.disableUI)
-            EventManager.Instance.RaiseGameEvent(EventConstants.HIDE_UI);
+        if (aso.disableUserUI) user.HideUI();
+        if (aso.disableTargetUI) target.HideUI();
     }
 
 

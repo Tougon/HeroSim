@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stackable: 0
   effectName: attack_accuracy_master
-  generic: 0
-  priority: 3
-  type: 0
+  activationAnimation: {fileID: 0}
+  deactivationAnimation: {fileID: 0}
+  miscAnimation: {fileID: 0}
   CheckSuccess:
     m_PersistentCalls:
       m_Calls: []
@@ -77,11 +77,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
-  OnApply:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
   OnMoveSelected:
     m_PersistentCalls:
       m_Calls:
@@ -121,22 +116,6 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   OnTurnEnd:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000}
-        m_MethodName: IncrementTurnCounter
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
-  OnStack:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
