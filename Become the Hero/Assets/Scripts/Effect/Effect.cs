@@ -465,7 +465,7 @@ public class Effect : ScriptableObject
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.RemoveDefenseModifier(GetName());
+        current.user.RemoveSpeedModifier(GetName());
     }
 
 
@@ -473,7 +473,7 @@ public class Effect : ScriptableObject
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.RemoveDefenseModifier(name);
+        current.user.RemoveSpeedModifier(name);
     }
 
 
@@ -489,7 +489,7 @@ public class Effect : ScriptableObject
     {
         if (castSuccess != checkSuccess) return;
 
-        current.target.RemoveDefenseModifier(GetName());
+        current.target.RemoveSpeedModifier(GetName());
     }
 
 
@@ -497,7 +497,7 @@ public class Effect : ScriptableObject
     {
         if (castSuccess != checkSuccess) return;
 
-        current.target.RemoveDefenseModifier(name);
+        current.target.RemoveSpeedModifier(name);
     }
 
 

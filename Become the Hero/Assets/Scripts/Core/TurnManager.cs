@@ -137,7 +137,6 @@ public class TurnManager : MonoBehaviour
             ec.target = null;
             ec.ResetDamageTaken();
             ec.ResetAction();
-            ec.ExecuteTurnStartEffects();
         }
 
         int index = 0;
@@ -169,7 +168,7 @@ public class TurnManager : MonoBehaviour
             ec.target = players[Random.Range(0, players.Count)];
 
         foreach (EntityController ec in entities)
-            ec.ExecuteMoveSelectedEffects();
+            ec.ExecuteTurnStartEffects();
 
         StartCoroutine(ActionSequence());
     }
@@ -196,6 +195,8 @@ public class TurnManager : MonoBehaviour
             // Tweak later so that the target can change
             if (ec.target.dead)
                 continue;
+
+            ec.ExecuteMoveSelectedEffects();
 
             // Cast the spell
             SpellCast spellCast = ec.action.Cast(ec, ec.target);
@@ -249,6 +250,8 @@ public class TurnManager : MonoBehaviour
                     ef.OnActivate();
             }
 
+            sequencer.StartSequence();
+
             while (sequencer.active)
                 yield return null;
         }
@@ -291,6 +294,8 @@ public class TurnManager : MonoBehaviour
             // turn end stuff
             ec.ExecuteTurnEndEffects();
         }
+
+        sequencer.StartSequence();
 
         while (sequencer.active)
             yield return null;

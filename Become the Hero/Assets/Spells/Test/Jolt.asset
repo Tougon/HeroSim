@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3d30bfc8ab023c4bbabeadf55721842, type: 3}
   m_Name: Jolt
   m_EditorClassIdentifier: 
-  spellName: Taze
+  spellName: Jolt
   spellCost: 9
   spellPriority: 0
   spellDescription: 

@@ -430,7 +430,6 @@ public class EntityController : EntityBase, IComparable<EntityController>
     {
         if (effects.Contains(eff))
         {
-            Debug.Log(eff.effect.GetName());
             effects.Remove(eff);
         }
     }
