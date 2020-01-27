@@ -11,6 +11,5 @@ public class AnimationSequenceObject : ScriptableObject
     public string animationName = "";
     public TextAsset animationSequence;
 
-    public bool disableUserUI = true;
-    public bool disableTargetUI = true;
+    public bool disableUI = true;
 }

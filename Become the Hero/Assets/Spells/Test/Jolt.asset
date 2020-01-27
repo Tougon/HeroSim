@@ -15,7 +15,8 @@ MonoBehaviour:
   spellName: Jolt
   spellCost: 9
   spellPriority: 0
-  spellDescription: 
+  spellDescription: The user stuns the target with a zap of lightning. It will leave
+    the target paralyzed.
   spellCastMessage: '[user] casts [name]!'
   spellAnimation: {fileID: 11400000, guid: 222bc7b9e3410154ca16828926f21790, type: 2}
   spellEffects:

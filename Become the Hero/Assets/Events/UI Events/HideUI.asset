@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e16f96c6c474f9341b60d30cf255f2f6, type: 3}
-  m_Name: SpellList
+  m_Script: {fileID: 11500000, guid: 7a78c7052899406438e9fc79486b45c0, type: 3}
+  m_Name: HideUI
   m_EditorClassIdentifier: 
-  spells:
-  - {fileID: 11400000, guid: b9cd063829c2a7c46819f98dea0e11e1, type: 2}
+  DeveloperDescription:
+    _value: 
