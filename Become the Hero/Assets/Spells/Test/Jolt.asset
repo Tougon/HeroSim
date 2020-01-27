@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d30bfc8ab023c4bbabeadf55721842, type: 3}
+  m_Name: Jolt
+  m_EditorClassIdentifier: 
+  spellName: Taze
+  spellCost: 9
+  spellPriority: 0
+  spellDescription: 
+  spellCastMessage: '[user] casts [name]!'
+  spellAnimation: {fileID: 11400000, guid: 222bc7b9e3410154ca16828926f21790, type: 2}
+  spellEffects:
+  - chance: 1
+    effects:
+    - chance: 1
+      effect: {fileID: 11400000, guid: b1a76c56a64f8d647a76450857f0a289, type: 2}
+  spellProperties: []
+  checkAccuracy: 1
+  spellAccuracy: 75

@@ -15,8 +15,16 @@ public class Effect : ScriptableObject
 
     [SerializeField]
     private bool stackable;
+
     public bool castSuccess { get; private set; }
+    // Indicates if the current event should check if the cast was successful or not
+    private bool checkSuccess = true;
+
     public string effectName;
+    // Used to allow for certain effects to be applied independently while using the same name (i.e. stat buffs)
+    [SerializeField]
+    private bool generic = false;
+
     // Current instance of effect calculations should be ran on
     public EffectInstance current;
 
@@ -29,13 +37,15 @@ public class Effect : ScriptableObject
     public UnityEvent CheckSuccess;
     public UnityEvent CheckRemainActive;
     public UnityEvent OnActivate;
+    public UnityEvent OnApply;
     public UnityEvent OnMoveSelected;
     public UnityEvent OnDeactivate;
     public UnityEvent OnTurnStart;
     public UnityEvent OnTurnEnd;
+    public UnityEvent OnStack;
 
     public bool IsStackable() { return stackable; }
-
+    public void ResetSuccess() { castSuccess = true; checkSuccess = true; }
 
     /// <summary>
     /// Create an instance of this effect
@@ -57,6 +67,15 @@ public class Effect : ScriptableObject
     public int GetPriority()
     {
         return priority;
+    }
+
+
+    public string GetName()
+    {
+        if (generic)
+            return current.spell.spell.spellName + "_" + effectName;
+        else
+            return effectName;
     }
 
 
@@ -114,31 +133,74 @@ public class Effect : ScriptableObject
         castSuccess = !castSuccess ? false : s == current.spell.spell;
     }
 
+
+    public void IsRandomIsLessThanValue(float val)
+    {
+        castSuccess = !castSuccess ? false : UnityEngine.Random.value <= val;
+    }
+
     #endregion
 
 
     #region Action Functions
+
+
+    public void SetCheckStatus(bool s)
+    {
+        checkSuccess = s;
+    }
+
 
     /// <summary>
     /// Sends a dialogue message to the <see cref="DialogueManager"/>
     /// </summary>
     public void SendDialogue(string dialogue)
     {
-        dialogue.Replace("[user]", current.user.param.entityName);
-        dialogue.Replace("[target]", current.target.param.entityName);
+        if (castSuccess != checkSuccess) return;
+        
+        dialogue = dialogue.Replace("[user]", current.user.param.entityName);
+        dialogue = dialogue.Replace("[target]", current.target.param.entityName);
         EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, dialogue);
+    }
+
+
+    /// <summary>
+    /// Sends an Animation Sequence to the <see cref="Sequencer"/>
+    /// </summary>
+    public void ApplyAnimationToUser(AnimationSequenceObject aso)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        Hero.Core.Sequence anim = new AnimationSequence(aso, current.user, current.target);
+        EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, anim);
+    }
+
+
+    /// <summary>
+    /// Sends an Animation Sequence to the <see cref="Sequencer"/>
+    /// </summary>
+    public void ApplyAnimationToTarget(AnimationSequenceObject aso)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        Hero.Core.Sequence anim = new AnimationSequence(aso, current.target, current.user);
+        EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, anim);
     }
 
 
     public void ApplyEffectToUser()
     {
+        if (castSuccess != checkSuccess) return;
+
         current.user.ApplyEffect(current);
     }
 
 
     public void RemoveEffectFromUser()
     {
-        current.user.RemoveEffect(current);
+        if (castSuccess != checkSuccess) return;
+
+        current.user.RemoveEffectNoDeactivate(current);
     }
 
 
@@ -150,13 +212,17 @@ public class Effect : ScriptableObject
 
     public void ApplyEffectToTarget()
     {
+        if (castSuccess != checkSuccess) return;
+
         current.target.ApplyEffect(current);
     }
 
 
     public void RemoveEffectFromTarget()
     {
+        if (castSuccess != checkSuccess) return;
 
+        current.target.RemoveEffectNoDeactivate(current);
     }
 
 
@@ -168,9 +234,54 @@ public class Effect : ScriptableObject
 
     public void ApplyPropertyToUser(Effect property)
     {
+        if (castSuccess != checkSuccess) return;
+
         EffectInstance eff = property.CreateEventInstance(current.user, current.target, current.spell);
         eff.numTurnsActive = current.numTurnsActive;
         current.user.AddProperty(eff);
+    }
+
+
+    public void ReplaceUserAction(Spell action)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.SetAction(action);
+    }
+
+
+    public void ReplaceTargetAction(Spell action)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.SetAction(action);
+    }
+
+
+    /// <summary>
+    /// Increases the number of turns this effect has been active
+    /// </summary>
+    public void IncrementTurnCounter()
+    {
+        current.numTurnsActive++;
+    }
+
+
+    /// <summary>
+    /// Resets the number of turns this effect has been active
+    /// </summary>
+    public void ResetTurnCounter()
+    {
+        current.numTurnsActive = 0;
+    }
+
+
+    /// <summary>
+    /// Decreases the number of turns this effect has been active
+    /// </summary>
+    public void DecreaseTurnCounter(int amt)
+    {
+        current.numTurnsActive -= amt;
     }
 
 
@@ -179,6 +290,8 @@ public class Effect : ScriptableObject
 
     public void ModifyUserMPFromDamageDealt(string s)
     {
+        if (castSuccess != checkSuccess) return;
+
         string[] param = s.Split(',');
         ModifyUserMPFromDamageDealt(float.Parse(param[0]), int.Parse(param[1]), int.Parse(param[2]));
     }
@@ -186,6 +299,8 @@ public class Effect : ScriptableObject
 
     public void ModifyUserMPFromDamageDealt(float modifier, int min, int max)
     {
+        if (castSuccess != checkSuccess) return;
+
         int damage = current.spell.GetDamageApplied();
         damage = (int)(((float)damage) * modifier);
 
@@ -196,6 +311,8 @@ public class Effect : ScriptableObject
 
     public void ModifyTargetMPFromDamageDealt(string s)
     {
+        if (castSuccess != checkSuccess) return;
+
         string[] param = s.Split(',');
         ModifyTargetMPFromDamageDealt(float.Parse(param[0]), int.Parse(param[1]), int.Parse(param[2]));
     }
@@ -203,6 +320,8 @@ public class Effect : ScriptableObject
 
     public void ModifyTargetMPFromDamageDealt(float modifier, int min, int max)
     {
+        if (castSuccess != checkSuccess) return;
+
         int damage = current.spell.GetDamageApplied();
         damage = (int)(((float)damage) * modifier);
 
@@ -213,6 +332,8 @@ public class Effect : ScriptableObject
 
     public void ModifyUserMPFromDamageTaken(string s)
     {
+        if (castSuccess != checkSuccess) return;
+
         string[] param = s.Split(',');
         ModifyUserMPFromDamageTaken(float.Parse(param[0]), int.Parse(param[1]), int.Parse(param[2]));
     }
@@ -220,6 +341,8 @@ public class Effect : ScriptableObject
 
     public void ModifyUserMPFromDamageTaken(float modifier, int min, int max)
     {
+        if (castSuccess != checkSuccess) return;
+
         int damage = current.user.damageTaken;
         damage = (int)(((float)damage) * modifier);
 
@@ -230,6 +353,8 @@ public class Effect : ScriptableObject
 
     public void ModifyTargetMPFromDamageTaken(string s)
     {
+        if (castSuccess != checkSuccess) return;
+
         string[] param = s.Split(',');
         ModifyTargetMPFromDamageTaken(float.Parse(param[0]), int.Parse(param[1]), int.Parse(param[2]));
     }
@@ -237,6 +362,8 @@ public class Effect : ScriptableObject
 
     public void ModifyTargetMPFromDamageTaken(float modifier, int min, int max)
     {
+        if (castSuccess != checkSuccess) return;
+
         int damage = current.target.damageTaken;
         damage = (int)(((float)damage) * modifier);
 
@@ -286,18 +413,24 @@ public class Effect : ScriptableObject
 
     public void ApplyDefenseModifierToUser(float amt)
     {
-        current.user.AddDefenseModifier(amt, current.effect.effectName);
+        if (castSuccess != checkSuccess) return;
+
+        current.user.AddDefenseModifier(amt, GetName());
     }
 
 
     public void RemoveDefenseModifierFromUser()
     {
-        current.user.RemoveDefenseModifier(current.effect.effectName);
+        if (castSuccess != checkSuccess) return;
+
+        current.user.RemoveDefenseModifier(GetName());
     }
 
 
     public void RemoveDefenseModifierFromUser(string name)
     {
+        if (castSuccess != checkSuccess) return;
+
         current.user.RemoveDefenseModifier(name);
     }
 
@@ -320,31 +453,87 @@ public class Effect : ScriptableObject
     }
 
 
+    public void ApplySpeedModifierToUser(float amt)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.AddSpeedModifier(amt, GetName());
+    }
+
+
+    public void RemoveSpeedModifierFromUser()
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.RemoveDefenseModifier(GetName());
+    }
+
+
+    public void RemoveSpeedModifierFromUser(string name)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.RemoveDefenseModifier(name);
+    }
+
+
+    public void ApplySpeedModifierToTarget(float amt)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.AddSpeedModifier(amt, GetName());
+    }
+
+
+    public void RemoveSpeedModifierFromTarget()
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.RemoveDefenseModifier(GetName());
+    }
+
+
+    public void RemoveSpeedModifierFromTarget(string name)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.RemoveDefenseModifier(name);
+    }
+
+
     public void ApplyAccuracyModifierToUser(float amt)
     {
-        current.user.AddAccuracyModifier(amt, current.effect.effectName);
+        if (castSuccess != checkSuccess) return;
+
+        current.user.AddAccuracyModifier(amt, GetName());
     }
 
 
     public void ApplyAttackAccuracyModifierToUser(float amt)
     {
+        if (castSuccess != checkSuccess) return;
+
         float result = 1;
 
         for (int i = 0; i < current.numTurnsActive; i++)
             result *= amt;
 
-        current.user.AddAccuracyModifier(result, current.effect.effectName);
+        current.user.AddAccuracyModifier(result, GetName());
     }
 
 
     public void RemoveAccuracyModifierFromUser()
     {
-        current.user.RemoveAccuracyModifier(current.effect.effectName);
+        if (castSuccess != checkSuccess) return;
+
+        current.user.RemoveAccuracyModifier(GetName());
     }
 
 
     public void RemoveAccuracyModifierFromUser(string name)
     {
+        if (castSuccess != checkSuccess) return;
+
         current.user.RemoveAccuracyModifier(name);
     }
 
@@ -360,6 +549,7 @@ public class Effect : ScriptableObject
 public class EffectInstance: IComparable<EffectInstance>
 {
     public int numTurnsActive;
+    public int strength = 1;
     public bool castSuccess { get; private set; }
 
     // Effect this instance is linked to
@@ -397,18 +587,28 @@ public class EffectInstance: IComparable<EffectInstance>
         if (castSuccess)
         {
             effect.current = this;
+            effect.ResetSuccess();
             effect.OnActivate.Invoke();
+        }
+    }
+
+
+    public void OnApply()
+    {
+        if (castSuccess)
+        {
+            effect.current = this;
+            effect.ResetSuccess();
+            effect.OnApply.Invoke();
         }
     }
 
 
     public void OnDeactivate()
     {
-        if (castSuccess)
-        {
-            effect.current = this;
-            effect.OnDeactivate.Invoke();
-        }
+        effect.current = this;
+        effect.ResetSuccess();
+        effect.OnDeactivate.Invoke();
     }
 
 
@@ -417,6 +617,7 @@ public class EffectInstance: IComparable<EffectInstance>
         if (castSuccess)
         {
             effect.current = this;
+            effect.ResetSuccess();
             effect.OnTurnStart.Invoke();
         }
     }
@@ -427,6 +628,7 @@ public class EffectInstance: IComparable<EffectInstance>
         if (castSuccess)
         {
             effect.current = this;
+            effect.ResetSuccess();
             effect.OnMoveSelected.Invoke();
         }
     }
@@ -437,7 +639,19 @@ public class EffectInstance: IComparable<EffectInstance>
         if (castSuccess)
         {
             effect.current = this;
+            effect.ResetSuccess();
             effect.OnTurnEnd.Invoke();
+        }
+    }
+
+
+    public void OnStack()
+    {
+        if (castSuccess)
+        {
+            effect.current = this;
+            effect.ResetSuccess();
+            effect.OnStack.Invoke();
         }
     }
 
