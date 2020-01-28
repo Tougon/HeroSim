@@ -10,12 +10,16 @@ public class EntityBase : MonoBehaviour
 {
     protected Animator anim;
     protected SpriteRenderer sprite;
+    protected Material mat;
 
     // Start is called before the first frame update
     protected virtual void Awake()
     {
         anim = GetComponent<Animator>();
         sprite = GetComponentInChildren<SpriteRenderer>();
+
+        // Instances the material
+        mat = sprite.material;
     }
 
 
@@ -45,9 +49,10 @@ public class EntityBase : MonoBehaviour
     /// <summary>
     /// Starts a color tween
     /// </summary>
-    public void SetColorTween(Color c, float duration)
+    public void SetColorTween(Color c, float amt, float duration)
     {
         sprite.DOColor(c, duration);
+        mat.DOFloat(amt, "_Amount", duration);
     }
 
 
@@ -57,6 +62,15 @@ public class EntityBase : MonoBehaviour
     public SpriteRenderer GetSpriteRenderer()
     {
         return sprite;
+    }
+
+
+    /// <summary>
+    /// Returns material used by the sprite renderer
+    /// </summary>
+    public Material GetMaterial()
+    {
+        return mat;
     }
 
 

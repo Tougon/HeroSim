@@ -51,6 +51,8 @@ public class AnimationSequence : Hero.Core.Sequence
     private Vector3 targetScale;
     private Color userColor;
     private Color targetColor;
+    private float userAmount;
+    private float targetAmount;
     #endregion
 
     private SpriteRenderer userSprite;
@@ -97,18 +99,20 @@ public class AnimationSequence : Hero.Core.Sequence
         userScale = user.transform.localScale;
         userSprite = user.GetSpriteRenderer();
         userColor = userSprite.color;
+        userAmount = user.GetMaterial().GetFloat("_Amount");
 
         // Calculate direction of motion. This allows all animations to be uniform regardless of positioning.
         directionX = user.transform.localScale.x / Mathf.Abs(user.transform.localScale.x);
         directionY = user.transform.localScale.y / Mathf.Abs(user.transform.localScale.y);
 
-        if (target!= null)
+        if (target != null)
         {
             targetPosition = target.transform.position;
             targetRotation = target.transform.eulerAngles;
             targetScale = target.transform.localScale;
             targetSprite = target.GetSpriteRenderer();
             targetColor = targetSprite.color;
+            targetAmount = target.GetMaterial().GetFloat("_Amount");
         }
 
         // Split the animation script.
@@ -192,13 +196,15 @@ public class AnimationSequence : Hero.Core.Sequence
         user.transform.eulerAngles = userRotation;
         user.transform.localScale = userScale;
         userSprite.color = userColor;
+        user.GetMaterial().SetFloat("_Amount", userAmount);
 
-        if(target != null)
+        if (target != null)
         {
             target.transform.position = targetPosition;
             target.transform.eulerAngles = targetRotation;
             target.transform.localScale = targetScale;
             targetSprite.color = targetColor;
+            target.GetMaterial().SetFloat("_Amount", targetAmount);
         }
     }
 
@@ -328,7 +334,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] colorVals = param.Split(',');
 
-                if (colorVals.Length > 7 && colorVals.Length < 6)
+                if (colorVals.Length > 8 && colorVals.Length < 7)
                     Debug.LogError("Invalid param count for Color!");
 
                 EntityBase eC;
@@ -339,7 +345,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 else if (sC.Equals("Target"))
                     eC = target;
                 else
-                    eC = effects[int.Parse(colorVals[6].Trim())];
+                    eC = effects[int.Parse(colorVals[7].Trim())];
 
                 float durationC = ((float.Parse(colorVals[1].Trim())) / 60.0f);
 
@@ -347,9 +353,10 @@ public class AnimationSequence : Hero.Core.Sequence
                 float yC = float.Parse(colorVals[3].Trim());
                 float zC = float.Parse(colorVals[4].Trim());
                 float wC = float.Parse(colorVals[5].Trim());
+                float aC = float.Parse(colorVals[6].Trim());
 
                 // Change the target's color
-                TweenColor(eC, new Color(xC, yC, zC, wC), durationC);
+                TweenColor(eC, new Color(xC, yC, zC, wC), aC, durationC);
                 break;
 
             case AnimationSequenceAction.Action.Vibrate:
@@ -564,16 +571,18 @@ public class AnimationSequence : Hero.Core.Sequence
     /// </summary>
     private void TweenScale(Transform t, float x, float y, float z, float duration)
     {
-        t.DOScale(new Vector3(x, y, z), duration);
+        //t.DOScale(new Vector3(x, y, z), duration);
+        t.DOScaleX(x, duration);
+        t.DOScaleY(y, duration);
     }
 
 
     /// <summary>
     /// Tweens color to the target over the given duration
     /// </summary>
-    private void TweenColor(EntityBase e, Color c, float duration)
+    private void TweenColor(EntityBase e, Color c, float amt, float duration)
     {
-        e.SetColorTween(c, duration);
+        e.SetColorTween(c, amt, duration);
     }
 
 
