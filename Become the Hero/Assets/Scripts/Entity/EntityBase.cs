@@ -8,19 +8,14 @@ using DG.Tweening;
 /// </summary>
 public class EntityBase : MonoBehaviour
 {
-    protected Animator anim;
-    protected SpriteRenderer sprite;
-    protected Material mat;
+    // Awake is called before the first frame update
+    protected virtual void Awake(){ }
 
-    // Start is called before the first frame update
-    protected virtual void Awake()
-    {
-        anim = GetComponent<Animator>();
-        sprite = GetComponentInChildren<SpriteRenderer>();
+    // Initialization specific to an Entity
+    public virtual void Init() { }
 
-        // Instances the material
-        mat = sprite.material;
-    }
+    // Initialization involving the values in an EntityController
+    public virtual void Init(EntityController ec) { }
 
 
     #region Animation Control
@@ -28,58 +23,30 @@ public class EntityBase : MonoBehaviour
     /// <summary>
     /// Sets animation to the given trigger
     /// </summary>
-    public void SetAnimation(string val)
-    {
-        anim.SetTrigger(val);
-    }
+    public virtual void SetAnimation(string val){ }
 
 
     /// <summary>
     /// Sets animation to the given trigger with the given bool
     /// </summary>
-    public void SetAnimationState(string val, bool b)
-    {
-        if (val.Equals("Visible"))
-            sprite.enabled = b;
-        else
-            anim.SetBool(val, b);
-    }
+    public virtual void SetAnimationState(string val, bool b) { }
 
 
     /// <summary>
     /// Starts a color tween
     /// </summary>
-    public void SetColorTween(Color c, float amt, float duration)
-    {
-        sprite.DOColor(c, duration);
-        mat.DOFloat(amt, "_Amount", duration);
-    }
+    public virtual void SetColorTween(Color c, float amt, float duration){ }
 
 
     /// <summary>
-    /// Returns sprite renderer component
+    /// Returns material used by something
     /// </summary>
-    public SpriteRenderer GetSpriteRenderer()
-    {
-        return sprite;
-    }
+    public virtual Material GetMaterial(){ return null; }
 
 
     /// <summary>
-    /// Returns material used by the sprite renderer
+    /// Changes the speed of...something. Could be particle speed, could be animator speed, who knows?
     /// </summary>
-    public Material GetMaterial()
-    {
-        return mat;
-    }
-
-
-    /// <summary>
-    /// Changes the speed of the animator
-    /// </summary>
-    public void FrameSpeedModify(float t)
-    {
-        anim.speed = t;
-    }
+    public virtual void FrameSpeedModify(float t){ }
     #endregion
 }

@@ -136,4 +136,9 @@ public class OffensiveSpell : Spell
 
         return (int)spellAccuracy;
     }
+
+    public override bool IsFlavorSpell()
+    {
+        return false;
+    }
 }

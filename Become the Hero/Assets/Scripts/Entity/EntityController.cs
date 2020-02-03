@@ -7,7 +7,7 @@ using DG.Tweening;
 /// <summary>
 /// Houses an <see cref="Entity"/> and allows for gameplay operations to be performed on it.
 /// </summary>
-public class EntityController : EntityBase, IComparable<EntityController>
+public class EntityController : EntitySprite, IComparable<EntityController>
 {
     protected TurnManager turnManger;
 
@@ -52,7 +52,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
     {
         base.Awake();
 
-        InitEntityController();
+        Init();
 
         if(spawn == null)
             spawn = (Resources.Load("Animation/Appear", typeof(AnimationSequenceObject))) as AnimationSequenceObject;
@@ -65,7 +65,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
     /// <summary>
     /// Initializes an entity controller
     /// </summary>
-    public void InitEntityController()
+    public override void Init()
     {
         if (current != null)
         {
@@ -106,7 +106,7 @@ public class EntityController : EntityBase, IComparable<EntityController>
     public void SetEntity(Entity e)
     {
         current = e;
-        InitEntityController();
+        Init();
         dead = false;
 
         Hero.Core.Sequence spawnSeq = new AnimationSequence(spawn, this, this);

@@ -61,7 +61,7 @@ MonoBehaviour:
         m_MethodName: ApplyAnimationToTarget
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: 222bc7b9e3410154ca16828926f21790,
+          m_ObjectArgument: {fileID: 11400000, guid: 1af8f4385ca054547b2f0d36eb917db5,
             type: 2}
           m_ObjectArgumentAssemblyTypeName: AnimationSequenceObject, Assembly-CSharp
           m_IntArgument: 0
@@ -122,7 +122,7 @@ MonoBehaviour:
         m_MethodName: ReplaceTargetAction
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: e4a36415df6477d4f8b10bd6175f4365,
+          m_ObjectArgument: {fileID: 11400000, guid: 50d5fcb12ff095241a2d9c34e0d49507,
             type: 2}
           m_ObjectArgumentAssemblyTypeName: Spell, Assembly-CSharp
           m_IntArgument: 0

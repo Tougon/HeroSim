@@ -1,5 +1,5 @@
-1|Color|User, 89, 0.0, 0.0, 0.0, 1.0
-90|Color|User,60, 1.0, 1.0, 1.0, 0.0
+1|Color|User, 89, 0.0, 0.0, 0.0, 1.0, 1.0
+90|Color|User,60, 1.0, 1.0, 1.0, 0.0, 0.0
 90|Move|User,60, 0.0, 1.0, 0.0
 151|ChangeAnimationState|User,Visible,false
 155|TerminateAnimation

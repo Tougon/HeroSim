@@ -17,7 +17,7 @@ MonoBehaviour:
   spellPriority: 6
   spellDescription: 
   spellCastMessage: '[user] guards against incoming attacks!'
-  spellAnimation: {fileID: 11400000, guid: 222bc7b9e3410154ca16828926f21790, type: 2}
+  spellAnimation: {fileID: 11400000, guid: 11a81225baec5b243a82f6bf54cb9d54, type: 2}
   spellEffects:
   - chance: 1
     effects:

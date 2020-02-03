@@ -1,0 +1,13 @@
+20|Move|User,28, 3.0, 2.0, 0.0
+80|GenerateEffect|Placeholder/E,User,-1.0,0.1,-0.5,1.0,1.0,1.0,true,10,0,0
+81|ApplyDamage
+81|UpdateHPUI|Target
+81|Color|E,60, 1.0, 1.0, 1.0, 0.0, 0.0, 0
+150|TerminateEffect|0
+159|BeginLoop|-1
+160|Rotate|User,5, 0.0, 0.0, 30.0
+165|Rotate|User,5, 0.0, 0.0, -30.0
+170|EndLoop
+180|Scale|User,10, 2.0, 1.5, 0.0
+200|Color|User,90, 0.0, 1.0, 0.0, 1.0, 1.0
+300|TerminateAnimation

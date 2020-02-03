@@ -190,7 +190,10 @@ public class AnimationSequence : Hero.Core.Sequence
     public override void SequenceEnd()
     {
         while(effects.Count > 0)
+        {
+            MonoBehaviour.Destroy(effects[0].gameObject);
             effects.RemoveAt(0);
+        }
 
         user.transform.position = userPosition;
         user.transform.eulerAngles = userRotation;
@@ -231,15 +234,15 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] effectVals = param.Split(',');
 
-                if (effectVals.Length != 12)
+                if (effectVals.Length != 13)
                     Debug.LogError("Invalid param count for Effect Generation!");
 
                 // Generate an effect with the given values
                 GenerateEffect(effectVals[0], effectVals[1], 
                     float.Parse(effectVals[2].Trim()), float.Parse(effectVals[3].Trim()), float.Parse(effectVals[4].Trim()),
                     float.Parse(effectVals[5].Trim()), float.Parse(effectVals[6].Trim()), float.Parse(effectVals[7].Trim()),
-                    bool.Parse(effectVals[8].Trim()), float.Parse(effectVals[9].Trim()), float.Parse(effectVals[10].Trim()), 
-                    float.Parse(effectVals[11].Trim()));
+                    bool.Parse(effectVals[8].Trim()), bool.Parse(effectVals[9].Trim()), float.Parse(effectVals[10].Trim()),
+                    float.Parse(effectVals[11].Trim()), float.Parse(effectVals[12].Trim()));
                 break;
 
             case AnimationSequenceAction.Action.TerminateEffect:
@@ -488,14 +491,17 @@ public class AnimationSequence : Hero.Core.Sequence
     /// Create an effect
     /// </summary>
     private void GenerateEffect(string path, string relative, float x, float y, float z, float scaleX, float scaleY, float scaleZ, bool match,
-        float varX, float varY, float varZ)
+        bool child, float varX, float varY, float varZ)
     {
         path = path.Trim();
         relative = relative.Trim();
         Transform par = null;
 
+        // Loads the effect
+        EntityBase effect = GameObject.Instantiate(Resources.Load(path, typeof(EntityBase))) as EntityBase;
+
         // Determines where the effect should spawn
-        if(relative == "User")
+        if (relative == "User")
         {
             Vector3 rel = user.transform.position;
 
@@ -503,8 +509,10 @@ public class AnimationSequence : Hero.Core.Sequence
             y = (rel.y) + (y * directionY);
             z += rel.z;
 
-            if(match)
+            if(child)
                 par = user.transform;
+
+            effect.Init(user);
         }
         else if(relative == "Target")
         {
@@ -514,14 +522,13 @@ public class AnimationSequence : Hero.Core.Sequence
             y = (rel.y) + (y * directionY);
             z += rel.z;
 
-            if(match)
+            if(child)
                 par = target.transform;
+
+            effect.Init(target);
         }
 
-        // Loads the effect
-        GameObject effect = GameObject.Instantiate(Resources.Load(path, typeof(GameObject))) as GameObject;
-
-        if (target != null)
+        if (par != null)
             effect.transform.SetParent(par);
 
         varX /= 2;
@@ -535,7 +542,8 @@ public class AnimationSequence : Hero.Core.Sequence
         effect.transform.position = new Vector3(x, y, z) + offset;
         effect.transform.localScale = match ? new Vector3(scaleX * directionX, scaleY * directionY, scaleZ) : 
             new Vector3(scaleX, scaleY, scaleZ);
-        effects.Add(effect.GetComponent<EntityBase>());
+
+        effects.Add(effect);
     }
 
 

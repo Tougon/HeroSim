@@ -78,7 +78,9 @@ public class Spell : ScriptableObject
 
                     // If damage is 0, check to see if any effects were applied.
                     if (result.GetDamage() == 0)
-                        result.success = result.GetEffectProcSuccess();
+                    {
+                        result.success = result.GetEffectProcSuccess() ? true : IsFlavorSpell();
+                    }
                 }
 
                 // Deactivate all properties
@@ -137,6 +139,15 @@ public class Spell : ScriptableObject
         bool[] critical = { true };
         cast.SetDamage(result);
         cast.SetCritical(critical);
+    }
+
+
+    /// <summary>
+    /// Returns true if this spell is flavor text
+    /// </summary>
+    public virtual bool IsFlavorSpell()
+    {
+        return true;
     }
 
 

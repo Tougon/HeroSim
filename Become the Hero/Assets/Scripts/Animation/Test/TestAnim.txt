@@ -1,6 +1,6 @@
 20|Move|User,28, 3.0, 2.0, 0.0
 60|ChangeUserAnimation|Attack
-80|GenerateEffect|Placeholder/E,User,-1.0,0.1,-0.5,1.0,1.0,1.0,true,10,0,0
+80|GenerateEffect|Placeholder/E,User,-1.0,0.1,-0.5,1.0,1.0,1.0,true,false,10,0,0
 81|Color|E,60, 1.0, 1.0, 1.0, 0.0, 0.0, 0
 150|TerminateEffect|0
 159|BeginLoop|-1
