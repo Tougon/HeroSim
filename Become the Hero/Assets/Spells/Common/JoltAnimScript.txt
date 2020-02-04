@@ -1,8 +1,0 @@
-1|Color|Target,1, 0.875, 0.9, 0.105, 1.0, 0.0
-21|GenerateEffect|Effect/Common/Electric_Shock_Weak,Target,0.0,0.5,0.0,1.0,1.0,1.0,true,false,0,0,0
-33|Color|Target,14, 0.875, 0.9, 0.105, 1.0, 0.75
-48|Color|Target,14, 0.875, 0.9, 0.105, 1.0, 0.0
-61|TerminateEffect|0
-63|Color|Target,14, 0.875, 0.9, 0.105, 1.0, 0.75
-78|Color|Target,14, 0.875, 0.9, 0.105, 1.0, 0.0
-100|TerminateAnimation

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AttackEffect
   m_EditorClassIdentifier: 
   stackable: 0
-  effectName: attack_accuracy_master
+  effectName: Player Attack Accuracy
   generic: 0
   priority: 3
   type: 0

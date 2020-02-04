@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spells:
   - {fileID: 11400000, guid: b9cd063829c2a7c46819f98dea0e11e1, type: 2}
+  - {fileID: 11400000, guid: b035ed09a4313be4da3189ef24c7b183, type: 2}
+  - {fileID: 11400000, guid: 45625ddb296270044bf9f1f32e06e645, type: 2}

@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6708dae2154ded4488d6390d0d8585a6, type: 3}
-  m_Name: JoltAnim
+  m_Name: StatRaiseAnim
   m_EditorClassIdentifier: 
-  animationName: Jolt
-  animationSequence: {fileID: 4900000, guid: 27c160ecce46fa748990b11fdd3e1b38, type: 3}
-  disableUI: 1
+  animationName: Stat Raise Animation
+  animationSequence: {fileID: 4900000, guid: 6fc9f02129b11c54f907be022d9a65a4, type: 3}
+  disableUI: 0

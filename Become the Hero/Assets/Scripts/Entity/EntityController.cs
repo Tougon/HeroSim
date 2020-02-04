@@ -33,6 +33,8 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     private int evasionStage = 0;
     private int accuracyStage = 0;
 
+    public const int STAT_STAGE_LIMIT = 6;
+
     private Dictionary<string, float> offenseModifiers = new Dictionary<string, float>();
     private Dictionary<string, float> defenseModifiers = new Dictionary<string, float>();
     private Dictionary<string, float> speedModifiers = new Dictionary<string, float>();
@@ -235,14 +237,20 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     public int GetAttack() { return param.entityAtk; }
     public float GetAttackModifier() { return GetStatModifier(atkStage); }
+    public void ChangeAttackModifier(int amt) { atkStage = Mathf.Clamp(atkStage + amt, -STAT_STAGE_LIMIT, STAT_STAGE_LIMIT); }
+    public int GetAttackStage() { return atkStage; }
 
 
     public int GetDefense() { return param.entityDef; }
     public float GetDefenseModifier() { return GetStatModifier(defStage); }
+    public void ChangeDefenseModifier(int amt) { defStage = Mathf.Clamp(defStage + amt, -STAT_STAGE_LIMIT, STAT_STAGE_LIMIT); }
+    public int GetDefenseStage() { return defStage; }
 
 
     public int GetSpeed() { return param.entitySpeed; }
     public float GetSpeedModifier() { return GetStatModifier(spdStage); }
+    public void ChangeSpeedModifier(int amt) { spdStage = Mathf.Clamp(spdStage + amt, -STAT_STAGE_LIMIT, STAT_STAGE_LIMIT); }
+    public int GetSpeedStage() { return spdStage; }
 
 
     public TurnManager GetTurnManager()

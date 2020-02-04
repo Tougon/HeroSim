@@ -37,6 +37,7 @@ public class Effect : ScriptableObject
     public UnityEvent CheckSuccess;
     public UnityEvent CheckRemainActive;
     public UnityEvent OnActivate;
+    public UnityEvent OnFailedToActivate;
     public UnityEvent OnApply;
     public UnityEvent OnMoveSelected;
     public UnityEvent OnDeactivate;
@@ -73,7 +74,7 @@ public class Effect : ScriptableObject
     public string GetName()
     {
         if (generic)
-            return current.spell.spell.spellName + "_" + effectName;
+            return current.spell.spell.spellName + effectName;
         else
             return effectName;
     }
@@ -134,6 +135,30 @@ public class Effect : ScriptableObject
     }
 
 
+    public void IsUserAttackNotMaxed()
+    {
+        castSuccess = !castSuccess ? false : current.user.GetAttackStage() < EntityController.STAT_STAGE_LIMIT;
+    }
+
+
+    public void IsUserAttackNotMin()
+    {
+        castSuccess = !castSuccess ? false : current.user.GetAttackStage() > -EntityController.STAT_STAGE_LIMIT;
+    }
+
+
+    public void IsTargetAttackNotMaxed()
+    {
+        castSuccess = !castSuccess ? false : current.target.GetAttackStage() < EntityController.STAT_STAGE_LIMIT;
+    }
+
+
+    public void IsTargetAttackNotMin()
+    {
+        castSuccess = !castSuccess ? false : current.target.GetAttackStage() > -EntityController.STAT_STAGE_LIMIT;
+    }
+
+
     public void IsRandomIsLessThanValue(float val)
     {
         castSuccess = !castSuccess ? false : UnityEngine.Random.value <= val;
@@ -159,6 +184,7 @@ public class Effect : ScriptableObject
         if (castSuccess != checkSuccess) return;
         
         dialogue = dialogue.Replace("[user]", current.user.param.entityName);
+        dialogue = dialogue.Replace("[spell]", current.spell.spell.spellName);
         dialogue = dialogue.Replace("[target]", current.target.param.entityName);
         EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, dialogue);
     }
@@ -204,6 +230,14 @@ public class Effect : ScriptableObject
     }
 
 
+    public void RemoveAndDeactivateEffectFromUser()
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.RemoveEffect(current);
+    }
+
+
     public void RemoveEffectFromUser(string name)
     {
 
@@ -224,6 +258,15 @@ public class Effect : ScriptableObject
 
         current.target.RemoveEffectNoDeactivate(current);
     }
+
+
+    public void RemoveAndDeactivateEffectFromTarget()
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.RemoveEffect(current);
+    }
+
 
 
     public void RemoveEffectFromTarget(string name)
@@ -537,6 +580,22 @@ public class Effect : ScriptableObject
         current.user.RemoveAccuracyModifier(name);
     }
 
+
+    public void ChangeUserAttackStage(int amt)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.ChangeAttackModifier(amt);
+    }
+
+
+    public void ChangeTargetAttackStage(int amt)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.ChangeAttackModifier(amt);
+    }
+
     #endregion
 
     #endregion
@@ -589,6 +648,17 @@ public class EffectInstance: IComparable<EffectInstance>
             effect.current = this;
             effect.ResetSuccess();
             effect.OnActivate.Invoke();
+        }
+    }
+
+
+    public void OnFailedToActivate()
+    {
+        if (castSuccess)
+        {
+            effect.current = this;
+            effect.ResetSuccess();
+            effect.OnFailedToActivate.Invoke();
         }
     }
 

@@ -17,7 +17,7 @@ public class AnimationSequence : Hero.Core.Sequence
     {
         public enum Action { ChangeUserAnimation, ChangeTargetAnimation, TerminateAnimation, GenerateEffect, TerminateEffect,
             Move, Rotate, Scale, Color, Vibrate, ChangeAnimationSpeed, ChangeAnimationState, PlaySound, BeginLoop, EndLoop, ApplyDamage,
-            UpdateHPUI, UpdateMPUI }
+            UpdateHPUI, UpdateMPUI, SetOverlayTexture, SetOverlayAnimation }
 
         public int frame;
         public Action action;
@@ -380,7 +380,7 @@ public class AnimationSequence : Hero.Core.Sequence
                     tV= effects[int.Parse(vibrateVals[5].Trim())].transform;
 
                 float durationV = ((float.Parse(vibrateVals[1].Trim())) / 60.0f);
-                Debug.Log(durationV);
+
                 Vector3 strengthV = new Vector3(float.Parse(vibrateVals[2]), float.Parse(vibrateVals[3]), 0.0f);
                 int vibratoV = int.Parse(vibrateVals[4]);
 
@@ -471,6 +471,51 @@ public class AnimationSequence : Hero.Core.Sequence
                     user.UpdateHPUI();
                 else if (param.Equals("Target"))
                     target.UpdateHPUI();
+                break;
+
+            case AnimationSequenceAction.Action.SetOverlayTexture:
+                // Split the param
+                string[] texVals = param.Split(',');
+
+                if (texVals.Length > 5 && texVals.Length < 4)
+                    Debug.LogError("Invalid param count for Texture Change!");
+
+                EntityBase eOT;
+                string sOT = texVals[0].Trim();
+
+                if (sOT.Equals("User"))
+                    eOT = user;
+                else if (sOT.Equals("Target"))
+                    eOT = target;
+                else
+                    eOT = effects[int.Parse(texVals[4].Trim())];
+
+                string pOT = texVals[1].Trim();
+                var texture = Resources.Load<Texture2D>(pOT);
+
+                eOT.SetOverlayTexture(texture, new Vector2(float.Parse(texVals[2].Trim()), float.Parse(texVals[3].Trim())));
+                break;
+
+            case AnimationSequenceAction.Action.SetOverlayAnimation:
+                // Split the param
+                string[] ovlAnimVals = param.Split(',');
+
+                if (ovlAnimVals.Length > 6 && ovlAnimVals.Length < 5)
+                    Debug.LogError("Invalid param count for Overlay Animation!");
+
+                EntityBase eOA;
+                string sOA = ovlAnimVals[0].Trim();
+
+                if (sOA.Equals("User"))
+                    eOA = user;
+                else if (sOA.Equals("Target"))
+                    eOA = target;
+                else
+                    eOA = effects[int.Parse(ovlAnimVals[5].Trim())];
+
+                eOA.SetOverlayTween(float.Parse(ovlAnimVals[1].Trim()), 
+                    new Vector2(float.Parse(ovlAnimVals[2].Trim()), float.Parse(ovlAnimVals[3].Trim())),
+                    float.Parse(ovlAnimVals[4].Trim()) / 60.0f);
                 break;
 
             case AnimationSequenceAction.Action.TerminateAnimation:

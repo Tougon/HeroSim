@@ -57,6 +57,26 @@ public class EntitySprite : EntityBase
 
 
     /// <summary>
+    /// Starts an overlay tween
+    /// </summary>
+    public override void SetOverlayTween(float amt, Vector2 speed, float duration)
+    {
+        mat.DOFloat(amt, "_OverlayAmount", duration);
+        mat.DOVector(speed, "_OverlayOffset", duration);
+    }
+
+
+    /// <summary>
+    /// Sets the overlayed texture to the given texture
+    /// </summary>
+    public override void SetOverlayTexture(Texture t, Vector2 tiling)
+    {
+        mat.SetTexture("_OverlayTex", t);
+        mat.SetVector("_OverlayOffset", tiling);
+    }
+
+
+    /// <summary>
     /// Returns sprite renderer component
     /// </summary>
     public SpriteRenderer GetSpriteRenderer()

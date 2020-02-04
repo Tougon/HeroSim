@@ -1,0 +1,5 @@
+1|SetOverlayTexture|User,Effect/Common/overlay_lower,1,1
+17|SetOverlayAnimation|User, 0, 0, -1.5, 1
+20|SetOverlayAnimation|User, 0.9, 0, -1.5, 30
+90|SetOverlayAnimation|User, 0, 0, -1.5, 30
+130|TerminateAnimation

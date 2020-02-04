@@ -34,7 +34,7 @@ public class StatusSpell : Spell
 
         // Flavor text here:
 
-        return Random.value <= hit;
+        return (Random.value * 100) <= hit;
     }
 
 

@@ -39,6 +39,18 @@ public class EntityBase : MonoBehaviour
 
 
     /// <summary>
+    /// Starts an overlay tween
+    /// </summary>
+    public virtual void SetOverlayTween(float amt, Vector2 speed, float duration){ }
+
+
+    /// <summary>
+    /// Sets the overlayed texture to the given texture
+    /// </summary>
+    public virtual void SetOverlayTexture(Texture t, Vector2 tiling){ }
+
+
+    /// <summary>
     /// Returns material used by something
     /// </summary>
     public virtual Material GetMaterial(){ return null; }

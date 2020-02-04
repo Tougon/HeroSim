@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3d30bfc8ab023c4bbabeadf55721842, type: 3}
-  m_Name: Jolt
+  m_Name: Paralyix
   m_EditorClassIdentifier: 
-  spellName: Jolt
+  spellName: Paralyix
   spellCost: 9
   spellPriority: 0
   spellDescription: The user stuns the target with a zap of lightning. It will leave

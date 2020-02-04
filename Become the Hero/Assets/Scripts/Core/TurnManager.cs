@@ -248,6 +248,8 @@ public class TurnManager : MonoBehaviour
             {
                 if (ef.castSuccess)
                     ef.OnActivate();
+                else
+                    ef.OnFailedToActivate();
             }
 
             sequencer.StartSequence();
