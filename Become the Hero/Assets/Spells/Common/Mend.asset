@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3d30bfc8ab023c4bbabeadf55721842, type: 3}
+  m_Name: Mend
+  m_EditorClassIdentifier: 
+  spellName: Mend
+  spellCost: 7
+  spellPriority: 0
+  spellDescription: The user casts an incantation that heals themselves for 15% of
+    their total HP.
+  spellCastMessage: '[user] casts [name]!'
+  spellAnimation: {fileID: 11400000, guid: 0b0806ef7ae3dc14b83e2ffda77c7520, type: 2}
+  spellEffects:
+  - chance: 1
+    effects:
+    - chance: 1
+      effect: {fileID: 11400000, guid: 5954ba60475c71d4fbe9cd72f12356a0, type: 2}
+  spellProperties: []
+  checkAccuracy: 0
+  spellAccuracy: 100

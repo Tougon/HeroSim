@@ -16,6 +16,7 @@ public class Spell : ScriptableObject
     public int spellPriority = 0;
     public string spellDescription;
     public string spellCastMessage = "[user] casts [name]!";
+    public string spellFailMessage { get; protected set; }
     public AnimationSequenceObject spellAnimation;
     public List<SpellEffectChance> spellEffects; // Effects that can be invoked by the spell itself
     public List<Effect> spellProperties; // Used to modify the damage roll
@@ -28,6 +29,7 @@ public class Spell : ScriptableObject
     {
         // Result of the cast spell
         SpellCast result = new SpellCast();
+        spellFailMessage = "";
 
         result.spell = this;
         result.user = user;
@@ -80,6 +82,9 @@ public class Spell : ScriptableObject
                     if (result.GetDamage() == 0)
                     {
                         result.success = result.GetEffectProcSuccess() ? true : IsFlavorSpell();
+
+                        if (!result.success)
+                            spellFailMessage = "";
                     }
                 }
 
@@ -108,6 +113,7 @@ public class Spell : ScriptableObject
             return true;
         }
 
+        spellFailMessage = user.GetEntity().vals.entityName + " does not have enough MP!";
         return false;
     }
 
@@ -345,6 +351,17 @@ public class SpellCast
     public string GetCastMessage()
     {
         string result = spell.spellCastMessage;
+        result = result.Replace("[user]", user.GetEntity().vals.entityName);
+        result = result.Replace("[target]", target.GetEntity().vals.entityName);
+        result = result.Replace("[name]", spell.spellName);
+
+        return result;
+    }
+
+
+    public string GetFailMessage()
+    {
+        string result = spell.spellFailMessage;
         result = result.Replace("[user]", user.GetEntity().vals.entityName);
         result = result.Replace("[target]", target.GetEntity().vals.entityName);
         result = result.Replace("[name]", spell.spellName);

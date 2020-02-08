@@ -164,6 +164,12 @@ public class Effect : ScriptableObject
         castSuccess = !castSuccess ? false : UnityEngine.Random.value <= val;
     }
 
+
+    public void IsUserNotAtFullHealth()
+    {
+        castSuccess = !castSuccess ? false : current.user.GetCurrentHP() < current.user.maxHP;
+    }
+
     #endregion
 
 
@@ -186,6 +192,8 @@ public class Effect : ScriptableObject
         dialogue = dialogue.Replace("[user]", current.user.param.entityName);
         dialogue = dialogue.Replace("[spell]", current.spell.spell.spellName);
         dialogue = dialogue.Replace("[target]", current.target.param.entityName);
+        dialogue = dialogue.Replace("[udamage]", Mathf.Abs(current.user.lastHit).ToString());
+        dialogue = dialogue.Replace("[tdamage]", Mathf.Abs(current.target.lastHit).ToString());
         EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, dialogue);
     }
 
@@ -329,6 +337,16 @@ public class Effect : ScriptableObject
 
 
     #region MP/HP Manipulation
+
+
+    public void ModifyUserHPFromPercentOfHP(float percent)
+    {
+        percent = Mathf.Clamp(percent, 0, 100);
+
+        int amt = Mathf.RoundToInt(((float)current.user.maxHP) * percent);
+
+        current.user.ApplyDamage(-amt, false, false);
+    }
 
 
     public void ModifyUserMPFromDamageDealt(string s)
@@ -654,12 +672,9 @@ public class EffectInstance: IComparable<EffectInstance>
 
     public void OnFailedToActivate()
     {
-        if (castSuccess)
-        {
-            effect.current = this;
-            effect.ResetSuccess();
-            effect.OnFailedToActivate.Invoke();
-        }
+        effect.current = this;
+        effect.ResetSuccess();
+        effect.OnFailedToActivate.Invoke();
     }
 
 

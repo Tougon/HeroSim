@@ -45,16 +45,35 @@ public class OffensiveSpell : Spell
         float accuracy = user.GetAccuracy();
         float evasion = target.GetEvasion();
 
-        float hit = spellAccuracy * (accuracy / evasion);
+        float baseCheck = (accuracy / evasion);
+        float hit = spellAccuracy * baseCheck;
 
         // Get user's accuracy modifiers to decrease hit chance.
         var accuracyModifiers = user.GetAccuracyModifiers();
 
         foreach (float f in accuracyModifiers)
             hit *= f;
+        
+        bool result = (Random.value * 100) <= hit;
 
-        // Flavor text here:
-        return (Random.value * 100) <= hit;
+        if (!result)
+        {
+            if(accuracy / evasion == 1.0f)
+                spellFailMessage = Random.value < 0.5f ? "[user]'s attack missed!" : "[target] dodges the attack!";
+            else
+            {
+                if(accuracy > evasion)
+                {
+                    spellFailMessage = Random.value < (evasion / accuracy) ? "[user]'s attack missed!" : "[target] dodges the attack!";
+                }
+                else
+                {
+                    spellFailMessage = Random.value < (accuracy / evasion) ? "[target] dodges the attack!" : "[user]'s attack missed!";
+                }
+            }
+        }
+
+        return result;
     }
 
 

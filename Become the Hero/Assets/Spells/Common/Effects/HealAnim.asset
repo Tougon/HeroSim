@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6708dae2154ded4488d6390d0d8585a6, type: 3}
-  m_Name: AfebbAnim
+  m_Name: HealAnim
   m_EditorClassIdentifier: 
-  animationName: Afebb
-  animationSequence: {fileID: 4900000, guid: 78850257dc6408c4faa0e3b986f90995, type: 3}
+  animationName: Heal Animation
+  animationSequence: {fileID: 4900000, guid: 223371bb16cecb24e8707bedcb86a5ec, type: 3}
   disableUI: 1

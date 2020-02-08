@@ -1,0 +1,10 @@
+1|Color|User,1, 1.0, 0.0, 0.0, 1.0, 0.0
+19|Vibrate|User,25, 0.135, 0.0, 200
+20|Color|User,10,0.5,0,0,1.0,0.7
+30|Color|User,10,0.5,0,0,1.0,0.0
+56|GenerateEffect|Effect/Common/Debuff_Red,Target,0.0,-0.5f,0.0,1.0,1.0,1.0,true,false,0,0,0
+87|Vibrate|Target,45, 1.2, 0.0, 300
+87|Color|Target,40,0.5,0,0,1.0,0.9
+128|Color|Target,40,0.5,0,0,1.0,0
+169|TerminateEffect|0
+170|TerminateAnimation

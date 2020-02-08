@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellName: Attack
   spellCost: 0
+  spellPriority: 0
+  spellDescription: 
   spellCastMessage: '[user] attacks!'
   spellAnimation: {fileID: 11400000, guid: b0ce99ad59dbd9c41a165c86771109d7, type: 2}
   spellEffects:

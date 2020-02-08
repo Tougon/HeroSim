@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be05f8730bb62f04795e81585daf6e7c, type: 3}
-  m_Name: AttackDecreaseThreeTurn
+  m_Name: StandardAttackBoost
   m_EditorClassIdentifier: 
   stackable: 1
-  effectName: Attack Decrease Three Turn
+  effectName: Attack Boost
   generic: 1
   priority: 3
   type: 0
@@ -21,7 +21,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 11400000}
-        m_MethodName: IsTargetAttackNotMin
+        m_MethodName: IsUserAttackNotMaxed
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -42,7 +42,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 3
+          m_IntArgument: 5
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -53,7 +53,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 11400000}
-        m_MethodName: ApplyEffectToTarget
+        m_MethodName: ApplyEffectToUser
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -76,7 +76,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: '[target]''s attack is as low as it gets!'
+          m_StringArgument: '[user]''s attack is maxed out!'
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
@@ -85,10 +85,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 11400000}
-        m_MethodName: ApplyAnimationToTarget
+        m_MethodName: ApplyAnimationToUser
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 11400000, guid: f89ae8bd0a5bac4428545b00a0c24aee,
+          m_ObjectArgument: {fileID: 11400000, guid: 0d2bd0fa4c9f3d64785550592f707246,
             type: 2}
           m_ObjectArgumentAssemblyTypeName: AnimationSequenceObject, Assembly-CSharp
           m_IntArgument: 0
@@ -104,16 +104,16 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: '[target]''s attack fell!'
+          m_StringArgument: '[user]''s attack rose!'
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 11400000}
-        m_MethodName: ChangeTargetAttackStage
+        m_MethodName: ChangeUserAttackStage
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -136,16 +136,16 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: '[target]''s attack loss from [spell] wore off!'
+          m_StringArgument: '[user]''s attack boost from [spell] wore off!'
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 11400000}
-        m_MethodName: ChangeTargetAttackStage
+        m_MethodName: ChangeUserAttackStage
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
+          m_IntArgument: -1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -195,8 +195,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: The effect of [target]'s attack loss from [spell] has
-            extended!
+          m_StringArgument: The effect of [user]'s attack boost from [spell] has extended!
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,

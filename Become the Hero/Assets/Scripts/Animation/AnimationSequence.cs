@@ -454,7 +454,7 @@ public class AnimationSequence : Hero.Core.Sequence
 
             case AnimationSequenceAction.Action.ApplyDamage:
                 // Applies damage
-                target.ApplyDamage(spell.GetDamageOfCurrentHit(), spell.GetIsCurrentHitCritical());
+                target.ApplyDamage(spell.GetDamageOfCurrentHit(), spell.GetIsCurrentHitCritical(), bool.Parse(param));
                 spell.IncrementHit();
                 break;
 

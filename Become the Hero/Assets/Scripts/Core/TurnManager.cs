@@ -214,10 +214,10 @@ public class TurnManager : MonoBehaviour
                 EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, animationSeq);
             }
             // Otherwise, output a failure message
-            else
+            else if(!spellCast.GetFailMessage().Equals(""))
             {
                 // NOTE: Replace with a spell specific method later so we can output more varied flavor text here
-                EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, "Failed!");
+                EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, spellCast.GetFailMessage());
             }
 
             // Start the sequence

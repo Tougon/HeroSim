@@ -119,7 +119,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     /// <summary>
     /// Apply damage to this entity
     /// </summary>
-    public void ApplyDamage(int val, bool crit)
+    public void ApplyDamage(int val, bool crit, bool vibrate)
     {
         // If dead, do not apply damage
         if (dead) return;
@@ -127,16 +127,21 @@ public class EntityController : EntitySprite, IComparable<EntityController>
         param.entityHP -= val;
         lastHit = val;
 
+        param.entityHP = Mathf.Clamp(param.entityHP, 0, maxHP);
+
         if (param.entityHP <= 0)
         {
             OnDeath();
             dead = true;
         }
 
-        if(crit || dead)
-            sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.59f, 0.0f, 0.0f), 300, 90, false, false);
-        else
-            sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.34f, 0.0f, 0.0f), 200, 90, false, false);
+        if (vibrate)
+        {
+            if (crit || dead)
+                sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.59f, 0.0f, 0.0f), 300, 90, false, false);
+            else
+                sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.34f, 0.0f, 0.0f), 200, 90, false, false);
+        }
     }
 
 

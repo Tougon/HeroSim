@@ -1,6 +1,6 @@
 21|GenerateEffect|Effect/Common/Slash,Target,0.0,0.5,0.0,1.0,1.0,1.0,true,false,0,0,0
 20|Move|User,8, 2.3, 0.0, 0.0
-27|ApplyDamage
+27|ApplyDamage|true
 27|UpdateHPUI|Target
 39|TerminateEffect|0
 52|Move|User,16, -2.3, 0.0, 0.0
