@@ -159,6 +159,30 @@ public class Effect : ScriptableObject
     }
 
 
+    public void IsUserDefenseNotMaxed()
+    {
+        castSuccess = !castSuccess ? false : current.user.GetDefenseStage() < EntityController.STAT_STAGE_LIMIT;
+    }
+
+
+    public void IsUserDefenseNotMin()
+    {
+        castSuccess = !castSuccess ? false : current.user.GetDefenseStage() > -EntityController.STAT_STAGE_LIMIT;
+    }
+
+
+    public void IsTargetDefenseNotMaxed()
+    {
+        castSuccess = !castSuccess ? false : current.target.GetDefenseStage() < EntityController.STAT_STAGE_LIMIT;
+    }
+
+
+    public void IsTargetDefenseNotMin()
+    {
+        castSuccess = !castSuccess ? false : current.target.GetDefenseStage() > -EntityController.STAT_STAGE_LIMIT;
+    }
+
+
     public void IsRandomIsLessThanValue(float val)
     {
         castSuccess = !castSuccess ? false : UnityEngine.Random.value <= val;
@@ -612,6 +636,22 @@ public class Effect : ScriptableObject
         if (castSuccess != checkSuccess) return;
 
         current.target.ChangeAttackModifier(amt);
+    }
+
+
+    public void ChangeUserDefenseStage(int amt)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.ChangeDefenseModifier(amt);
+    }
+
+
+    public void ChangeTargetDefenseStage(int amt)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.ChangeDefenseModifier(amt);
     }
 
     #endregion

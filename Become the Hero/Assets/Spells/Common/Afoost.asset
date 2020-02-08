@@ -16,7 +16,7 @@ MonoBehaviour:
   spellCost: 10
   spellPriority: 0
   spellDescription: The user casts an incantation that increases their strength for
-    the next three turns.
+    the next five turns.
   spellCastMessage: '[user] casts [name]!'
   spellAnimation: {fileID: 11400000, guid: 451295b4f8c8f704382112e1e8a2bad5, type: 2}
   spellEffects:

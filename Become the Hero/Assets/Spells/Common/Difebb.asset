@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3d30bfc8ab023c4bbabeadf55721842, type: 3}
-  m_Name: Afebb
+  m_Name: Difebb
   m_EditorClassIdentifier: 
-  spellName: Afebb
+  spellName: Difebb
   spellCost: 8
   spellPriority: 0
-  spellDescription: The user casts an incantation that decreases the target's strength
+  spellDescription: The user casts an incantation that decreases the target's defense
     for five turns.
   spellCastMessage: '[user] casts [name]!'
-  spellAnimation: {fileID: 11400000, guid: 358681999859e0745999528909489a88, type: 2}
+  spellAnimation: {fileID: 11400000, guid: 454943ed7ff7695499310b15c01b678b, type: 2}
   spellEffects:
   - chance: 1
     effects:
     - chance: 1
-      effect: {fileID: 11400000, guid: 448431eeea65dda499242533ebf428d0, type: 2}
+      effect: {fileID: 11400000, guid: f84f84dddd36bf5499f3adf87c2a4390, type: 2}
   spellProperties: []
   checkAccuracy: 1
   spellAccuracy: 90

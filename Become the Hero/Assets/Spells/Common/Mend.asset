@@ -15,8 +15,8 @@ MonoBehaviour:
   spellName: Mend
   spellCost: 7
   spellPriority: 0
-  spellDescription: The user casts an incantation that heals themselves for 15% of
-    their total HP.
+  spellDescription: The user casts an incantation that heals them for 15% of their
+    total HP.
   spellCastMessage: '[user] casts [name]!'
   spellAnimation: {fileID: 11400000, guid: 0b0806ef7ae3dc14b83e2ffda77c7520, type: 2}
   spellEffects:
