@@ -34,3 +34,12 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# Ignore the auto-generated AOT compatibility dll.
+BecomeTheHero/Assets/Plugins/Sirenix/Assemblies/AOT/*
+
+# Ignore all unpacked demos.
+BecomeTheHero/Assets/Plugins/Sirenix/Demos/*
+
+# But keep the demo packages themselves.
+!BecomeTheHero/Assets/Plugins/Sirenix/Demos/*.unitypackage 
