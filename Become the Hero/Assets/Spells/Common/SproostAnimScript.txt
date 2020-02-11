@@ -1,0 +1,9 @@
+1|Color|User,1, 0.0, 1.0, 0.0, 1.0, 0.0
+19|Vibrate|User,25, 0.135, 0.0, 200
+20|Color|User,52,0,1,0,1.0,0.9
+76|GenerateEffect|Effect/Common/Boost_Green,User,0.0,0.0,0.0,1.0,1.0,1.0,true,false,0,0,0
+77|Vibrate|User,45, 1.2, 0.0, 300
+77|Color|User,40,0,1,0,1.0,0.0
+86|GenerateEffect|Effect/Common/Boost_Green,User,0.0,0.0,0.0,1.0,1.0,1.0,true,false,0,0,0
+134|TerminateEffect|0
+135|TerminateAnimation

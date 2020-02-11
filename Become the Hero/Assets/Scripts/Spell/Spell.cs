@@ -17,6 +17,7 @@ public class Spell : ScriptableObject
     public string spellDescription;
     public string spellCastMessage = "[user] casts [name]!";
     public string spellFailMessage { get; protected set; }
+    public SpellFamily spellFamily;
     public AnimationSequenceObject spellAnimation;
     public List<SpellEffectChance> spellEffects; // Effects that can be invoked by the spell itself
     public List<Effect> spellProperties; // Used to modify the damage roll

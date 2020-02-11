@@ -20,6 +20,6 @@ MonoBehaviour:
     entityMP: 50
     entityAtk: 50
     entityDef: 50
-    entitySpeed: 50
+    entitySpeed: 101
   moveList:
   - {fileID: 11400000, guid: 8bd727b76a4ef6c4fae3e5ce1a837c19, type: 2}

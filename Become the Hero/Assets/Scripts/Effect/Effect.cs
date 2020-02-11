@@ -183,6 +183,30 @@ public class Effect : ScriptableObject
     }
 
 
+    public void IsUserSpeedNotMaxed()
+    {
+        castSuccess = !castSuccess ? false : current.user.GetSpeedStage() < EntityController.STAT_STAGE_LIMIT;
+    }
+
+
+    public void IsUserSpeedNotMin()
+    {
+        castSuccess = !castSuccess ? false : current.user.GetSpeedStage() > -EntityController.STAT_STAGE_LIMIT;
+    }
+
+
+    public void IsTargetSpeedNotMaxed()
+    {
+        castSuccess = !castSuccess ? false : current.target.GetSpeedStage() < EntityController.STAT_STAGE_LIMIT;
+    }
+
+
+    public void IsTargetSpeedNotMin()
+    {
+        castSuccess = !castSuccess ? false : current.target.GetSpeedStage() > -EntityController.STAT_STAGE_LIMIT;
+    }
+
+
     public void IsRandomIsLessThanValue(float val)
     {
         castSuccess = !castSuccess ? false : UnityEngine.Random.value <= val;
@@ -652,6 +676,22 @@ public class Effect : ScriptableObject
         if (castSuccess != checkSuccess) return;
 
         current.target.ChangeDefenseModifier(amt);
+    }
+
+
+    public void ChangeUserSpeedStage(int amt)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.user.ChangeSpeedModifier(amt);
+    }
+
+
+    public void ChangeTargetSpeedStage(int amt)
+    {
+        if (castSuccess != checkSuccess) return;
+
+        current.target.ChangeSpeedModifier(amt);
     }
 
     #endregion

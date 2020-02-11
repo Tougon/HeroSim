@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3d30bfc8ab023c4bbabeadf55721842, type: 3}
-  m_Name: Greatmend
+  m_Name: Sproost
   m_EditorClassIdentifier: 
-  spellName: Greatmend
-  spellCost: 12
+  spellName: Sproost
+  spellCost: 10
   spellPriority: 0
-  spellDescription: The user casts an incantation that heals them for 25% of their
-    total HP.
+  spellDescription: The user casts an incantation that increases their agility for
+    the next five turns.
   spellCastMessage: '[user] casts [name]!'
-  spellFamily: {fileID: 11400000, guid: 22516a1e2c056024fa853a6c66fe20a2, type: 2}
-  spellAnimation: {fileID: 11400000, guid: 0b0806ef7ae3dc14b83e2ffda77c7520, type: 2}
+  spellFamily: {fileID: 0}
+  spellAnimation: {fileID: 11400000, guid: b19d91356552d5144b131fed941c75af, type: 2}
   spellEffects:
   - chance: 1
     effects:
     - chance: 1
-      effect: {fileID: 11400000, guid: 501c142a91ce2c34e932d271ef82ce2e, type: 2}
+      effect: {fileID: 11400000, guid: eb5ba301ce18b1640bd06c7d0b7ae990, type: 2}
   spellProperties: []
   checkAccuracy: 0
   spellAccuracy: 100

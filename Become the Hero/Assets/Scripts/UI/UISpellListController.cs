@@ -17,9 +17,9 @@ public class UISpellListController : MonoBehaviour
     public void UpdateSpellButtons(EntityController ec)
     {
         PlayerController pc = (PlayerController)ec;
-        List<Spell> spells = pc.GetAvailableSpells();
+        Spell[] spells = pc.GetAvailableSpells();
  
-        for(int i=0; i<spellButtons.Count; i++)
+        for(int i=0; i<spells.Length; i++)
         {
             spellButtons[i].InitializeButton(spells[i], i, pc.GetCurrentMP());
         }

@@ -18,6 +18,7 @@ MonoBehaviour:
   spellDescription: The user casts an incantation that heals them for 15% of their
     total HP.
   spellCastMessage: '[user] casts [name]!'
+  spellFamily: {fileID: 11400000, guid: 22516a1e2c056024fa853a6c66fe20a2, type: 2}
   spellAnimation: {fileID: 11400000, guid: 0b0806ef7ae3dc14b83e2ffda77c7520, type: 2}
   spellEffects:
   - chance: 1

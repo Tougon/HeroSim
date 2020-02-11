@@ -11,8 +11,8 @@ public class PlayerController : EntityController
     private Spell defend;
 
     [SerializeField]
-    private SpellList spellList;
-    private List<Spell> availableSpells = new List<Spell>(4);
+    private PlayerSpellList spellList;
+    private Spell[] availableSpells = new Spell[4];
 
     [SerializeField]
     private int amountMPGainPerTurn = 5;
@@ -33,6 +33,7 @@ public class PlayerController : EntityController
     void Start()
     {
         entityUI.ShowText();
+        spellList.Initialize();
 
         // initialize the player 
         EventManager.Instance.RaiseEntityControllerEvent(EventConstants.ON_PLAYER_INITIALIZE, this);
@@ -48,18 +49,13 @@ public class PlayerController : EntityController
 
     public void PopulateSpellList()
     {
-        availableSpells.Clear();
-
-        for (int i = 0; i < 4; i++)
-        {
-            availableSpells.Add(spellList.spells[Random.Range(0, spellList.spells.Count)]);
-        }
+        availableSpells = spellList.GetSpellListForTurn();
 
         EventManager.Instance.RaiseEntityControllerEvent(EventConstants.ON_SPELL_LIST_INITIALIZE, this);
     }
 
 
-    public List<Spell> GetAvailableSpells()
+    public Spell[] GetAvailableSpells()
     {
         return availableSpells;
     }
@@ -81,7 +77,7 @@ public class PlayerController : EntityController
 
     public void SetActionToSpell(int index)
     {
-        index = Mathf.Clamp(index, 0, availableSpells.Count);
+        index = Mathf.Clamp(index, 0, availableSpells.Length);
         action = availableSpells[index];
 
         // Don't do this if the spell affects the user.

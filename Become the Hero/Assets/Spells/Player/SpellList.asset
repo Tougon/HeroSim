@@ -9,14 +9,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e16f96c6c474f9341b60d30cf255f2f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 709f055ff80ebcd429fb1c76ac5891cb, type: 3}
   m_Name: SpellList
   m_EditorClassIdentifier: 
-  spells:
-  - {fileID: 11400000, guid: b9cd063829c2a7c46819f98dea0e11e1, type: 2}
-  - {fileID: 11400000, guid: b035ed09a4313be4da3189ef24c7b183, type: 2}
-  - {fileID: 11400000, guid: 45625ddb296270044bf9f1f32e06e645, type: 2}
-  - {fileID: 11400000, guid: 5601703086e24f84295f4bf2794459d6, type: 2}
-  - {fileID: 11400000, guid: 0bb75c687725f3149854b6bb8d14d33f, type: 2}
-  - {fileID: 11400000, guid: a7834abe87f5f74449ee703430a96557, type: 2}
-  - {fileID: 11400000, guid: 20210122639223a41895ad559cb1ec89, type: 2}
+  spellList:
+  - spell: {fileID: 11400000, guid: b035ed09a4313be4da3189ef24c7b183, type: 2}
+    relativeOdds: 65
+  - spell: {fileID: 11400000, guid: 5601703086e24f84295f4bf2794459d6, type: 2}
+    relativeOdds: 65
+  - spell: {fileID: 11400000, guid: e509586b7ec6cdb41acc4bf9789167c7, type: 2}
+    relativeOdds: 65
+  - spell: {fileID: 11400000, guid: 45625ddb296270044bf9f1f32e06e645, type: 2}
+    relativeOdds: 55
+  - spell: {fileID: 11400000, guid: 0bb75c687725f3149854b6bb8d14d33f, type: 2}
+    relativeOdds: 55
+  - spell: {fileID: 11400000, guid: 9c15ac8e0093e7d4f8bd444d686b9c7d, type: 2}
+    relativeOdds: 55
+  - spell: {fileID: 11400000, guid: a7834abe87f5f74449ee703430a96557, type: 2}
+    relativeOdds: 80
+  - spell: {fileID: 11400000, guid: 20210122639223a41895ad559cb1ec89, type: 2}
+    relativeOdds: 60
+  - spell: {fileID: 11400000, guid: b9cd063829c2a7c46819f98dea0e11e1, type: 2}
+    relativeOdds: 50
