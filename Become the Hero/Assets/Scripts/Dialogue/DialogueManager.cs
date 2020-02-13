@@ -16,6 +16,9 @@ public class DialogueManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI display;
 
+    [SerializeField]
+    private int charactersPerLine = 51;
+
 
     void Awake()
     {
@@ -51,9 +54,20 @@ public class DialogueManager : MonoBehaviour
         isPrinting = true;
         display.text = "";
 
+        int line = 1;
+
         // Prints a character, then pauses for X seconds.
         for (int i = 0; i < target.Length; i++)
         {
+            if(target[i] == ' ')
+            {
+                if (target.IndexOf(' ', i + 1) > (line * charactersPerLine))
+                    target = target.Insert(i + 1, "\n");
+            }
+
+            if (i > (line * charactersPerLine))
+                line++;
+
             display.text += target[i];
             yield return new WaitForSeconds(dialogueSpeed);
         }

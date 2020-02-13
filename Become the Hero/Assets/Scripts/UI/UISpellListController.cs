@@ -18,7 +18,7 @@ public class UISpellListController : MonoBehaviour
     {
         PlayerController pc = (PlayerController)ec;
         Spell[] spells = pc.GetAvailableSpells();
- 
+
         for(int i=0; i<spells.Length; i++)
         {
             spellButtons[i].InitializeButton(spells[i], i, pc.GetCurrentMP());
@@ -28,6 +28,6 @@ public class UISpellListController : MonoBehaviour
 
     void OnDestroy()
     {
-        EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_SPELL_LIST_INITIALIZE).AddListener(UpdateSpellButtons);
+        EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_SPELL_LIST_INITIALIZE).RemoveListener(UpdateSpellButtons);
     }
 }

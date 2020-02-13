@@ -41,7 +41,7 @@ public class UISpellButton : MonoBehaviour
         text.text = s.spellName;
         cost.text = s.spellCost.ToString();
         index = i;
-
+        
         b.enabled = s.spellCost <= mp ? true : false;
         e.enabled = b.enabled;
     }
