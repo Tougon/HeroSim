@@ -137,6 +137,7 @@ public class TurnManager : MonoBehaviour
             ec.target = null;
             ec.ResetDamageTaken();
             ec.ResetAction();
+            ec.acceptTouch = true;
         }
 
         int index = 0;
@@ -168,7 +169,10 @@ public class TurnManager : MonoBehaviour
             ec.target = players[Random.Range(0, players.Count)];
 
         foreach (EntityController ec in entities)
+        {
             ec.ExecuteTurnStartEffects();
+            ec.acceptTouch = false;
+        }
 
         StartCoroutine(ActionSequence());
     }
@@ -363,7 +367,7 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.GetGameEvent(EventConstants.ON_MOVE_SELECTED).RemoveListener(OnMoveSelected);
 
         // Placeholder. The TurnManager WILL NOT handle scene transitions in the final game.
-        EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_OUT_COMPLETE).AddListener(Reload);
+        EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_OUT_COMPLETE).RemoveListener(Reload);
 
         EventManager.Instance.GetSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE).RemoveListener(QueueSequence);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_INITIALIZE).RemoveListener(AddEnemy);

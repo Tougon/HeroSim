@@ -50,7 +50,7 @@ public class OffensiveSpell : Spell
 
         // Get user's accuracy modifiers to decrease hit chance.
         var accuracyModifiers = user.GetAccuracyModifiers();
-
+        
         foreach (float f in accuracyModifiers)
             hit *= f;
         

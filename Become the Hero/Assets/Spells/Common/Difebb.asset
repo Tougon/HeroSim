@@ -18,6 +18,7 @@ MonoBehaviour:
   spellDescription: The user casts an incantation that decreases the target's defense
     for five turns.
   spellCastMessage: '[user] casts [name]!'
+  spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: 454943ed7ff7695499310b15c01b678b, type: 2}
   spellEffects:
   - chance: 1
@@ -25,5 +26,6 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: f84f84dddd36bf5499f3adf87c2a4390, type: 2}
   spellProperties: []
+  spellType: 4
   checkAccuracy: 1
   spellAccuracy: 90

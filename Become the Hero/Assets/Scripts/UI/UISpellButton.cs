@@ -12,10 +12,13 @@ public class UISpellButton : MonoBehaviour
 
     [SerializeField]
     private TextMeshProUGUI text;
+    private RectTransform textPos;
     [SerializeField]
     private TextMeshProUGUI cost;
+    private RectTransform costPos;
     public Button b { get; private set; }
     public EventTrigger e { get; private set; }
+    public UISpellListController controller { get; set; }
 
     private int index;
     public bool selected { get; private set; }
@@ -32,6 +35,12 @@ public class UISpellButton : MonoBehaviour
         b = GetComponent<Button>();
         e = GetComponent<EventTrigger>();
         rect = GetComponent<RectTransform>();
+
+        if(text != null)
+            textPos = text.rectTransform;
+
+        if(cost != null)
+            costPos = cost.rectTransform;
     }
 
 
@@ -41,9 +50,26 @@ public class UISpellButton : MonoBehaviour
         text.text = s.spellName;
         cost.text = s.spellCost.ToString();
         index = i;
+
+        var data = controller.GetButtonData(s.GetSpellType());
+
         
         b.enabled = s.spellCost <= mp ? true : false;
         e.enabled = b.enabled;
+
+        if (b.enabled)
+            b.image.color = data.color;
+        else
+        {
+            Color c = data.color;
+            float hue, sat, val;
+
+            Color.RGBToHSV(c, out hue, out sat, out val);
+            sat *= 0.5f;
+            c = Color.HSVToRGB(hue, sat, val);
+
+            b.image.color = c;
+        }
     }
 
 
@@ -75,6 +101,11 @@ public class UISpellButton : MonoBehaviour
     {
         EventManager.Instance.RaiseGameObjectEvent(EventConstants.ON_BUTTON_PRESSED, this.gameObject);
 
+        if (text != null)
+            textPos.offsetMin = new Vector2(textPos.offsetMin.x, 2);
+        if (cost != null)
+            costPos.offsetMin = new Vector2(costPos.offsetMin.x, 0);
+
         if (b.interactable) selected = true;
     }
 
@@ -87,6 +118,14 @@ public class UISpellButton : MonoBehaviour
         EventManager.Instance.RaiseGameEvent(EventConstants.ON_BUTTON_RELEASED);
         selected = false;
         buttonDownTime = 0.0f;
+
+        if(buttonHold != null)
+            StopCoroutine(buttonHold);
+
+        if (text != null)
+            textPos.offsetMin = new Vector2(textPos.offsetMin.x, 6);
+        if (cost != null)
+            costPos.offsetMin = new Vector2(costPos.offsetMin.x, 4);
     }
 
 

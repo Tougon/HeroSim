@@ -23,8 +23,8 @@ public class EntityControllerUI : MonoBehaviour
     private TextMeshProUGUI textMP;
 
     // Used to offset position and height
-    private float heightBase = 0.5f;
-    private float heightDifference = 0.05f;
+    private float heightBase = 0.55f;
+    private float heightDifference = 0.075f;
     private float textHPPos = 0.06f;
     private float noTextHPPos = 0.07f;
     private float textMPPos = -0.15f;

@@ -18,6 +18,7 @@ MonoBehaviour:
   spellDescription: The user casts an incantation that increases their strength for
     the next five turns.
   spellCastMessage: '[user] casts [name]!'
+  spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: 451295b4f8c8f704382112e1e8a2bad5, type: 2}
   spellEffects:
   - chance: 1
@@ -25,5 +26,6 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: 93d504fafe208cb49942b008101fceb5, type: 2}
   spellProperties: []
+  spellType: 3
   checkAccuracy: 0
   spellAccuracy: 100

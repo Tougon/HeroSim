@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using DG.Tweening;
 
 public class UISpellInfoDisplay : MonoBehaviour
 {
@@ -15,10 +16,12 @@ public class UISpellInfoDisplay : MonoBehaviour
     private Vector2 startPos;
 
     private bool reset = true;
+    private CanvasGroup group;
 
 
     void Awake()
     {
+        group = GetComponent<CanvasGroup>();
         rect = GetComponent<RectTransform>();
         startPos = rect.anchoredPosition;
 
@@ -26,7 +29,7 @@ public class UISpellInfoDisplay : MonoBehaviour
         accuracy = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
         description = transform.GetChild(2).GetComponent<TextMeshProUGUI>();
 
-        EventManager.Instance.GetGameEvent(EventConstants.ON_BUTTON_RELEASED).AddListener(ResetPosition);
+        EventManager.Instance.GetGameEvent(EventConstants.ON_BUTTON_RELEASED).AddListener(OnButtonReleased);
         EventManager.Instance.GetSpellGameEvent(EventConstants.SPELL_INFO_DISPLAY).AddListener(SetSpellInfo);
         EventManager.Instance.GetRectTransformGameEvent(EventConstants.ON_SPELL_INFO_APPEAR).AddListener(SetPosition);
     }
@@ -34,6 +37,7 @@ public class UISpellInfoDisplay : MonoBehaviour
 
     public void SetPosition(RectTransform other)
     {
+        group.alpha = 1.0f;
         reset = false;
 
         Vector3 target = other.transform.position;
@@ -45,7 +49,13 @@ public class UISpellInfoDisplay : MonoBehaviour
     }
 
 
-    public void ResetPosition()
+    public void OnButtonReleased()
+    {
+        group.DOFade(0.0f, 0.85f).OnComplete(SetToStartPosition);
+    }
+
+
+    public void SetToStartPosition()
     {
         if (!reset) rect.anchoredPosition = startPos;
         reset = true;
@@ -67,7 +77,7 @@ public class UISpellInfoDisplay : MonoBehaviour
 
     public void OnDestroy()
     {
-        EventManager.Instance.GetGameEvent(EventConstants.ON_BUTTON_RELEASED).RemoveListener(ResetPosition);
+        EventManager.Instance.GetGameEvent(EventConstants.ON_BUTTON_RELEASED).RemoveListener(OnButtonReleased);
         EventManager.Instance.GetSpellGameEvent(EventConstants.SPELL_INFO_DISPLAY).RemoveListener(SetSpellInfo);
         EventManager.Instance.GetRectTransformGameEvent(EventConstants.ON_SPELL_INFO_APPEAR).RemoveListener(SetPosition);
     }

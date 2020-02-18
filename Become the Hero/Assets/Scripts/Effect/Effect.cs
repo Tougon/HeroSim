@@ -74,7 +74,7 @@ public class Effect : ScriptableObject
     public string GetName()
     {
         if (generic)
-            return current.spell.spell.spellName + effectName;
+            return current.spell.spell.spellName + " " + effectName;
         else
             return effectName;
     }

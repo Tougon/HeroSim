@@ -18,6 +18,7 @@ MonoBehaviour:
   spellDescription: The user casts an incantation that increases their defense for
     the next five turns.
   spellCastMessage: '[user] casts [name]!'
+  spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: 5418c0c8f46f80e4d804134628945395, type: 2}
   spellEffects:
   - chance: 1
@@ -25,5 +26,6 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: f0ed6b83c1d25754ba27da182837b541, type: 2}
   spellProperties: []
+  spellType: 3
   checkAccuracy: 0
   spellAccuracy: 100

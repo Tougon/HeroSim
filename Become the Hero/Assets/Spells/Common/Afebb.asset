@@ -18,6 +18,7 @@ MonoBehaviour:
   spellDescription: The user casts an incantation that decreases the target's strength
     for five turns.
   spellCastMessage: '[user] casts [name]!'
+  spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: 358681999859e0745999528909489a88, type: 2}
   spellEffects:
   - chance: 1
@@ -25,5 +26,6 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: 448431eeea65dda499242533ebf428d0, type: 2}
   spellProperties: []
+  spellType: 4
   checkAccuracy: 1
   spellAccuracy: 90

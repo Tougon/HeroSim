@@ -8,6 +8,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewSpell", menuName = "Spell/Flavor Spell", order = 1)]
 public class Spell : ScriptableObject
 {
+    public enum SpellType { Other, Attack, Status, Buff, Debuff, Heal }
+
     public const int DAMAGE_CONSTANT = 50;
 
     public string spellName;
@@ -22,6 +24,8 @@ public class Spell : ScriptableObject
     public List<SpellEffectChance> spellEffects; // Effects that can be invoked by the spell itself
     public List<Effect> spellProperties; // Used to modify the damage roll
 
+    [SerializeField]
+    private SpellType spellType = SpellType.Other;
 
     /// <summary>
     /// Returns an instance of this spell using the spell data to calculate damage and effects
@@ -167,6 +171,12 @@ public class Spell : ScriptableObject
     public virtual int GetAccuracy()
     {
         return -1;
+    }
+
+
+    public SpellType GetSpellType()
+    {
+        return spellType;
     }
 }
 

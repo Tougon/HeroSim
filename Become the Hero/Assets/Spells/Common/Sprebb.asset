@@ -26,5 +26,6 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: f32cdecc96c38294090bc0a21450ff71, type: 2}
   spellProperties: []
+  spellType: 4
   checkAccuracy: 1
   spellAccuracy: 90

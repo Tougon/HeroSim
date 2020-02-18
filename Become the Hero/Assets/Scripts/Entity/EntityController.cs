@@ -48,6 +48,12 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     [SerializeField]
     protected EntityControllerUI entityUI;
 
+    protected bool isIdentified = false;
+
+    public bool acceptTouch { get; set; }
+    private bool touched = false;
+    private IEnumerator touchTimer;
+
 
     // Start is called before the first frame update
     protected override void Awake()
@@ -55,6 +61,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
         base.Awake();
 
         Init();
+        acceptTouch = false;
 
         if(spawn == null)
             spawn = (Resources.Load("Animation/Appear", typeof(AnimationSequenceObject))) as AnimationSequenceObject;
@@ -89,6 +96,9 @@ public class EntityController : EntitySprite, IComparable<EntityController>
             spdStage = 0;
             evasionStage = 0;
             accuracyStage = 0;
+
+            // Reset ID. If we add save data, we'll need a check here
+            isIdentified = false;
 
             effects = new List<EffectInstance>();
             properties = new List<EffectInstance>();
@@ -602,6 +612,52 @@ public class EntityController : EntitySprite, IComparable<EntityController>
         if (entityUI != null)
             entityUI.ChangeHP(lastHit);
     }
+
+    #region Pointer/Menu Functions
+
+    /// <summary>
+    /// On Pointer Down callback.
+    /// </summary>
+    public void OnPointerDown()
+    {
+        if (acceptTouch)
+        {
+            Debug.Log("CLICKED");
+            touched = true;
+
+            touchTimer = TouchTimer();
+            StartCoroutine(touchTimer);
+        }
+    }
+
+    /// <summary>
+    /// Runs while the EntityController is touched.
+    /// </summary>
+    private IEnumerator TouchTimer()
+    {
+        yield return new WaitForSeconds(1.0f);
+
+        // Invoke the display event
+        EventManager.Instance.RaiseEntityControllerEvent(EventConstants.OPEN_STATUS_SCREEN, this);
+        OnPointerUp();
+    }
+
+    /// <summary>
+    /// On Pointer Up callback.
+    /// </summary>
+    public void OnPointerUp()
+    {
+        // Only call if touched, because the OnExit event uses the same behavior.
+        if (touched && acceptTouch)
+        {
+            if (touchTimer != null)
+                StopCoroutine(touchTimer);
+
+            touched = false;
+        }
+    }
+
+    #endregion
 
     #endregion
 

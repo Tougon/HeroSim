@@ -18,6 +18,7 @@ MonoBehaviour:
   spellDescription: The user stuns the target with a zap of lightning. It will leave
     the target paralyzed.
   spellCastMessage: '[user] casts [name]!'
+  spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: bae0192f89103744880dd0970191f17a, type: 2}
   spellEffects:
   - chance: 1
@@ -25,5 +26,6 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: b1a76c56a64f8d647a76450857f0a289, type: 2}
   spellProperties: []
+  spellType: 2
   checkAccuracy: 1
   spellAccuracy: 75

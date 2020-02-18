@@ -48,6 +48,7 @@ public static class EventConstants
     public const string ON_ENEMY_INITIALIZE = "OnEnemyInitialize";
     public const string ON_SPELL_LIST_INITIALIZE = "OnSpellListInitialize";
     public const string ON_ENEMY_DEFEAT = "OnEnemyDefeat";
+    public const string OPEN_STATUS_SCREEN = "OpenStatusScreen";
     #endregion
 
     #region Sequence Event Constants
