@@ -80,11 +80,17 @@ public class EntityController : EntitySprite, IComparable<EntityController>
         {
             // Set the params to the entity's params
             param = new EntityParams();
+
+            // Get name info
+            param.entityName = current.vals.entityName;
+            param.useArticle = current.vals.useArticle;
+            param.article = current.vals.article;
+
+            // Get stats
             param.entityHP = ((current.vals.entityHP * 2 * Spell.DAMAGE_CONSTANT) / 100) + Spell.DAMAGE_CONSTANT + 10;
             param.entityMP = current.vals.entityMP;
             param.entityAtk = ((current.vals.entityAtk * 2 * Spell.DAMAGE_CONSTANT) / 100) + 5;
             param.entityDef = ((current.vals.entityDef * 2 * Spell.DAMAGE_CONSTANT) / 100) + 5;
-            param.entityName = current.vals.entityName;
             param.entitySpeed = ((current.vals.entitySpeed * 2 * Spell.DAMAGE_CONSTANT) / 100) + 5;
 
             maxHP = param.entityHP;
@@ -226,8 +232,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
         return param.entityMP;
     }
 
-
-    // Accuracy / Evasion calcs go here
+    
     public float GetAccuracy()
     {
         return 1;
@@ -272,6 +277,9 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     {
         return turnManger;
     }
+
+
+    public bool IsIdentified() { return isIdentified; }
 
     #endregion
 
@@ -602,6 +610,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     #endregion
 
+
     #region UI Functions
 
     public void ShowUI() { if (entityUI != null) entityUI.ShowUI(); }
@@ -660,6 +669,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     #endregion
 
     #endregion
+
 
     #region Compare
 

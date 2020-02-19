@@ -79,9 +79,11 @@ public class EntityControllerUI : MonoBehaviour
         rt.DOAnchorPosY(heightDifference, 0);
         rt.DOSizeDelta(new Vector2(rt.sizeDelta.x, heightBase - (heightDifference * 2.0f)), 0);
 
-        barHP.GetComponent<RectTransform>().DOAnchorPosY(noTextHPPos, 0);
+        //barHP.rectTransform.DOAnchorPosY(noTextHPPos, 0);
+        barHP.transform.parent.GetComponent<RectTransform>().DOAnchorPosY(noTextHPPos, 0);
         textHP.color = Color.clear;
-        barMP.GetComponent<RectTransform>().DOAnchorPosY(noTextMPPos, 0);
+        //barMP.rectTransform.DOAnchorPosY(noTextMPPos, 0);
+        barMP.transform.parent.GetComponent<RectTransform>().DOAnchorPosY(noTextMPPos, 0);
         textMP.color = Color.clear;
     }
 
@@ -93,9 +95,11 @@ public class EntityControllerUI : MonoBehaviour
         rt.DOAnchorPosY(0, 0.3f);
         rt.DOSizeDelta(new Vector2(rt.sizeDelta.x, heightBase), 0.3f);
 
-        barHP.GetComponent<RectTransform>().DOAnchorPosY(textHPPos, 0.3f);
+        //barHP.rectTransform.DOAnchorPosY(textHPPos, 0.3f);
+        barHP.transform.parent.GetComponent<RectTransform>().DOAnchorPosY(textHPPos, 0.3f);
         textHP.DOColor(Color.white, 0.3f);
-        barMP.GetComponent<RectTransform>().DOAnchorPosY(textMPPos, 0.3f);
+        //barMP.rectTransform.DOAnchorPosY(textMPPos, 0.3f);
+        barMP.transform.parent.GetComponent<RectTransform>().DOAnchorPosY(textMPPos, 0.3f);
         textMP.DOColor(Color.white, 0.3f);
     }
 

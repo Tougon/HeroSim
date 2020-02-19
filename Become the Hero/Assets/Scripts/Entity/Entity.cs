@@ -27,4 +27,13 @@ public class EntityParams
     public int entityAtk;
     public int entityDef;
     public int entitySpeed;
+
+    public Sprite entitySprite;
+    public string entityDescription;
+
+
+    public string GetEntityName()
+    {
+        return useArticle ? article + " " + entityName.ToLower() : entityName;
+    }
 }

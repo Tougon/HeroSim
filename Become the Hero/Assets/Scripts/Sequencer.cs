@@ -12,6 +12,9 @@ public class Sequencer : MonoBehaviour
 
     public bool active { get; private set; }
 
+    private IEnumerator currentSeq;
+    private IEnumerator currentStep;
+
 
     /// <summary>
     /// Adds a <see cref="Sequence"/> into the queue.
@@ -30,7 +33,8 @@ public class Sequencer : MonoBehaviour
         if (sequence.Count < 1)
             return;
 
-        StartCoroutine(RunSequence());
+        currentSeq = RunSequence();
+        StartCoroutine(currentSeq);
     }
 
 
@@ -42,7 +46,8 @@ public class Sequencer : MonoBehaviour
     {
         Sequence seq = sequence.Dequeue();
         seq.SequenceStart();
-        StartCoroutine(seq.SequenceLoop());
+        currentStep = seq.SequenceLoop();
+        StartCoroutine(currentStep);
         active = true;
 
         while (seq.active)
@@ -60,7 +65,10 @@ public class Sequencer : MonoBehaviour
     public void PlayNextSequence()
     {
         if (sequence.Count > 0)
-            StartCoroutine(RunSequence());
+        {
+            currentSeq = RunSequence();
+            StartCoroutine(currentSeq);
+        }
         else
             active = false;
     }

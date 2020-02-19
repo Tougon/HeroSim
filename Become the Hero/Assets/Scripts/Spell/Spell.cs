@@ -362,9 +362,12 @@ public class SpellCast
     public string GetCastMessage()
     {
         string result = spell.spellCastMessage;
-        result = result.Replace("[user]", user.GetEntity().vals.entityName);
-        result = result.Replace("[target]", target.GetEntity().vals.entityName);
-        result = result.Replace("[name]", spell.spellName);
+        var userVals = user.GetEntity().vals;
+        var targetVals = target.GetEntity().vals;
+
+        result = DialogueUtilities.ReplacePlaceholderWithEntityName(result, userVals, "[user]");
+        result = DialogueUtilities.ReplacePlaceholderWithEntityName(result, targetVals, "[target]");
+        result = DialogueUtilities.ReplacePlaceholderWithText(result, spell.spellName, "[name]");
 
         return result;
     }
@@ -373,9 +376,12 @@ public class SpellCast
     public string GetFailMessage()
     {
         string result = spell.spellFailMessage;
-        result = result.Replace("[user]", user.GetEntity().vals.entityName);
-        result = result.Replace("[target]", target.GetEntity().vals.entityName);
-        result = result.Replace("[name]", spell.spellName);
+        var userVals = user.GetEntity().vals;
+        var targetVals = target.GetEntity().vals;
+
+        result = DialogueUtilities.ReplacePlaceholderWithEntityName(result, userVals, "[user]");
+        result = DialogueUtilities.ReplacePlaceholderWithEntityName(result, targetVals, "[target]");
+        result = DialogueUtilities.ReplacePlaceholderWithText(result, spell.spellName, "[name]");
 
         return result;
     }

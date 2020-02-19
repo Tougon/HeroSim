@@ -9,6 +9,7 @@ public class TurnManager : MonoBehaviour
     private List<EntityController> players = new List<EntityController>();
     private List<EntityController> enemies = new List<EntityController>();
     private Sequencer sequencer;
+    private IEnumerator current;
 
     void Awake()
     {
@@ -97,7 +98,11 @@ public class TurnManager : MonoBehaviour
 
     public void OnBattleBegin()
     {
-        StartCoroutine(BattleStartSequence());
+        if (current != null)
+            StopCoroutine(current);
+
+        current = BattleStartSequence();
+        StartCoroutine(current);
     }
 
     private IEnumerator BattleStartSequence()
@@ -106,17 +111,21 @@ public class TurnManager : MonoBehaviour
             yield return null;
         
         string battleStart = "";
-        EntityParams ep = enemies[0].GetEntity().vals;
+        var e = enemies[0].GetEntity().vals;
 
-        // Will eventually change this to a loop/account for duplicates/variety
-        battleStart = ep.useArticle ? ep.article + " " + ep.entityName : ep.entityName;
+        // May eventually change this to a loop/account for duplicates/variety
+        battleStart = e.GetEntityName();
         battleStart += " approaches!";
 
         EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, battleStart);
         sequencer.StartSequence();
 
         // Start a coroutine that waits for the sequence to end. Once it ends, invoke the next event.
-        StartCoroutine(InvokeOnSequenceEnd(EventConstants.ON_TURN_BEGIN));
+        if (current != null)
+            StopCoroutine(current);
+
+        current = InvokeOnSequenceEnd(EventConstants.ON_TURN_BEGIN);
+        StartCoroutine(current);
     }
 
     #endregion
@@ -126,7 +135,11 @@ public class TurnManager : MonoBehaviour
 
     public void OnTurnBegin()
     {
-        StartCoroutine(TurnStartSequence());
+        if (current != null)
+            StopCoroutine(current);
+
+        current = TurnStartSequence();
+        StartCoroutine(current);
     }
 
     private IEnumerator TurnStartSequence()
@@ -174,7 +187,12 @@ public class TurnManager : MonoBehaviour
             ec.acceptTouch = false;
         }
 
-        StartCoroutine(ActionSequence());
+
+        if (current != null)
+            StopCoroutine(current);
+
+        current = ActionSequence();
+        StartCoroutine(current);
     }
 
 
@@ -219,10 +237,7 @@ public class TurnManager : MonoBehaviour
             }
             // Otherwise, output a failure message
             else if(!spellCast.GetFailMessage().Equals(""))
-            {
-                // NOTE: Replace with a spell specific method later so we can output more varied flavor text here
                 EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, spellCast.GetFailMessage());
-            }
 
             // Start the sequence
             sequencer.StartSequence();
@@ -235,8 +250,8 @@ public class TurnManager : MonoBehaviour
                     string critSeq = "Critical Hit!";
                     EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, critSeq);
                 }
-
-                string damageSeq = ec.target.param.entityName + " takes " + spellCast.GetDamageApplied() + " damage!";
+                
+                string damageSeq = ec.target.param.GetEntityName() + " takes " + spellCast.GetDamageApplied() + " damage!";
                 EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, damageSeq);
             }
 
@@ -263,8 +278,12 @@ public class TurnManager : MonoBehaviour
         }
 
         yield return null;
-        
-        StartCoroutine(InvokeOnSequenceEnd(EventConstants.ON_TURN_END));
+
+        if (current != null)
+            StopCoroutine(current);
+
+        current = InvokeOnSequenceEnd(EventConstants.ON_TURN_END);
+        StartCoroutine(current);
     }
 
     #endregion
@@ -285,7 +304,11 @@ public class TurnManager : MonoBehaviour
 
     public void OnTurnEnd()
     {
-        StartCoroutine(TurnEndSequence());
+        if (current != null)
+            StopCoroutine(current);
+
+        current = TurnEndSequence();
+        StartCoroutine(current);
     }
 
 
@@ -337,6 +360,8 @@ public class TurnManager : MonoBehaviour
                 EventManager.Instance.RaiseGameEvent(EventConstants.ON_TURN_BEGIN);
             }
         }
+
+        Resources.UnloadUnusedAssets();
     }
 
     #endregion

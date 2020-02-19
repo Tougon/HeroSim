@@ -236,12 +236,15 @@ public class Effect : ScriptableObject
     public void SendDialogue(string dialogue)
     {
         if (castSuccess != checkSuccess) return;
-        
-        dialogue = dialogue.Replace("[user]", current.user.param.entityName);
-        dialogue = dialogue.Replace("[spell]", current.spell.spell.spellName);
-        dialogue = dialogue.Replace("[target]", current.target.param.entityName);
-        dialogue = dialogue.Replace("[udamage]", Mathf.Abs(current.user.lastHit).ToString());
-        dialogue = dialogue.Replace("[tdamage]", Mathf.Abs(current.target.lastHit).ToString());
+
+        dialogue = DialogueUtilities.ReplacePlaceholderWithEntityName(dialogue, current.user.param, "[user]");
+        dialogue = DialogueUtilities.ReplacePlaceholderWithEntityName(dialogue, current.target.param, "[target]");
+        dialogue = DialogueUtilities.ReplacePlaceholderWithText(dialogue, current.spell.spell.spellName, "[spell]");
+        dialogue = DialogueUtilities.ReplacePlaceholderWithText(dialogue, 
+            Mathf.Abs(current.user.lastHit).ToString(), "[udamage]");
+        dialogue = DialogueUtilities.ReplacePlaceholderWithText(dialogue, 
+            Mathf.Abs(current.target.lastHit).ToString(), "[tdamage]");
+
         EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, dialogue);
     }
 

@@ -19,6 +19,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField]
     private int charactersPerLine = 51;
 
+    IEnumerator result;
 
     void Awake()
     {
@@ -84,7 +85,7 @@ public class DialogueManager : MonoBehaviour
     /// </summary>
     public IEnumerator BeginTextAnimation(string target)
     {
-        IEnumerator result = PrintText(target);
+        result = PrintText(target);
         StartCoroutine(result);
 
         return result;
