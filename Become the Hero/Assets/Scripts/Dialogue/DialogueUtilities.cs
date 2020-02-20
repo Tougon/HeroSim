@@ -9,11 +9,10 @@ public class DialogueUtilities
     /// </summary>
     public static string ReplacePlaceholderWithEntityName(string sequence, EntityParams entity, string placeholder)
     {
-        // NOTE THIS NEEDS TO BE RETOOLED TO HAVE THE [user] BE A PARAM
         if (entity.useArticle)
         {
             string name = entity.article + " " + entity.entityName.ToLower();
-
+			
             // Replace all instances that are at the beginning of a sentence
             sequence = Regex.Replace(sequence, @"(^|\. |\? |\! )\" + placeholder, "$1" + name);
             sequence = sequence.Replace(placeholder, name.ToLower());
