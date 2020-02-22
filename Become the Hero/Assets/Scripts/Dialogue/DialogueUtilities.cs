@@ -12,10 +12,11 @@ public class DialogueUtilities
         if (entity.useArticle)
         {
             string name = entity.article + " " + entity.entityName.ToLower();
-			
+
             // Replace all instances that are at the beginning of a sentence
             sequence = Regex.Replace(sequence, @"(^|\. |\? |\! )\" + placeholder, "$1" + name);
             sequence = sequence.Replace(placeholder, name.ToLower());
+
         }
         else
             sequence = sequence.Replace(placeholder, entity.entityName);

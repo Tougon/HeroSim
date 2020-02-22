@@ -631,7 +631,6 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     {
         if (acceptTouch)
         {
-            Debug.Log("CLICKED");
             touched = true;
 
             touchTimer = TouchTimer();

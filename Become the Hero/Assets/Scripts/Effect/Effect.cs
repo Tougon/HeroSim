@@ -7,7 +7,7 @@ using UnityEngine.Events;
 /// <summary>
 /// Represents an effect of an attack.
 /// </summary>
-[CreateAssetMenu(fileName = "NewEffect", menuName = "Effect", order = 3)]
+[CreateAssetMenu(fileName = "NewEffect", menuName = "Effect/Effect", order = 3)]
 public class Effect : ScriptableObject
 {
     // Indicates if the effect should be removed on death
@@ -31,6 +31,11 @@ public class Effect : ScriptableObject
     // Order effects should execute at the end of a turn. Higher priorities execute sooner.
     [SerializeField] [Range(0, 9)]
     private int priority = 3;
+
+    // Turn limit applied to instances of this effect. Generally only used for displays.
+    [SerializeField] [Range(0, 20)]
+    private int limit = 3;
+
     public EffectType type = EffectType.Volitile;
 
     // Used for function callbacks
@@ -48,16 +53,21 @@ public class Effect : ScriptableObject
     public bool IsStackable() { return stackable; }
     public void ResetSuccess() { castSuccess = true; checkSuccess = true; }
 
+    public EffectDisplay display;
+
+
+
     /// <summary>
     /// Create an instance of this effect
     /// </summary>
-    public EffectInstance CreateEventInstance(EntityController u, EntityController t, SpellCast s)
+    public EffectInstance CreateEffectInstance(EntityController u, EntityController t, SpellCast s)
     {
         EffectInstance e = new EffectInstance();
         e.user = u;
         e.target = t;
         e.spell = s;
         e.effect = this;
+        e.limit = limit;
         return e;
     }
 
@@ -102,9 +112,15 @@ public class Effect : ScriptableObject
     }
 
 
-    public void IsActiveForLessThanXTurns(int limit)
+    public void IsActiveForLessThanTurnLimit()
     {
         castSuccess = !castSuccess ? false : current.numTurnsActive < limit;
+    }
+
+
+    public void IsActiveForLessThanXTurns(int duration)
+    {
+        castSuccess = !castSuccess ? false : current.numTurnsActive < duration;
     }
 
 
@@ -338,7 +354,7 @@ public class Effect : ScriptableObject
     {
         if (castSuccess != checkSuccess) return;
 
-        EffectInstance eff = property.CreateEventInstance(current.user, current.target, current.spell);
+        EffectInstance eff = property.CreateEffectInstance(current.user, current.target, current.spell);
         eff.numTurnsActive = current.numTurnsActive;
         current.user.AddProperty(eff);
     }
@@ -710,6 +726,7 @@ public class EffectInstance: IComparable<EffectInstance>
 {
     public int numTurnsActive;
     public int strength = 1;
+    public int limit { get; set; }
     public bool castSuccess { get; private set; }
 
     // Effect this instance is linked to

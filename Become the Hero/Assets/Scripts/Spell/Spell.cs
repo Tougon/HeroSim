@@ -58,7 +58,7 @@ public class Spell : ScriptableObject
                 {
                     if (e != null && !properties.Exists(f => f.effect == e) || (properties.Exists(f => f.effect == e) && e.IsStackable()))
                     {
-                        EffectInstance eff = e.CreateEventInstance(user, target, result);
+                        EffectInstance eff = e.CreateEffectInstance(user, target, result);
                         eff.CheckSuccess();
                         eff.OnActivate();
                         properties.Add(eff);
@@ -301,7 +301,7 @@ public class SpellCast
                 if (proc < spell.spellEffects[i].chance &&
                     (e != null && !effects.Exists(f => f.effect == e) || (effects.Exists(f => f.effect == e) && e.IsStackable())))
                 {
-                    EffectInstance eff = e.CreateEventInstance(user, target, this);
+                    EffectInstance eff = e.CreateEffectInstance(user, target, this);
                     eff.CheckSuccess();
                     effects.Add(eff);
                 }
@@ -396,13 +396,13 @@ public class SpellCast
 /// Keep in mind this will NOT automatically split so be careful.
 /// </summary>
 [System.Serializable]
-public class SpellEffectChance
+public struct SpellEffectChance
 {
     [System.Serializable]
-    public class EffectChance
+    public struct EffectChance
     {
         [Range(0, 1)]
-        public float chance = 1.0f;
+        public float chance;
         public Effect effect;
     }
 

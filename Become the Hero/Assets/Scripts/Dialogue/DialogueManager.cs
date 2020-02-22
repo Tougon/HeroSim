@@ -53,23 +53,16 @@ public class DialogueManager : MonoBehaviour
     public IEnumerator PrintText(string target)
     {
         isPrinting = true;
-        display.text = "";
+        display.text = target;
+        display.maxVisibleCharacters = 0;
 
-        int line = 1;
+        yield return new WaitForSeconds(dialogueSpeed);
 
         // Prints a character, then pauses for X seconds.
         for (int i = 0; i < target.Length; i++)
         {
-            if(target[i] == ' ')
-            {
-                if (target.IndexOf(' ', i + 1) > (line * charactersPerLine))
-                    target = target.Insert(i + 1, "\n");
-            }
+            display.maxVisibleCharacters = i+1;
 
-            if (i > (line * charactersPerLine))
-                line++;
-
-            display.text += target[i];
             yield return new WaitForSeconds(dialogueSpeed);
         }
 
@@ -99,6 +92,7 @@ public class DialogueManager : MonoBehaviour
     {
         StopCoroutine(anim);
         display.text = target;
+        display.maxVisibleCharacters = target.Length;
         isPrinting = false;
     }
 
