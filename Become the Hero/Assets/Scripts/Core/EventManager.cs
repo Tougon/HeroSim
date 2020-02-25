@@ -91,7 +91,7 @@ public class EventManager : ScriptableObject
         GameEvent gameEvent = this.GetGameEvent(eventName);
         if (!gameEvent)
         {
-            Debug.LogError("ERROR: Invalid Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
+            //Debug.LogError("ERROR: Invalid Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
         }
         else
         {
@@ -111,7 +111,7 @@ public class EventManager : ScriptableObject
         BoolGameEvent boolEvent = this.GetBoolEvent(eventName);
         if (!boolEvent)
         {
-            Debug.LogError("ERROR: Invalid Bool Event name: " + eventName + ". Double check Event Constants/your spelling.");
+            //Debug.LogError("ERROR: Invalid Bool Event name: " + eventName + ". Double check Event Constants/your spelling.");
         }
         else
         {
@@ -131,7 +131,7 @@ public class EventManager : ScriptableObject
         IntGameEvent intEvent = this.GetIntEvent(eventName);
         if (!intEvent)
         {
-            Debug.LogError("ERROR: Invalid Int Event name: " + eventName + ". Double check Event Constants/your spelling.");
+            //Debug.LogError("ERROR: Invalid Int Event name: " + eventName + ". Double check Event Constants/your spelling.");
         }
         else
         {
@@ -151,7 +151,7 @@ public class EventManager : ScriptableObject
         StringGameEvent stringEvent = this.GetStringEvent(eventName);
         if (!stringEvent)
         {
-            Debug.LogError("ERROR: Invalid String Event name: " + eventName + ". Double check Event Constants/your spelling.");
+            //Debug.LogError("ERROR: Invalid String Event name: " + eventName + ". Double check Event Constants/your spelling.");
         }
         else
         {
@@ -171,7 +171,7 @@ public class EventManager : ScriptableObject
         GameObjectGameEvent gameObjectEvent = this.GetGameObjectEvent(eventName);
         if (!gameObjectEvent)
         {
-            Debug.LogError("ERROR: Invalid String Event name: " + eventName + ". Double check Event Constants/your spelling.");
+            //Debug.LogError("ERROR: Invalid String Event name: " + eventName + ". Double check Event Constants/your spelling.");
         }
         else
         {
@@ -191,7 +191,7 @@ public class EventManager : ScriptableObject
         EntityControllerGameEvent entityControllerEvent = this.GetEntityControllerEvent(eventName);
         if (!entityControllerEvent)
         {
-            Debug.LogError("ERROR: Invalid Entity Controller Event name: " + eventName + ". Double check Event Constants/your spelling.");
+            //Debug.LogError("ERROR: Invalid Entity Controller Event name: " + eventName + ". Double check Event Constants/your spelling.");
         }
         else
         {
@@ -211,7 +211,7 @@ public class EventManager : ScriptableObject
         SequenceGameEvent sequenceGameEvent = this.GetSequenceGameEvent(eventName);
         if (!sequenceGameEvent)
         {
-            Debug.LogError("ERROR: Invalid Sequence Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
+            //Debug.LogError("ERROR: Invalid Sequence Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
         }
         else
         {
@@ -231,7 +231,7 @@ public class EventManager : ScriptableObject
         SpellGameEvent spellGameEvent = this.GetSpellGameEvent(eventName);
         if (!spellGameEvent)
         {
-            Debug.LogError("ERROR: Invalid Spell Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
+            //Debug.LogError("ERROR: Invalid Spell Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
         }
         else
         {
@@ -251,7 +251,7 @@ public class EventManager : ScriptableObject
         RectTransformGameEvent rtGameEvent = this.GetRectTransformGameEvent(eventName);
         if (!rtGameEvent)
         {
-            Debug.LogError("ERROR: Invalid RectTransform Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
+            //Debug.LogError("ERROR: Invalid RectTransform Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
         }
         else
         {
@@ -439,7 +439,7 @@ public class EventManager : ScriptableObject
         {
             if (!gameEvent)
             {
-                Debug.LogError("ERROR: No Game Event specified! Check the EventManager object to see if it's populated correctly.");
+                //Debug.LogError("ERROR: No Game Event specified! Check the EventManager object to see if it's populated correctly.");
                 break;
             }
             gameEventMap.Add(gameEvent.name.ToLower(), gameEvent);

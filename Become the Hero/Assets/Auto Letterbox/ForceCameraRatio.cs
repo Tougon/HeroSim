@@ -184,7 +184,7 @@ namespace LetterboxCamera
 
                 for (int i = 0; i < cameras.Count; i++) {
                     if (cameras[i].camera.depth == -100) {
-                        Debug.LogError(cameras[i].camera.name + " has a depth of -100 and may conflict with the Letter Box Camera in Forced Camera Ratio!");
+                        //Debug.LogError(cameras[i].camera.name + " has a depth of -100 and may conflict with the Letter Box Camera in Forced Camera Ratio!");
                     }
                 }
             }

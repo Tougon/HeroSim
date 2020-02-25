@@ -221,6 +221,12 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     }
 
 
+    public List<EffectInstance> GetEffects()
+    {
+        return effects;
+    }
+
+
     public int GetCurrentHP()
     {
         return param.entityHP;
@@ -432,7 +438,6 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     {
         if (effects.Contains(eff))
         {
-            Debug.Log(eff.effect.GetName());
             eff.OnDeactivate();
             effects.Remove(eff);
         }

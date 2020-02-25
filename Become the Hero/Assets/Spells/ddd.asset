@@ -10,23 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 955669ae195bf9043b837837b0adc9c9, type: 3}
-  m_Name: Attack
+  m_Name: ddd
   m_EditorClassIdentifier: 
-  spellName: Attack
+  spellName: ddd
   spellType: 0
   spellCost: 0
   spellPriority: 0
   spellDescription: 
-  spellCastMessage: '[user] attacks!'
+  spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 0}
-  spellAnimation: {fileID: 11400000, guid: b0ce99ad59dbd9c41a165c86771109d7, type: 2}
-  spellEffects:
-  - chance: 1
-    effects:
-    - chance: 1
-      effect: {fileID: 11400000, guid: e7e22b1b89f0aea45bcb28e9e2023068, type: 2}
+  spellAnimation: {fileID: 0}
+  spellEffects: []
   spellProperties: []
-  spellPower: 60
+  spellPower: 50
   checkAccuracy: 1
   spellAccuracy: 100
   minNumberOfHits: 1

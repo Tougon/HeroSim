@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Represents a <see cref="Spell"/> that can deal damage.
@@ -15,22 +16,36 @@ public class OffensiveSpell : Spell
 
     public bool checkAccuracy = true;
     [Range(0, 100)]
+    [ShowIf("checkAccuracy")]
     public float spellAccuracy = 100;
 
 
     [Header("Multi-Hit Params")]
     [Range(0, 10)]
+    [ValidateInput("ValidateMinHitCount")][OnValueChanged("OnMinHitCountChanged")]
     public int minNumberOfHits = 1;
 
+    private bool ValidateMinHitCount(int property) { return property <= maxNumberOfHits; }
+    private void OnMinHitCountChanged() { if (!ValidateMinHitCount(minNumberOfHits)) minNumberOfHits = maxNumberOfHits; }
+
+
     [Range(0, 10)]
+    [ValidateInput("ValidateMaxHitCount")][OnValueChanged("OnMaxHitCountChanged")]
     public int maxNumberOfHits = 1;
+
+    private bool ValidateMaxHitCount(int property) { return property >= minNumberOfHits; }
+    private void OnMaxHitCountChanged() { if (!ValidateMaxHitCount(maxNumberOfHits)) maxNumberOfHits = minNumberOfHits; }
+
+
     // If checked, hit count will vary between the min and max number of hits.
+    [ShowIf("@maxNumberOfHits != minNumberOfHits")]
     public bool varyHitCount = false;
 
     [Header("Critical Hit Params")]
     public bool canCritical = true;
 
     [Range(1, 24)]
+    [ShowIf("canCritical")]
     public int criticalHitChance = 16;
 
 

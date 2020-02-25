@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
+
 
 /// <summary>
 /// Represents any action that can be taken on a turn.
@@ -12,20 +14,35 @@ public class Spell : ScriptableObject
 
     public const int DAMAGE_CONSTANT = 50;
 
-    public string spellName;
-    public int spellCost;
-    [Range(-6, 6)]
-    public int spellPriority = 0;
-    public string spellDescription;
-    public string spellCastMessage = "[user] casts [name]!";
-    public string spellFailMessage { get; protected set; }
-    public SpellFamily spellFamily;
-    public AnimationSequenceObject spellAnimation;
-    public List<SpellEffectChance> spellEffects; // Effects that can be invoked by the spell itself
-    public List<Effect> spellProperties; // Used to modify the damage roll
+    [PropertyOrder(0)] public string spellName;
 
-    [SerializeField]
-    private SpellType spellType = SpellType.Other;
+    [Header("Standard Spell Params")]
+    [SerializeField] [PropertyOrder(1)] private SpellType spellType = SpellType.Other;
+    [PropertyOrder(1)] [Range(0, 250)] public int spellCost;
+    [PropertyOrder(2)] [Range(-6, 6)] public int spellPriority = 0;
+    [PropertyOrder(3)] public string spellDescription;
+    [PropertyOrder(4)] public string spellCastMessage = "[user] casts [name]!";
+    [PropertyOrder(5)] public string spellFailMessage { get; protected set; }
+    [PropertyOrder(6)] public SpellFamily spellFamily;
+
+    [PropertyOrder(7)] [Button(ButtonSizes.Small)]
+    public static void CreateNewSpellFamily()
+    {
+        Debug.Log("Ye");
+    }
+
+    [PropertySpace(10)]
+    [PropertyOrder(8)] public AnimationSequenceObject spellAnimation;
+
+    [PropertyOrder(8)] [Button(ButtonSizes.Small)]
+    public static void CreateNewAnimationSequence()
+    {
+        Debug.Log("Ye");
+    }
+
+    [Header("Effect Params")]
+    [PropertyOrder(9)] public List<SpellEffectChance> spellEffects; // Effects that can be invoked by the spell itself
+    [PropertyOrder(10)] public List<Effect> spellProperties; // Used to modify the damage roll
 
     /// <summary>
     /// Returns an instance of this spell using the spell data to calculate damage and effects

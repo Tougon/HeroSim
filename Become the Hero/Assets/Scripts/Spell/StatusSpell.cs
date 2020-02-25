@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Represents a <see cref="Spell"/> that deals no damage and applies a status effect.
@@ -12,6 +13,7 @@ public class StatusSpell : Spell
 
     public bool checkAccuracy = true;
     [Range(0, 100)]
+    [ShowIf("checkAccuracy")]
     public float spellAccuracy = 100;
     
     /// <summary>

@@ -16,6 +16,8 @@ public class UIStatusScreen : MonoBehaviour
 
     [SerializeField]
     private UIStatusScreenStatDisplay statDisplay;
+    [SerializeField]
+    private UIEffectDisplayController effectDisplay;
 
     private CanvasGroup group;
 
@@ -46,6 +48,16 @@ public class UIStatusScreen : MonoBehaviour
         {
             statDisplay.SetStatDisplay(false);
             statDisplay.UpdateStats(ec);
+        }
+
+        var effects = ec.GetEffects();
+
+        if (effects.Count == 0)
+            effectDisplay.gameObject.SetActive(false);
+        else
+        {
+            effectDisplay.gameObject.SetActive(true);
+            effectDisplay.UpdateEffectDisplay(effects);
         }
 
         group.blocksRaycasts = true;

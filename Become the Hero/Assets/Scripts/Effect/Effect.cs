@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Represents an effect of an attack.
@@ -38,6 +39,8 @@ public class Effect : ScriptableObject
 
     public EffectType type = EffectType.Volitile;
 
+    public EffectDisplay display;
+
     // Used for function callbacks
     public UnityEvent CheckSuccess;
     public UnityEvent CheckRemainActive;
@@ -52,10 +55,7 @@ public class Effect : ScriptableObject
 
     public bool IsStackable() { return stackable; }
     public void ResetSuccess() { castSuccess = true; checkSuccess = true; }
-
-    public EffectDisplay display;
-
-
+    
 
     /// <summary>
     /// Create an instance of this effect
@@ -144,7 +144,7 @@ public class Effect : ScriptableObject
         castSuccess = !castSuccess ? false : healthPercent > percent;
     }
 
-
+    [TabGroup("First")]
     public void IsCurrentMoveEqualToTarget(Spell s)
     {
         castSuccess = !castSuccess ? false : s == current.spell.spell;

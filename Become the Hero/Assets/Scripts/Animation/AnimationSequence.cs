@@ -126,7 +126,7 @@ public class AnimationSequence : Hero.Core.Sequence
             // If line does not have enough values, show an error
             if(line.Length > 3 || line.Length < 2)
             {
-                Debug.LogError("Invalid format on line " + (i+1) + "!");
+                //Debug.LogError("Invalid format on line " + (i+1) + "!");
                 return;
             }
 
@@ -153,8 +153,8 @@ public class AnimationSequence : Hero.Core.Sequence
     /// </summary>
     public override void SequenceStart()
     {
-        if (!initialized)
-            Debug.LogError("Sequence has not been initialized!");
+        /*if (!initialized)
+            Debug.LogError("Sequence has not been initialized!");*/
 
         active = true;
         running = true;
@@ -234,8 +234,8 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] effectVals = param.Split(',');
 
-                if (effectVals.Length != 13)
-                    Debug.LogError("Invalid param count for Effect Generation!");
+                /*if (effectVals.Length != 13)
+                    Debug.LogError("Invalid param count for Effect Generation!");*/
 
                 // Generate an effect with the given values
                 GenerateEffect(effectVals[0], effectVals[1], 
@@ -254,8 +254,8 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] moveVals = param.Split(',');
 
-                if(moveVals.Length > 6 && moveVals.Length < 5)
-                    Debug.LogError("Invalid param count for Movement!");
+                /*if(moveVals.Length > 6 && moveVals.Length < 5)
+                    Debug.LogError("Invalid param count for Movement!");*/
 
                 Transform tM;
                 string sM = moveVals[0].Trim();
@@ -281,8 +281,8 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] rotateVals = param.Split(',');
 
-                if (rotateVals.Length > 6 && rotateVals.Length < 5)
-                    Debug.LogError("Invalid param count for Movement!");
+                /*if (rotateVals.Length > 6 && rotateVals.Length < 5)
+                    Debug.LogError("Invalid param count for Movement!");*/
 
                 Transform tR;
                 string sR = rotateVals[0].Trim();
@@ -308,8 +308,8 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] scaleVals = param.Split(',');
 
-                if (scaleVals.Length > 6 && scaleVals.Length < 5)
-                    Debug.LogError("Invalid param count for Movement!");
+                /*if (scaleVals.Length > 6 && scaleVals.Length < 5)
+                    Debug.LogError("Invalid param count for Movement!");*/
 
                 Transform tS;
                 string sS = scaleVals[0].Trim();
@@ -337,8 +337,8 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] colorVals = param.Split(',');
 
-                if (colorVals.Length > 8 && colorVals.Length < 7)
-                    Debug.LogError("Invalid param count for Color!");
+                /*if (colorVals.Length > 8 && colorVals.Length < 7)
+                    Debug.LogError("Invalid param count for Color!");*/
 
                 EntityBase eC;
                 string sC = colorVals[0].Trim();
@@ -366,8 +366,8 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] vibrateVals = param.Split(',');
 
-                if (vibrateVals.Length > 6 && vibrateVals.Length < 5)
-                    Debug.LogError("Invalid param count for Vibration!");
+                /*if (vibrateVals.Length > 6 && vibrateVals.Length < 5)
+                    Debug.LogError("Invalid param count for Vibration!");*/
 
                 Transform tV;
                 string sV = vibrateVals[0].Trim();
@@ -392,8 +392,8 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] speedVals = param.Split(',');
 
-                if (speedVals.Length > 3 && speedVals.Length < 2)
-                    Debug.LogError("Invalid param count for Speed!");
+                /*if (speedVals.Length > 3 && speedVals.Length < 2)
+                    Debug.LogError("Invalid param count for Speed!");*/
                 
                 string sSp = speedVals[0].Trim();
                 float sSpeed = float.Parse(speedVals[1].Trim());
@@ -412,8 +412,8 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] stateVals = param.Split(',');
 
-                if (stateVals.Length > 4 && stateVals.Length < 3)
-                    Debug.LogError("Invalid param count for State Change!");
+                /*if (stateVals.Length > 4 && stateVals.Length < 3)
+                    Debug.LogError("Invalid param count for State Change!");*/
 
                 EntityBase eAS;
                 string sAS = stateVals[0].Trim();
@@ -477,8 +477,8 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] texVals = param.Split(',');
 
-                if (texVals.Length > 5 && texVals.Length < 4)
-                    Debug.LogError("Invalid param count for Texture Change!");
+                /*if (texVals.Length > 5 && texVals.Length < 4)
+                    Debug.LogError("Invalid param count for Texture Change!");*/
 
                 EntityBase eOT;
                 string sOT = texVals[0].Trim();
@@ -500,8 +500,8 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Split the param
                 string[] ovlAnimVals = param.Split(',');
 
-                if (ovlAnimVals.Length > 6 && ovlAnimVals.Length < 5)
-                    Debug.LogError("Invalid param count for Overlay Animation!");
+                /*if (ovlAnimVals.Length > 6 && ovlAnimVals.Length < 5)
+                    Debug.LogError("Invalid param count for Overlay Animation!");*/
 
                 EntityBase eOA;
                 string sOA = ovlAnimVals[0].Trim();

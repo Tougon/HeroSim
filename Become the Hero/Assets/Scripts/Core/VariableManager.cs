@@ -45,7 +45,7 @@ public class VariableManager : ScriptableObject
             return value.Value;
         }
 
-        Debug.LogError("ERROR: No variable of name " + varName + " exists. Returning false.");
+        //Debug.LogError("ERROR: No variable of name " + varName + " exists. Returning false.");
         return false;
     }
     #endregion
@@ -67,7 +67,7 @@ public class VariableManager : ScriptableObject
             return;
         }
 
-        Debug.LogError("ERROR: No variable of name " + varName + " exists.");
+        //Debug.LogError("ERROR: No variable of name " + varName + " exists.");
     }
     #endregion
 
