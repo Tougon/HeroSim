@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Afoost
   m_EditorClassIdentifier: 
   spellName: Afoost
+  spellType: 3
   spellCost: 10
   spellPriority: 0
   spellDescription: The user casts an incantation that increases their strength for
@@ -26,6 +27,5 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: 93d504fafe208cb49942b008101fceb5, type: 2}
   spellProperties: []
-  spellType: 3
   checkAccuracy: 0
   spellAccuracy: 100

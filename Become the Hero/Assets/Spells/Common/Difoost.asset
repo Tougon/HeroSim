@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Difoost
   m_EditorClassIdentifier: 
   spellName: Difoost
+  spellType: 3
   spellCost: 10
   spellPriority: 0
   spellDescription: The user casts an incantation that increases their defense for
@@ -26,6 +27,5 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: f0ed6b83c1d25754ba27da182837b541, type: 2}
   spellProperties: []
-  spellType: 3
   checkAccuracy: 0
   spellAccuracy: 100

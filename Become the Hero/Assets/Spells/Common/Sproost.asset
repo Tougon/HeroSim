@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Sproost
   m_EditorClassIdentifier: 
   spellName: Sproost
+  spellType: 3
   spellCost: 10
   spellPriority: 0
   spellDescription: The user casts an incantation that increases their agility for
@@ -26,6 +27,5 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: eb5ba301ce18b1640bd06c7d0b7ae990, type: 2}
   spellProperties: []
-  spellType: 3
   checkAccuracy: 0
   spellAccuracy: 100

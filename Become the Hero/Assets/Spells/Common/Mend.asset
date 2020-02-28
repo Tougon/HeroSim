@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Mend
   m_EditorClassIdentifier: 
   spellName: Mend
+  spellType: 5
   spellCost: 7
   spellPriority: 0
   spellDescription: The user casts an incantation that heals them for 15% of their
@@ -26,6 +27,5 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: 5954ba60475c71d4fbe9cd72f12356a0, type: 2}
   spellProperties: []
-  spellType: 5
   checkAccuracy: 0
   spellAccuracy: 100

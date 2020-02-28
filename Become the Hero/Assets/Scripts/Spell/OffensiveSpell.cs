@@ -11,12 +11,14 @@ public class OffensiveSpell : Spell
 {
     [Header("Base Damage Params")]
 
-    [Range(0, 250)]
+    [Range(0, 250)][GUIColor(0.90f, 0.45f, 0.45f)]
     public float spellPower = 50.0f;
 
+    [Header("Accuracy Params")]
+    [GUIColor(0.90f, 0.90f, 0.05f)]
     public bool checkAccuracy = true;
     [Range(0, 100)]
-    [ShowIf("checkAccuracy")]
+    [ShowIf("checkAccuracy")][GUIColor(0.90f, 0.90f, 0.05f)]
     public float spellAccuracy = 100;
 
 
@@ -46,6 +48,7 @@ public class OffensiveSpell : Spell
 
     [Range(1, 24)]
     [ShowIf("canCritical")]
+    [GUIColor(0.90f, 0.45f, 0.05f)]
     public int criticalHitChance = 16;
 
 

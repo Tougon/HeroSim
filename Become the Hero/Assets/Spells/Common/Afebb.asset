@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Afebb
   m_EditorClassIdentifier: 
   spellName: Afebb
+  spellType: 4
   spellCost: 8
   spellPriority: 0
   spellDescription: The user casts an incantation that decreases the target's strength
@@ -26,6 +27,5 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: 448431eeea65dda499242533ebf428d0, type: 2}
   spellProperties: []
-  spellType: 4
   checkAccuracy: 1
   spellAccuracy: 90

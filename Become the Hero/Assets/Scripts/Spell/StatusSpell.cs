@@ -9,11 +9,13 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName = "NewSpell", menuName = "Spell/Status Spell", order = 3)]
 public class StatusSpell : Spell
 {
-    [Header("Base Damage Params")]
+    [Header("Accuracy Params")]
 
+    [GUIColor(0.90f, 0.90f, 0.05f)]
     public bool checkAccuracy = true;
     [Range(0, 100)]
     [ShowIf("checkAccuracy")]
+    [GUIColor(0.90f, 0.90f, 0.05f)]
     public float spellAccuracy = 100;
     
     /// <summary>

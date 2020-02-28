@@ -166,7 +166,10 @@ public class TurnManager : MonoBehaviour
 
         // Select an action for all AI entities
         foreach (EntityController ec in enemies)
+        {
+            ec.target = players[Random.Range(0, players.Count)];
             ec.SelectAction();
+        }
 
         EventManager.Instance.RaiseGameEvent(EventConstants.ON_MOVE_SELECTED);
     }
@@ -178,9 +181,6 @@ public class TurnManager : MonoBehaviour
 
     public void OnMoveSelected()
     {
-        foreach (EntityController ec in enemies)
-            ec.target = players[Random.Range(0, players.Count)];
-
         foreach (EntityController ec in entities)
         {
             ec.ExecuteTurnStartEffects();

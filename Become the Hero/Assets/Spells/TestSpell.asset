@@ -13,12 +13,16 @@ MonoBehaviour:
   m_Name: TestSpell
   m_EditorClassIdentifier: 
   spellName: Testing Spell
+  spellType: 0
   spellCost: 60
+  spellPriority: 0
   spellDescription: Placeholder spell for testing. Will be scrapped soon.
   spellCastMessage: '[user] casts [name]!'
+  spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: 222bc7b9e3410154ca16828926f21790, type: 2}
   spellEffects: []
   spellProperties: []
+  isEditing: 0
   spellPower: 20
   checkAccuracy: 1
   spellAccuracy: 85

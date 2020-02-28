@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using Hero.SpellEditor;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities.Editor;
@@ -8,23 +9,27 @@ using System;
 public class SpellEditor : OdinMenuEditorWindow
 {
     private CreateNewSpell createNewSpell;
-
-
+    private CreateEffectPopup createNewEffect;
+    
     [MenuItem("Tools/Spell Editor")]
     private static void OpenWindow()
     {
         GetWindow<SpellEditor>().Show();
+        
     }
 
 
     protected override OdinMenuTree BuildMenuTree()
     {
-        var tree = new OdinMenuTree();
+        var tree = new OdinMenuTree()
+        {
+
+        };
 
         createNewSpell = new CreateNewSpell();
         tree.Add("Create New Spell", createNewSpell);
-        tree.AddAllAssetsAtPath("Spells", "Assets/Spells", typeof(Spell), true, false);
-
+        var res = tree.AddAllAssetsAtPath("Spells", "Assets/Spells", typeof(Spell), true, true);
+        res.SortMenuItemsByName();
         return tree;
     }
 
@@ -38,6 +43,12 @@ public class SpellEditor : OdinMenuEditorWindow
         SirenixEditorGUI.BeginHorizontalToolbar();
         {
             GUILayout.FlexibleSpace();
+
+            if(SirenixEditorGUI.ToolbarButton("Create Effect"))
+            {
+                createNewEffect = new CreateEffectPopup();
+                PopupWindow.Show(GUILayoutUtility.GetLastRect(), createNewEffect);
+            }
 
             if(SirenixEditorGUI.ToolbarButton("Delete Current"))
             {
@@ -57,20 +68,71 @@ public class SpellEditor : OdinMenuEditorWindow
         base.OnDestroy();
 
         if (createNewSpell != null)
+        {
+            if (createNewSpell.spell.spellFamily != null &&
+                    !SpellEditorUtilities.CheckIfAssetExists(createNewSpell.spell.spellFamily.name, "Assets/Spells/Families/"))
+                DestroyImmediate(createNewSpell.spell.spellFamily);
+
+            if (createNewSpell.spell.spellAnimation != null &&
+                    !SpellEditorUtilities.CheckIfAssetExists(createNewSpell.spell.spellAnimation.name, "Assets/Spells/" +
+                    SpellEditorUtilities.currentPath + "/"))
+                DestroyImmediate(createNewSpell.spell.spellAnimation);
+            
+            if(createNewSpell.spell.spellEffects != null)
+            {
+
+                foreach (var chance in createNewSpell.spell.spellEffects)
+                {
+                    foreach (var effect in chance.effects)
+                    {
+                        if (effect.effect.display != null && !SpellEditorUtilities.DoesAssetExist(effect.effect.display))
+                        {
+                            DestroyImmediate(effect.effect.display);
+                            effect.effect.display = null;
+                        }
+                    }
+                }
+            }
+
+            if (createNewSpell.spell.spellProperties != null)
+            {
+                foreach (var property in createNewSpell.spell.spellProperties)
+                {
+                    if (property.display != null && !SpellEditorUtilities.DoesAssetExist(property.display))
+                    {
+                        DestroyImmediate(property.display);
+                        property.display = null;
+                    }
+                }
+            }
+
             DestroyImmediate(createNewSpell.spell);
+        }
+
+        SpellEditorUtilities.CleanUp();
     }
 
 
     public class CreateNewSpell
     {
+        [FolderPath(RequireExistingPath = true, ParentFolder = "$parent", AbsolutePath = false)]
+        [OnValueChanged("SetCurrentPath")]
+        [InfoBox("@GetFullPath()")]
+        public string path = "";
+        private void SetCurrentPath() { SpellEditorUtilities.currentPath = path; }
+        private string GetFullPath()
+        {
+            if (!DirectoryIsValid())
+                return "BAD PATH";
+            else
+                return parent + "/" + path;
+        }
+
+
         [InlineEditor(ObjectFieldMode = InlineEditorObjectFieldModes.Hidden)]
-        [PropertySpace(15)]
+        [PropertySpace(20)]
         [ShowIf("DirectoryIsValid")]
         public Spell spell;
-
-        [PropertySpace(20)]
-        [FolderPath(RequireExistingPath = true, ParentFolder = "$parent", AbsolutePath = false)]
-        public string path = "";
 
         private string parent = "Assets/Spells";
         private bool showError = false;
@@ -91,8 +153,7 @@ public class SpellEditor : OdinMenuEditorWindow
         [Button("Create New Spell", ButtonSizes.Large)]
         public void Create()
         {
-            AssetDatabase.CreateAsset(spell, parent + "/" + path + "/" + spell.spellName.Trim() + ".asset");
-            AssetDatabase.SaveAssets();
+            SpellEditorUtilities.CreateAsset(spell, parent + "/" + path + "/" + spell.spellName.Trim());
 
             // Reset
             ResetWindow();
@@ -110,8 +171,7 @@ public class SpellEditor : OdinMenuEditorWindow
         private bool CanCreate()
         {
             errorMessage = "Cannot Create!";
-
-
+            
             if (!DirectoryIsValid())
             {
                 errorMessage += "\nSpell is not in a valid directory. Spells must be in the Spells folder.";
@@ -127,29 +187,35 @@ public class SpellEditor : OdinMenuEditorWindow
                 return false;
             }
 
+            if(spell.spellFamily != null && !SpellEditorUtilities.CheckIfAssetExists
+                (spell.spellFamily.name, "Assets/Spells/Families/"))
+            {
+                errorMessage += "\nSpell's family does not exist in assets. Click Create to create it.";
+                showError = true;
+                return false;
+            }
+
             if (spell.spellAnimation == null)
             {
                 errorMessage += "\nSpell's animation is null.";
                 showError = true;
                 return false;
             }
+            else if (spell.spellAnimation != null && !SpellEditorUtilities.CheckIfAssetExists
+                (spell.spellAnimation.name, "Assets/Spells/" + SpellEditorUtilities.currentPath + "/"))
+            {
+                errorMessage += "\nSpell's animation does not exist in assets. Click Create to create it.";
+                showError = true;
+                return false;
+            }
 
             // Check if spell does not already exist
-            var assets = AssetDatabase.FindAssets(spell.spellName.Trim());
 
-            if (assets.Length > 1)
+            if (SpellEditorUtilities.CheckIfAssetExists(spell.spellName.Trim(), parent + "/" + path + "/"))
             {
-                foreach(var asset in assets)
-                {
-                    string targetPath = AssetDatabase.GUIDToAssetPath(asset);
-
-                    if (targetPath.Replace(spell.spellName.Trim() + ".asset", "").Equals(parent + "/" + path + "/"))
-                    {
-                        errorMessage += "\nSpell already exists in the given directory.";
-                        showError = true;
-                        return false;
-                    }
-                }
+                errorMessage += "\nSpell already exists in the given directory.";
+                showError = true;
+                return false;
             }
 
             showError = false;
@@ -183,6 +249,7 @@ public class SpellEditor : OdinMenuEditorWindow
         [ButtonGroup("ResetButtons")]
         [Button(ButtonSizes.Large)]
         [LabelText("Standard Spell")]
+        [GUIColor(0.85f, 1.0f, 0.95f)]
         public void SetSpellToDefault()
         {
             spell = ScriptableObject.CreateInstance<Spell>();
@@ -195,6 +262,7 @@ public class SpellEditor : OdinMenuEditorWindow
         [ButtonGroup("ResetButtons")]
         [Button(ButtonSizes.Large)]
         [LabelText("Offensive Spell")]
+        [GUIColor(0.85f, 1.0f, 0.95f)]
         public void SetSpellToOffensive()
         {
             spell = ScriptableObject.CreateInstance<OffensiveSpell>();
@@ -207,11 +275,47 @@ public class SpellEditor : OdinMenuEditorWindow
         [ButtonGroup("ResetButtons")]
         [Button(ButtonSizes.Large)]
         [LabelText("Status Spell")]
+        [GUIColor(0.85f, 1.0f, 0.95f)]
         public void SetSpellToStatus()
         {
             spell = ScriptableObject.CreateInstance<StatusSpell>();
             spell.spellName = "New Status Spell";
             spellType = CreatingSpellType.Status;
+        }
+    }
+}
+
+
+public class CreateEffectPopup : PopupWindowContent
+{
+    public string effectName = "";
+
+    public override Vector2 GetWindowSize()
+    {
+        return new Vector2(400, 150);
+    }
+
+    public override void OnGUI(Rect rect)
+    {
+        GUILayout.Label("Enter Effect Name", EditorStyles.boldLabel);
+        effectName = EditorGUILayout.TextField("Effect Name: ", effectName);
+
+        if(effectName.Replace(" ", "") != "" && !SpellEditorUtilities.CheckIfAssetExists(effectName, "Assets/Spells/Common/Effects/"))
+        {
+            if (GUILayout.Button("Create"))
+            {
+                SpellEditorUtilities.CreateAsset(ScriptableObject.CreateInstance<Effect>(), 
+                    "Assets/Spells/Common/Effects/" + (effectName.Replace(" ", "")));
+
+                this.editorWindow.Close();
+            }
+        }
+        else
+        {
+            if (effectName.Replace(" ", "") == "")
+                GUILayout.Label("Invalid Effect name!", EditorStyles.boldLabel);
+            else
+                GUILayout.Label("An Effect with the given name already exists!", EditorStyles.boldLabel);
         }
     }
 }

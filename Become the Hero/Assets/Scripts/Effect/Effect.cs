@@ -5,12 +5,20 @@ using UnityEngine;
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
 
+#if UNITY_EDITOR
+using Hero.SpellEditor;
+#endif
+
 /// <summary>
 /// Represents an effect of an attack.
 /// </summary>
 [CreateAssetMenu(fileName = "NewEffect", menuName = "Effect/Effect", order = 3)]
+[GUIColor(1.0f, 1.0f, 1.0f)]
 public class Effect : ScriptableObject
 {
+    [HideInInspector]
+    public delegate void InitialDelegate();
+
     // Indicates if the effect should be removed on death
     public enum EffectType { Volitile, NonVolitile }
 
@@ -39,23 +47,71 @@ public class Effect : ScriptableObject
 
     public EffectType type = EffectType.Volitile;
 
+    [InlineEditor] [GUIColor(0.98f, 0.85f, 0.55f)]
     public EffectDisplay display;
+
+#if UNITY_EDITOR
+
+    private string effectDisplayButtonName = "Create New Effect Display";
+    
+    [Button(ButtonSizes.Small)]
+    [GUIColor("CheckDisplayColor")]
+    [LabelText("$effectDisplayButtonName")]
+    [EnableIf("CheckDisplayName")]
+    private void CreateNewEffectDisplay()
+    {
+        if (display == null || SpellEditorUtilities.CheckIfAssetExists
+            (this.effectName.Replace(" ", "") + "Display", "Assets/UI/EffectDisplay/"))
+        {
+            display = ScriptableObject.CreateInstance<EffectDisplay>();
+            effectDisplayButtonName = "Create";
+            display.displayName = effectName;
+        }
+        else
+        {
+            SpellEditorUtilities.CreateAsset(display,
+                "Assets/UI/EffectDisplay/" + this.effectName.Replace(" ", "") + "Display");
+            display = null;
+            effectDisplayButtonName = "Create New Effect Display";
+        }
+    }
+
+    private bool CheckDisplayName() { return display == null || this.effectName.Replace(" ", "") + "Display" != ""; }
+    private Color CheckDisplayColor() { return IsEffectDisplayValid() ? Color.white : Color.green; }
+
+    private bool IsEffectDisplayValid()
+    {
+        return (display == null || SpellEditorUtilities.CheckIfAssetExists
+            (this.effectName.Replace(" ", "") + "Display", "Assets/UI/EffectDisplay/"));
+    }
+
+#endif
 
     // Used for function callbacks
     public UnityEvent CheckSuccess;
-    public UnityEvent CheckRemainActive;
-    public UnityEvent OnActivate;
-    public UnityEvent OnFailedToActivate;
-    public UnityEvent OnApply;
-    public UnityEvent OnMoveSelected;
-    public UnityEvent OnDeactivate;
-    public UnityEvent OnTurnStart;
-    public UnityEvent OnTurnEnd;
-    public UnityEvent OnStack;
 
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToCheckSuccess")]
+    public List<BetterEventEntry> CheckEffectSuccess = new List<BetterEventEntry>();
+    private void AssignThisToCheckSuccess(){ CheckEffectSuccess.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
+
+    [GUIColor(0.9f, 0.9f, 0.9f)] public UnityEvent CheckRemainActive;
+    public UnityEvent OnActivate;
+    [GUIColor(0.9f, 0.9f, 0.9f)] public UnityEvent OnFailedToActivate;
+    public UnityEvent OnApply;
+    [GUIColor(0.9f, 0.9f, 0.9f)] public UnityEvent OnMoveSelected;
+    public UnityEvent OnDeactivate;
+    [GUIColor(0.9f, 0.9f, 0.9f)] public UnityEvent OnTurnStart;
+    public UnityEvent OnTurnEnd;
+    [GUIColor(0.9f, 0.9f, 0.9f)] public UnityEvent OnStack;
+    
     public bool IsStackable() { return stackable; }
     public void ResetSuccess() { castSuccess = true; checkSuccess = true; }
-    
+
+
+    /// <summary>
+    /// Empty function used for initialization
+    /// </summary>
+    public void NONE() { Debug.Log("yesssssss"); }
 
     /// <summary>
     /// Create an instance of this effect
@@ -744,6 +800,7 @@ public class EffectInstance: IComparable<EffectInstance>
     {
         effect.current = this;
         effect.CheckForCastSuccess();
+        Invoke(effect.CheckEffectSuccess);
         castSuccess = effect.castSuccess;
     }
 
@@ -837,6 +894,19 @@ public class EffectInstance: IComparable<EffectInstance>
             effect.current = this;
             effect.ResetSuccess();
             effect.OnStack.Invoke();
+        }
+    }
+
+
+    /// <summary>
+    /// Custom Invoke function for BetterEvents
+    /// </summary>
+    private void Invoke(List<BetterEventEntry> Events)
+    {
+        if (Events == null) return;
+        for (int i = 0; i < Events.Count; i++)
+        {
+            Events[i].Invoke();
         }
     }
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
+#if UNITY_EDITOR
+using Hero.SpellEditor;
+#endif
 
 /// <summary>
 /// Represents any action that can be taken on a turn.
@@ -10,39 +13,145 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName = "NewSpell", menuName = "Spell/Flavor Spell", order = 1)]
 public class Spell : ScriptableObject
 {
+    #region Variables
+
     public enum SpellType { Other, Attack, Status, Buff, Debuff, Heal }
 
     public const int DAMAGE_CONSTANT = 50;
 
-    [PropertyOrder(0)] public string spellName;
+    [PropertyOrder(0)] [GUIColor(0.98f, 0.95f, 0.5f)] public string spellName;
 
     [Header("Standard Spell Params")]
     [SerializeField] [PropertyOrder(1)] private SpellType spellType = SpellType.Other;
-    [PropertyOrder(1)] [Range(0, 250)] public int spellCost;
-    [PropertyOrder(2)] [Range(-6, 6)] public int spellPriority = 0;
-    [PropertyOrder(3)] public string spellDescription;
-    [PropertyOrder(4)] public string spellCastMessage = "[user] casts [name]!";
-    [PropertyOrder(5)] public string spellFailMessage { get; protected set; }
-    [PropertyOrder(6)] public SpellFamily spellFamily;
+    [PropertyOrder(1)] [Range(0, 250)] [GUIColor(0.05f, 0.80f, 0.85f)] public int spellCost;
+    [PropertyOrder(2)] [Range(-6, 6)] [GUIColor(0.90f, 0.90f, 0.05f)] public int spellPriority = 0;
+    [PropertyOrder(3)] [GUIColor(0.98f, 0.95f, 0.5f)] public string spellDescription;
+    [PropertyOrder(4)] [GUIColor(0.98f, 0.95f, 0.5f)] public string spellCastMessage = "[user] casts [name]!";
+    [PropertyOrder(5)] [GUIColor(0.98f, 0.95f, 0.5f)] public string spellFailMessage { get; protected set; }
+    [PropertyOrder(6)] [InlineEditor] [GUIColor(0.80f, 0.65f, 0.98f)] public SpellFamily spellFamily;
+
+#if UNITY_EDITOR
+
+    private string spellFamilyButtonName = "Create New Spell Family";
 
     [PropertyOrder(7)] [Button(ButtonSizes.Small)]
-    public static void CreateNewSpellFamily()
+    [GUIColor("CheckFamilyColor")]
+    [LabelText("$spellFamilyButtonName")]
+    [EnableIf("CheckFamilyName")]
+    private void CreateNewSpellFamily()
     {
-        Debug.Log("Ye");
+        if(spellFamily == null || SpellEditorUtilities.CheckIfAssetExists
+            (spellFamily.familyName.Replace("Family", "").Replace(" ", "") + "Family", "Assets/Spells/Families/"))
+        {
+            spellFamily = ScriptableObject.CreateInstance<SpellFamily>();
+            spellFamilyButtonName = "Create";
+        }
+        else
+        {
+            SpellEditorUtilities.CreateAsset(spellFamily, 
+                "Assets/Spells/Families/" + spellFamily.familyName.Replace("Family", "").Replace(" ", "") + "Family");
+            spellFamily = null;
+            spellFamilyButtonName = "Create New Spell Family";
+        }
     }
+
+    private bool CheckFamilyName() { return spellFamily == null || spellFamily.familyName.Replace("Family", "").Trim() != ""; }
+    private Color CheckFamilyColor() { return IsSpellFamilyValid() ? Color.white : Color.green; }
+
+    private bool IsSpellFamilyValid()
+    {
+        return (spellFamily == null || SpellEditorUtilities.CheckIfAssetExists
+            (spellFamily.familyName.Replace("Family", "").Trim() + "Family", "Assets/Spells/Families/"));
+    }
+
+#endif
 
     [PropertySpace(10)]
+    [InlineEditor]
+    [GUIColor(0.65f, 0.98f, 0.65f)]
     [PropertyOrder(8)] public AnimationSequenceObject spellAnimation;
 
+#if UNITY_EDITOR
+
+    private string spellAnimButtonName = "Create New Animation Sequence";
+
     [PropertyOrder(8)] [Button(ButtonSizes.Small)]
-    public static void CreateNewAnimationSequence()
+    [GUIColor("CheckAnimColor")]
+    [LabelText("$spellAnimButtonName")]
+    [EnableIf("CheckButtonStatus")]
+    private void CreateNewAnimationSequence()
     {
-        Debug.Log("Ye");
+        if (IsAnimationValid(false))
+        {
+            spellAnimation = ScriptableObject.CreateInstance<AnimationSequenceObject>();
+            spellAnimation.animationName = this.spellName;
+            spellAnimation.disableUI = true;
+
+            spellAnimButtonName = "Create";
+        }
+        else
+        {
+            string animPath = SpellEditorUtilities.GetAssetPath(this);
+
+            if(animPath != "")
+            {
+                animPath = animPath.Replace(this.name + ".asset", "") + spellAnimation.animationName.Replace(" ", "");
+                Debug.Log(animPath);
+                SpellEditorUtilities.CreateAsset(spellAnimation, animPath + "Anim");
+                SpellEditorUtilities.CreateTextFile(animPath + "AnimScript");
+            }
+            else
+            {
+                string slash = SpellEditorUtilities.currentPath == "" ? "" : "/";
+                string output = "Assets/Spells/" + 
+                    SpellEditorUtilities.currentPath + slash + spellAnimation.animationName.Replace(" ", "") + "Anim";
+                Debug.Log(output);
+                SpellEditorUtilities.CreateAsset(spellAnimation, output);
+                SpellEditorUtilities.CreateTextFile(output + "Script");
+            }
+
+            spellAnimation = null;
+            spellAnimButtonName = "Create New Animation Sequence";
+        }
     }
 
+    private bool CheckButtonStatus() { return IsAnimationValid(true); }
+    private Color CheckAnimColor() { return IsAnimationValid(false) ? Color.white : Color.green; }
+
+
+    private bool IsAnimationValid(bool inv)
+    {
+        if (spellAnimation == null || SpellEditorUtilities.DoesAssetExist(spellAnimation))
+            return true;
+
+        string animPath = SpellEditorUtilities.GetAssetPath(this);
+        bool result = true;
+
+        if (animPath != "")
+        {
+            animPath = animPath.Replace(this.name + ".asset", "");
+            result = (SpellEditorUtilities.CheckIfAssetExists
+                (spellAnimation.animationName.Trim() + "Anim", animPath));
+
+            return inv ? !result : result;
+        }
+
+        result =  (SpellEditorUtilities.CheckIfAssetExists
+            (spellAnimation.animationName.Trim() + "Anim", "Assets/Spells/" + SpellEditorUtilities.currentPath + "/"));
+        return inv ? !result : result;
+    }
+#endif
+
     [Header("Effect Params")]
+    [GUIColor(0.65f, 0.80f, 0.98f)]
     [PropertyOrder(9)] public List<SpellEffectChance> spellEffects; // Effects that can be invoked by the spell itself
-    [PropertyOrder(10)] public List<Effect> spellProperties; // Used to modify the damage roll
+
+    //[ListDrawerSettings(HideAddButton = , HideRemoveButton = )]
+    [InlineEditor]
+    [GUIColor(0.65f, 0.80f, 0.98f)]
+    [PropertyOrder(10)] public List<Effect> spellProperties = new List<Effect>(); // Used to modify the damage roll
+
+    #endregion
 
     /// <summary>
     /// Returns an instance of this spell using the spell data to calculate damage and effects
@@ -360,8 +469,6 @@ public class SpellCast
 
         for(int i=0; i<effects.Count; i++)
         {
-            effects[i].CheckSuccess();
-
             if (effects[i].castSuccess)
                 result = true;
         }
@@ -413,21 +520,41 @@ public class SpellCast
 /// Keep in mind this will NOT automatically split so be careful.
 /// </summary>
 [System.Serializable]
-public struct SpellEffectChance
+public class SpellEffectChance
 {
     [System.Serializable]
-    public struct EffectChance
+    [GUIColor(1.0f, 1.0f, 1.0f)]
+    public class EffectChance
     {
         [Range(0, 1)]
         public float chance;
+        
+        [InlineEditor]
         public Effect effect;
     }
 
     // Odds of this effect set being invoked.
     [Range(0, 1)]
-    public float chance;
+    [GUIColor(1.0f, 1.0f, 1.0f)] public float chance;
 
+    [InfoBox("The sum of all effect chances is greater than 1. Some effects may not activate with the correct frequency.", 
+        InfoMessageType.Warning, "CheckIfTotalChanceIsGreaterThanOne")]
     public EffectChance[] effects;
+
+    private bool CheckIfTotalChanceIsGreaterThanOne()
+    {
+        float result = 0;
+
+        for(int i=0; i<effects.Length; i++)
+        {
+            result += effects[i].chance;
+
+            if (result > 1.0f)
+                return true;
+        }
+
+        return false;
+    }
 
     /// <summary>
     /// Returns a random effect from effects.

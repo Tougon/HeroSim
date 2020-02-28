@@ -18,4 +18,38 @@ public class EnemyController : EntityController
 
         EventManager.Instance.RaiseEntityControllerEvent(EventConstants.ON_ENEMY_DEFEAT, this);
     }
+
+    public override void SelectAction()
+    {
+        // Until we have "real" AI, an enemy's choice of action should be random, but it should check if the effect will proc.
+        action = current.moveList[UnityEngine.Random.Range(0, current.moveList.Count)];
+
+        while (!CheckEffectProc())
+            action = current.moveList[UnityEngine.Random.Range(0, current.moveList.Count)];
+    }
+
+
+    private bool CheckEffectProc()
+    {
+        bool result = true;
+
+        foreach(var ec in action.spellEffects)
+        {
+            foreach (var e in ec.effects)
+            {
+                var effInst = e.effect.CreateEffectInstance(this, target, null);
+                effInst.CheckSuccess();
+                result = effInst.castSuccess;
+            }
+        }
+
+        foreach(Effect p in action.spellProperties)
+        {
+            var effInst = p.CreateEffectInstance(this, target, null);
+            effInst.CheckSuccess();
+            result = effInst.castSuccess;
+        }
+
+        return result;
+    }
 }
