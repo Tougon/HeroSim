@@ -52,13 +52,11 @@ public class UIStatusScreen : MonoBehaviour
 
         var effects = ec.GetEffects();
 
-        if (effects.Count == 0)
+        effectDisplay.gameObject.SetActive(true);
+        effectDisplay.UpdateEffectDisplay(effects);
+
+        if (effectDisplay.numEffectsDisplayed == 0)
             effectDisplay.gameObject.SetActive(false);
-        else
-        {
-            effectDisplay.gameObject.SetActive(true);
-            effectDisplay.UpdateEffectDisplay(effects);
-        }
 
         group.blocksRaycasts = true;
         group.alpha = 1;

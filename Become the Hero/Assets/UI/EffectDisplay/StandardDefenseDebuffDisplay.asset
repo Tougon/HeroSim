@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be589ca1701f7914fb7e996741c48523, type: 3}
-  m_Name: StandardAttackBoostDisplay
+  m_Name: StandardDefenseDebuffDisplay
   m_EditorClassIdentifier: 
-  displayName: Attack Up
+  displayName: Defense Down
   displayTurnLimit: 1
-  description: Increases attack power.
-  icon: {fileID: 21300000, guid: 5e5d0ca92150837418a4df72d7186502, type: 3}
+  description: Decreases defense.
+  icon: {fileID: 21300000, guid: 41923229168c77c4d87d3b9002e8d02e, type: 3}

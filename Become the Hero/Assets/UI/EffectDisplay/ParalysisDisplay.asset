@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be589ca1701f7914fb7e996741c48523, type: 3}
-  m_Name: StandardAttackBoostDisplay
+  m_Name: ParalysisDisplay
   m_EditorClassIdentifier: 
-  displayName: Attack Up
+  displayName: Paralysis
   displayTurnLimit: 1
-  description: Increases attack power.
-  icon: {fileID: 21300000, guid: 5e5d0ca92150837418a4df72d7186502, type: 3}
+  description: Decreases speed and provides a chance to not move each turn.
+  icon: {fileID: 21300000, guid: edc53764ce287c149a82e75fc980b05a, type: 3}

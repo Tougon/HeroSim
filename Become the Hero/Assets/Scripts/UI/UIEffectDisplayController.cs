@@ -10,6 +10,8 @@ public class UIEffectDisplayController : MonoBehaviour
     [SerializeField][Range(0, 30)]
     private int maxNumEffectDisplays = 20;
 
+    public int numEffectsDisplayed { get; private set; }
+
     [SerializeField]
     private Transform displayRoot;
 
@@ -37,10 +39,11 @@ public class UIEffectDisplayController : MonoBehaviour
     {
         // Remove all effects that should not be displayed.
         effects.RemoveAll(f => f.effect.display == null);
+        numEffectsDisplayed = effects.Count;
 
         for(int i=0; i<maxNumEffectDisplays; i++)
         {
-            if (i < effects.Count)
+            if (i < numEffectsDisplayed)
             {
                 effectDisplay[i].gameObject.SetActive(true);
                 effectDisplay[i].Init(effects[i]);

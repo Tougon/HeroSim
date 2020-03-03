@@ -22,17 +22,21 @@ public class Effect : ScriptableObject
     // Indicates if the effect should be removed on death
     public enum EffectType { Volitile, NonVolitile }
 
+    // Used in functions to indicate if the user or target should recieve the effect
+    public enum EffectTarget { user, target }
+
     [SerializeField]
+    [PropertyOrder(0)]
     private bool stackable;
 
-    public bool castSuccess { get; private set; }
+    [PropertyOrder(0)] public bool castSuccess { get; private set; }
     // Indicates if the current event should check if the cast was successful or not
     private bool checkSuccess = true;
 
-    public string effectName;
+    [PropertyOrder(0)] public string effectName;
     // Used to allow for certain effects to be applied independently while using the same name (i.e. stat buffs)
     [SerializeField]
-    private bool generic = false;
+    [PropertyOrder(0)] private bool generic = false;
 
     // Current instance of effect calculations should be ran on
     public EffectInstance current;
@@ -43,12 +47,12 @@ public class Effect : ScriptableObject
 
     // Turn limit applied to instances of this effect. Generally only used for displays.
     [SerializeField] [Range(0, 20)]
-    private int limit = 3;
+    [PropertyOrder(0)] private int limit = 3;
 
-    public EffectType type = EffectType.Volitile;
+    [PropertyOrder(0)] public EffectType type = EffectType.Volitile;
 
     [InlineEditor] [GUIColor(0.98f, 0.85f, 0.55f)]
-    public EffectDisplay display;
+    [PropertyOrder(0)] public EffectDisplay display;
 
 #if UNITY_EDITOR
 
@@ -58,6 +62,7 @@ public class Effect : ScriptableObject
     [GUIColor("CheckDisplayColor")]
     [LabelText("$effectDisplayButtonName")]
     [EnableIf("CheckDisplayName")]
+    [PropertyOrder(0)]
     private void CreateNewEffectDisplay()
     {
         if (display == null || SpellEditorUtilities.CheckIfAssetExists
@@ -88,22 +93,52 @@ public class Effect : ScriptableObject
 #endif
 
     // Used for function callbacks
-    public UnityEvent CheckSuccess;
+    [PropertySpace(20)]
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToCheckSuccess")][PropertyOrder(1)]
+    public List<BetterEventEntry> CheckSuccess = new List<BetterEventEntry>();
+    private void AssignThisToCheckSuccess(){ CheckSuccess.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
 
-    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToCheckSuccess")]
-    public List<BetterEventEntry> CheckEffectSuccess = new List<BetterEventEntry>();
-    private void AssignThisToCheckSuccess(){ CheckEffectSuccess.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
-
-    [GUIColor(0.9f, 0.9f, 0.9f)] public UnityEvent CheckRemainActive;
-    public UnityEvent OnActivate;
-    [GUIColor(0.9f, 0.9f, 0.9f)] public UnityEvent OnFailedToActivate;
-    public UnityEvent OnApply;
-    [GUIColor(0.9f, 0.9f, 0.9f)] public UnityEvent OnMoveSelected;
-    public UnityEvent OnDeactivate;
-    [GUIColor(0.9f, 0.9f, 0.9f)] public UnityEvent OnTurnStart;
-    public UnityEvent OnTurnEnd;
-    [GUIColor(0.9f, 0.9f, 0.9f)] public UnityEvent OnStack;
+    [GUIColor(0.9f, 0.9f, 0.9f)]
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToCheckRemainActive")][PropertyOrder(1)]
+    public List<BetterEventEntry> CheckRemainActive = new List<BetterEventEntry>();
+    private void AssignThisToCheckRemainActive() { CheckRemainActive.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
     
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToOnActivate")][PropertyOrder(1)]
+    public List<BetterEventEntry> OnActivate = new List<BetterEventEntry>();
+    private void AssignThisToOnActivate() { OnActivate.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
+
+    [GUIColor(0.9f, 0.9f, 0.9f)]
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToActivateFailed")][PropertyOrder(1)]
+    public List<BetterEventEntry> OnFailedToActivate = new List<BetterEventEntry>();
+    private void AssignThisToActivateFailed() { OnFailedToActivate.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
+
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToOnApply")][PropertyOrder(1)]
+    public List<BetterEventEntry> OnApply = new List<BetterEventEntry>();
+    private void AssignThisToOnApply() { OnApply.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
+
+    [GUIColor(0.9f, 0.9f, 0.9f)]
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToMoveSelected")][PropertyOrder(1)]
+    public List<BetterEventEntry> OnMoveSelected = new List<BetterEventEntry>();
+    private void AssignThisToMoveSelected() { OnMoveSelected.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
+    
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToDeactivate")][PropertyOrder(1)]
+    public List<BetterEventEntry> OnDeactivate = new List<BetterEventEntry>();
+    private void AssignThisToDeactivate() { OnDeactivate.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
+
+    [GUIColor(0.9f, 0.9f, 0.9f)]
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToTurnStart")][PropertyOrder(1)]
+    public List<BetterEventEntry> OnTurnStart = new List<BetterEventEntry>();
+    private void AssignThisToTurnStart() { OnTurnStart.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
+
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToTurnEnd")][PropertyOrder(1)]
+    public List<BetterEventEntry> OnTurnEnd = new List<BetterEventEntry>();
+    private void AssignThisToTurnEnd() { OnTurnEnd.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
+
+    [GUIColor(0.9f, 0.9f, 0.9f)]
+    [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToOnStack")][PropertyOrder(1)]
+    public List<BetterEventEntry> OnStack = new List<BetterEventEntry>();
+    private void AssignThisToOnStack() { OnStack.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
+
     public bool IsStackable() { return stackable; }
     public void ResetSuccess() { castSuccess = true; checkSuccess = true; }
 
@@ -111,7 +146,7 @@ public class Effect : ScriptableObject
     /// <summary>
     /// Empty function used for initialization
     /// </summary>
-    public void NONE() { Debug.Log("yesssssss"); }
+    public void NONE() { }
 
     /// <summary>
     /// Create an instance of this effect
@@ -154,7 +189,11 @@ public class Effect : ScriptableObject
     public void CheckForCastSuccess()
     {
         castSuccess = true;
-        CheckSuccess.Invoke();
+
+        for (int i = 0; i < CheckSuccess.Count; i++)
+        {
+            CheckSuccess[i].Invoke();
+        }
     }
 
 
@@ -164,7 +203,11 @@ public class Effect : ScriptableObject
     public void CheckForRemainActive()
     {
         castSuccess = true;
-        CheckRemainActive.Invoke();
+
+        for (int i = 0; i < CheckRemainActive.Count; i++)
+        {
+            CheckRemainActive[i].Invoke();
+        }
     }
 
 
@@ -180,102 +223,98 @@ public class Effect : ScriptableObject
     }
 
 
-    public void IsUserLastMoveSuccessful()
+    public void IsLastMoveSuccessful(EffectTarget target)
     {
-        castSuccess = !castSuccess ? false : current.user.actionResult.success;
+        if(target.Equals(EffectTarget.user))
+            castSuccess = !castSuccess ? false : current.user.actionResult.success;
+        else if (target.Equals(EffectTarget.target))
+            castSuccess = !castSuccess ? false : current.target.actionResult.success;
     }
 
 
-    public void IsUserLastMoveEqualToTarget (Spell s)
+    public void IsLastMoveEqualToTarget (EffectTarget target, Spell spell)
     {
-        castSuccess = !castSuccess ? false : s == current.user.action;
+        if (target.Equals(EffectTarget.user))
+            castSuccess = !castSuccess ? false : spell == current.user.action;
+        else if (target.Equals(EffectTarget.target))
+            castSuccess = !castSuccess ? false : spell == current.target.action;
     }
 
 
-    public void IsUserHealthAbovePercent(float percent)
+    public void IsHealthAbovePercent(EffectTarget target, float percent)
     {
         percent = Mathf.Clamp(percent, 0.0f, 1.0f);
 
-        float healthPercent = ((float)current.user.GetCurrentHP() / (float)current.user.maxHP);
-        castSuccess = !castSuccess ? false : healthPercent > percent;
+        if (target.Equals(EffectTarget.user))
+        {
+            float healthPercent = ((float)current.user.GetCurrentHP() / (float)current.user.maxHP);
+            castSuccess = !castSuccess ? false : healthPercent > percent;
+        }
+        else if (target.Equals(EffectTarget.target))
+        {
+            float healthPercent = ((float)current.target.GetCurrentHP() / (float)current.target.maxHP);
+            castSuccess = !castSuccess ? false : healthPercent > percent;
+        }
     }
 
     [TabGroup("First")]
-    public void IsCurrentMoveEqualToTarget(Spell s)
+    public void IsEffectMoveEqualToTarget(Spell spell)
     {
-        castSuccess = !castSuccess ? false : s == current.spell.spell;
+        castSuccess = !castSuccess ? false : spell == current.spell.spell;
     }
 
 
-    public void IsUserAttackNotMaxed()
+    public void IsAttackNotMaxed(EffectTarget target)
     {
-        castSuccess = !castSuccess ? false : current.user.GetAttackStage() < EntityController.STAT_STAGE_LIMIT;
+        if (target.Equals(EffectTarget.user))
+            castSuccess = !castSuccess ? false : current.user.GetAttackStage() < EntityController.STAT_STAGE_LIMIT;
+        else if (target.Equals(EffectTarget.target))
+            castSuccess = !castSuccess ? false : current.target.GetAttackStage() < EntityController.STAT_STAGE_LIMIT;
     }
 
 
-    public void IsUserAttackNotMin()
+    public void IsAttackNotMin(EffectTarget target)
     {
-        castSuccess = !castSuccess ? false : current.user.GetAttackStage() > -EntityController.STAT_STAGE_LIMIT;
+        if (target.Equals(EffectTarget.user))
+            castSuccess = !castSuccess ? false : current.user.GetAttackStage() > -EntityController.STAT_STAGE_LIMIT;
+        else if (target.Equals(EffectTarget.target))
+            castSuccess = !castSuccess ? false : current.target.GetAttackStage() > -EntityController.STAT_STAGE_LIMIT;
     }
 
 
-    public void IsTargetAttackNotMaxed()
+    public void IsDefenseNotMaxed(EffectTarget target)
     {
-        castSuccess = !castSuccess ? false : current.target.GetAttackStage() < EntityController.STAT_STAGE_LIMIT;
+        if (target.Equals(EffectTarget.user))
+            castSuccess = !castSuccess ? false : current.user.GetDefenseStage() < EntityController.STAT_STAGE_LIMIT;
+        else if (target.Equals(EffectTarget.target))
+            castSuccess = !castSuccess ? false : current.target.GetDefenseStage() < EntityController.STAT_STAGE_LIMIT;
     }
 
 
-    public void IsTargetAttackNotMin()
+    public void IsDefenseNotMin(EffectTarget target)
     {
-        castSuccess = !castSuccess ? false : current.target.GetAttackStage() > -EntityController.STAT_STAGE_LIMIT;
+        if (target.Equals(EffectTarget.user))
+            castSuccess = !castSuccess ? false : current.user.GetDefenseStage() > -EntityController.STAT_STAGE_LIMIT;
+        else if (target.Equals(EffectTarget.target))
+            castSuccess = !castSuccess ? false : current.target.GetDefenseStage() > -EntityController.STAT_STAGE_LIMIT;
     }
 
 
-    public void IsUserDefenseNotMaxed()
+    public void IsSpeedNotMaxed(EffectTarget target)
     {
-        castSuccess = !castSuccess ? false : current.user.GetDefenseStage() < EntityController.STAT_STAGE_LIMIT;
+        if (target.Equals(EffectTarget.user))
+            castSuccess = !castSuccess ? false : current.user.GetSpeedStage() < EntityController.STAT_STAGE_LIMIT;
+        else if (target.Equals(EffectTarget.target))
+            castSuccess = !castSuccess ? false : current.target.GetSpeedStage() < EntityController.STAT_STAGE_LIMIT;
     }
 
 
-    public void IsUserDefenseNotMin()
+    public void IsSpeedNotMin(EffectTarget target)
     {
-        castSuccess = !castSuccess ? false : current.user.GetDefenseStage() > -EntityController.STAT_STAGE_LIMIT;
-    }
-
-
-    public void IsTargetDefenseNotMaxed()
-    {
-        castSuccess = !castSuccess ? false : current.target.GetDefenseStage() < EntityController.STAT_STAGE_LIMIT;
-    }
-
-
-    public void IsTargetDefenseNotMin()
-    {
-        castSuccess = !castSuccess ? false : current.target.GetDefenseStage() > -EntityController.STAT_STAGE_LIMIT;
-    }
-
-
-    public void IsUserSpeedNotMaxed()
-    {
-        castSuccess = !castSuccess ? false : current.user.GetSpeedStage() < EntityController.STAT_STAGE_LIMIT;
-    }
-
-
-    public void IsUserSpeedNotMin()
-    {
-        castSuccess = !castSuccess ? false : current.user.GetSpeedStage() > -EntityController.STAT_STAGE_LIMIT;
-    }
-
-
-    public void IsTargetSpeedNotMaxed()
-    {
-        castSuccess = !castSuccess ? false : current.target.GetSpeedStage() < EntityController.STAT_STAGE_LIMIT;
-    }
-
-
-    public void IsTargetSpeedNotMin()
-    {
-        castSuccess = !castSuccess ? false : current.target.GetSpeedStage() > -EntityController.STAT_STAGE_LIMIT;
+        if (target.Equals(EffectTarget.user))
+            castSuccess = !castSuccess ? false : current.user.GetSpeedStage() > -EntityController.STAT_STAGE_LIMIT;
+        else if (target.Equals(EffectTarget.target))
+            castSuccess = !castSuccess ? false : current.target.GetSpeedStage() > -EntityController.STAT_STAGE_LIMIT;
     }
 
 
@@ -285,9 +324,12 @@ public class Effect : ScriptableObject
     }
 
 
-    public void IsUserNotAtFullHealth()
+    public void IsNotAtFullHealth(EffectTarget target)
     {
-        castSuccess = !castSuccess ? false : current.user.GetCurrentHP() < current.user.maxHP;
+        if (target.Equals(EffectTarget.target))
+            castSuccess = !castSuccess ? false : current.user.GetCurrentHP() < current.user.maxHP;
+        else if (target.Equals(EffectTarget.target))
+            castSuccess = !castSuccess ? false : current.target.GetCurrentHP() < current.target.maxHP;
     }
 
     #endregion
@@ -324,111 +366,90 @@ public class Effect : ScriptableObject
     /// <summary>
     /// Sends an Animation Sequence to the <see cref="Sequencer"/>
     /// </summary>
-    public void ApplyAnimationToUser(AnimationSequenceObject aso)
+    public void ApplyAnimation(EffectTarget target, AnimationSequenceObject animation)
     {
         if (castSuccess != checkSuccess) return;
 
-        Hero.Core.Sequence anim = new AnimationSequence(aso, current.user, current.target);
-        EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, anim);
+        if (target.Equals(EffectTarget.user))
+        {
+            Hero.Core.Sequence anim = new AnimationSequence(animation, current.user, current.target);
+            EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, anim);
+        }
+        else if (target.Equals(EffectTarget.target))
+        {
+            Hero.Core.Sequence anim = new AnimationSequence(animation, current.target, current.user);
+            EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, anim);
+        }
     }
 
 
-    /// <summary>
-    /// Sends an Animation Sequence to the <see cref="Sequencer"/>
-    /// </summary>
-    public void ApplyAnimationToTarget(AnimationSequenceObject aso)
+    public void ApplyEffect(EffectTarget target)
     {
         if (castSuccess != checkSuccess) return;
 
-        Hero.Core.Sequence anim = new AnimationSequence(aso, current.target, current.user);
-        EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, anim);
+        if(target.Equals(EffectTarget.user))
+            current.user.ApplyEffect(current);
+        else if (target.Equals(EffectTarget.target))
+            current.target.ApplyEffect(current);
     }
 
 
-    public void ApplyEffectToUser()
+    public void RemoveEffect(EffectTarget target)
+    {
+        if (castSuccess != checkSuccess) return;
+        
+        if (target.Equals(EffectTarget.user))
+            current.user.RemoveEffectNoDeactivate(current);
+        else if (target.Equals(EffectTarget.target))
+            current.target.RemoveEffectNoDeactivate(current);
+    }
+
+
+    public void RemoveAndDeactivateEffect(EffectTarget target)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.ApplyEffect(current);
+        if (target.Equals(EffectTarget.user))
+            current.user.RemoveEffect(current);
+        else if (target.Equals(EffectTarget.target))
+            current.target.RemoveEffect(current);
     }
 
 
-    public void RemoveEffectFromUser()
+    public void RemoveEffect(EffectTarget target, string name)
+    {
+
+    }
+
+
+    public void ApplyProperty(EffectTarget target, Effect property)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.RemoveEffectNoDeactivate(current);
+        if (target.Equals(EffectTarget.user))
+        {
+            EffectInstance eff = property.CreateEffectInstance(current.user, current.target, current.spell);
+            eff.numTurnsActive = current.numTurnsActive;
+            current.user.AddProperty(eff);
+        }
+        else if (target.Equals(EffectTarget.target))
+        {
+            EffectInstance eff = property.CreateEffectInstance(current.target, current.user, current.spell);
+            eff.numTurnsActive = current.numTurnsActive;
+            current.target.AddProperty(eff);
+        }
+
     }
 
 
-    public void RemoveAndDeactivateEffectFromUser()
+    public void ReplaceAction(EffectTarget target, Spell action)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.RemoveEffect(current);
-    }
-
-
-    public void RemoveEffectFromUser(string name)
-    {
-
-    }
-
-
-    public void ApplyEffectToTarget()
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.target.ApplyEffect(current);
-    }
-
-
-    public void RemoveEffectFromTarget()
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.target.RemoveEffectNoDeactivate(current);
-    }
-
-
-    public void RemoveAndDeactivateEffectFromTarget()
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.target.RemoveEffect(current);
-    }
-
-
-
-    public void RemoveEffectFromTarget(string name)
-    {
-
-    }
-
-
-    public void ApplyPropertyToUser(Effect property)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        EffectInstance eff = property.CreateEffectInstance(current.user, current.target, current.spell);
-        eff.numTurnsActive = current.numTurnsActive;
-        current.user.AddProperty(eff);
-    }
-
-
-    public void ReplaceUserAction(Spell action)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.user.SetAction(action);
-    }
-
-
-    public void ReplaceTargetAction(Spell action)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.target.SetAction(action);
+        if(target.Equals(EffectTarget.user))
+            current.user.SetAction(action);
+        else if (target.Equals(EffectTarget.target))
+            current.target.SetAction(action);
     }
 
 
@@ -462,238 +483,161 @@ public class Effect : ScriptableObject
     #region MP/HP Manipulation
 
 
-    public void ModifyUserHPFromPercentOfHP(float percent)
+    public void ModifyHPFromPercentOfHP(EffectTarget target, float percent)
     {
         percent = Mathf.Clamp(percent, 0, 100);
+        int amt = 0;
 
-        int amt = Mathf.RoundToInt(((float)current.user.maxHP) * percent);
+        if (target.Equals(EffectTarget.user))
+        {
+            amt = Mathf.RoundToInt(((float)current.user.maxHP) * percent);
+            current.user.ApplyDamage(-amt, false, false);
+        }
+        else if (target.Equals(EffectTarget.target))
+        {
+            amt = Mathf.RoundToInt(((float)current.target.maxHP) * percent);
+            current.target.ApplyDamage(-amt, false, false);
+        }
 
-        current.user.ApplyDamage(-amt, false, false);
     }
 
 
-    public void ModifyUserMPFromDamageDealt(string s)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        string[] param = s.Split(',');
-        ModifyUserMPFromDamageDealt(float.Parse(param[0]), int.Parse(param[1]), int.Parse(param[2]));
-    }
-
-
-    public void ModifyUserMPFromDamageDealt(float modifier, int min, int max)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        int damage = current.spell.GetDamageApplied();
-        damage = (int)(((float)damage) * modifier);
-
-        damage = Mathf.Clamp(damage, min, max);
-        current.user.ModifyMP(damage);
-    }
-
-
-    public void ModifyTargetMPFromDamageDealt(string s)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        string[] param = s.Split(',');
-        ModifyTargetMPFromDamageDealt(float.Parse(param[0]), int.Parse(param[1]), int.Parse(param[2]));
-    }
-
-
-    public void ModifyTargetMPFromDamageDealt(float modifier, int min, int max)
+    public void ModifyMPFromDamageDealt(EffectTarget target, float modifier, int min, int max)
     {
         if (castSuccess != checkSuccess) return;
 
         int damage = current.spell.GetDamageApplied();
         damage = (int)(((float)damage) * modifier);
-
         damage = Mathf.Clamp(damage, min, max);
-        current.target.ModifyMP(damage);
+
+        if (target.Equals(EffectTarget.user))
+            current.user.ModifyMP(damage);
+        else if (target.Equals(EffectTarget.target))
+            current.target.ModifyMP(damage);
     }
 
 
-    public void ModifyUserMPFromDamageTaken(string s)
+    public void ModifyMPFromDamageTaken(EffectTarget target, float modifier, int min, int max)
     {
         if (castSuccess != checkSuccess) return;
 
-        string[] param = s.Split(',');
-        ModifyUserMPFromDamageTaken(float.Parse(param[0]), int.Parse(param[1]), int.Parse(param[2]));
+        if (target.Equals(EffectTarget.user))
+        {
+            int damage = current.user.damageTaken;
+            damage = (int)(((float)damage) * modifier);
+            damage = Mathf.Clamp(damage, min, max);
+            current.user.ModifyMP(damage);
+        }
+        else if (target.Equals(EffectTarget.target))
+        {
+            int damage = current.target.damageTaken;
+            damage = (int)(((float)damage) * modifier);
+            damage = Mathf.Clamp(damage, min, max);
+            current.target.ModifyMP(damage);
+        }
     }
 
-
-    public void ModifyUserMPFromDamageTaken(float modifier, int min, int max)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        int damage = current.user.damageTaken;
-        damage = (int)(((float)damage) * modifier);
-
-        damage = Mathf.Clamp(damage, min, max);
-        current.user.ModifyMP(damage);
-    }
-
-
-    public void ModifyTargetMPFromDamageTaken(string s)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        string[] param = s.Split(',');
-        ModifyTargetMPFromDamageTaken(float.Parse(param[0]), int.Parse(param[1]), int.Parse(param[2]));
-    }
-
-
-    public void ModifyTargetMPFromDamageTaken(float modifier, int min, int max)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        int damage = current.target.damageTaken;
-        damage = (int)(((float)damage) * modifier);
-
-        damage = Mathf.Clamp(damage, min, max);
-        current.target.ModifyMP(damage);
-    }
 
     #endregion
 
     #region Stat Modifiers
 
-    public void ApplyOffenseModifierToUser(float amt)
+    public void ApplyOffenseModifier(EffectTarget target, float amt)
     {
 
     }
 
 
-    public void RemoveOffenseModifierFromUser()
+    public void RemoveOffenseModifier(EffectTarget target)
     {
 
     }
 
 
-    public void RemoveOffenseModifierFromUser(string name)
+    public void RemoveOffenseModifier(EffectTarget target, string name)
     {
 
     }
 
 
-    public void ApplyOffenseModifierToTarget(float amt)
-    {
-
-    }
-
-
-    public void RemoveOffenseModifierFromTarget()
-    {
-
-    }
-
-
-    public void RemoveOffenseModifierFromTarget(string name)
-    {
-
-    }
-
-
-    public void ApplyDefenseModifierToUser(float amt)
+    public void ApplyDefenseModifier(EffectTarget target, float amt)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.AddDefenseModifier(amt, GetName());
+        if (target.Equals(EffectTarget.user))
+            current.user.AddDefenseModifier(amt, GetName());
+        else if(target.Equals(EffectTarget.target))
+            current.target.AddDefenseModifier(amt, GetName());
     }
 
 
-    public void RemoveDefenseModifierFromUser()
+    public void RemoveDefenseModifier(EffectTarget target)
+    {
+        if (castSuccess != checkSuccess) return;
+        
+        if (target.Equals(EffectTarget.user))
+            current.user.RemoveDefenseModifier(GetName());
+        else if (target.Equals(EffectTarget.target))
+            current.target.RemoveDefenseModifier(GetName());
+    }
+
+
+    public void RemoveDefenseModifier(EffectTarget target, string name)
+    {
+        if (castSuccess != checkSuccess) return;
+        
+        if (target.Equals(EffectTarget.user))
+            current.user.RemoveDefenseModifier(name);
+        else if (target.Equals(EffectTarget.target))
+            current.target.RemoveDefenseModifier(name);
+    }
+
+
+    public void ApplySpeedModifier(EffectTarget target, float amt)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.RemoveDefenseModifier(GetName());
+        if(target.Equals(EffectTarget.user))
+            current.user.AddSpeedModifier(amt, GetName());
+        else if(target.Equals(EffectTarget.target))
+            current.target.AddSpeedModifier(amt, GetName());
     }
 
 
-    public void RemoveDefenseModifierFromUser(string name)
+    public void RemoveSpeedModifier(EffectTarget target)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.RemoveDefenseModifier(name);
+        if (target.Equals(EffectTarget.user))
+            current.user.RemoveSpeedModifier(GetName());
+        else if (target.Equals(EffectTarget.target))
+            current.target.RemoveSpeedModifier(GetName());
     }
 
 
-    public void ApplyDefenseModifierToTarget(float amt)
-    {
-
-    }
-
-
-    public void RemoveDefenseModifierFromTarget()
-    {
-
-    }
-
-
-    public void RemoveDefenseModifierFromTarget(string name)
-    {
-
-    }
-
-
-    public void ApplySpeedModifierToUser(float amt)
+    public void RemoveSpeedModifier(EffectTarget target, string name)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.AddSpeedModifier(amt, GetName());
+        if (target.Equals(EffectTarget.user))
+            current.user.RemoveSpeedModifier(name);
+        else if (target.Equals(EffectTarget.target))
+            current.target.RemoveSpeedModifier(name);
     }
 
 
-    public void RemoveSpeedModifierFromUser()
+    public void ApplyAccuracyModifier(EffectTarget target, float amt)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.RemoveSpeedModifier(GetName());
+        if (target.Equals(EffectTarget.user))
+            current.user.AddAccuracyModifier(amt, GetName());
+        else if (target.Equals(EffectTarget.target))
+            current.target.AddAccuracyModifier(amt, GetName());
     }
 
 
-    public void RemoveSpeedModifierFromUser(string name)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.user.RemoveSpeedModifier(name);
-    }
-
-
-    public void ApplySpeedModifierToTarget(float amt)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.target.AddSpeedModifier(amt, GetName());
-    }
-
-
-    public void RemoveSpeedModifierFromTarget()
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.target.RemoveSpeedModifier(GetName());
-    }
-
-
-    public void RemoveSpeedModifierFromTarget(string name)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.target.RemoveSpeedModifier(name);
-    }
-
-
-    public void ApplyAccuracyModifierToUser(float amt)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.user.AddAccuracyModifier(amt, GetName());
-    }
-
-
-    public void ApplyAttackAccuracyModifierToUser(float amt)
+    public void ApplyAttackAccuracyModifier(EffectTarget target, float amt)
     {
         if (castSuccess != checkSuccess) return;
 
@@ -702,71 +646,66 @@ public class Effect : ScriptableObject
         for (int i = 0; i < current.numTurnsActive; i++)
             result *= amt;
 
-        current.user.AddAccuracyModifier(result, GetName());
+        if (target.Equals(EffectTarget.user))
+            current.user.AddAccuracyModifier(result, GetName());
+        else if (target.Equals(EffectTarget.target))
+            current.target.AddAccuracyModifier(result, GetName());
     }
 
 
-    public void RemoveAccuracyModifierFromUser()
+    public void RemoveAccuracyModifier(EffectTarget target)
     {
         if (castSuccess != checkSuccess) return;
 
+        if (target.Equals(EffectTarget.user))
+            current.user.RemoveAccuracyModifier(GetName());
+        else if (target.Equals(EffectTarget.target))
+            current.target.RemoveAccuracyModifier(GetName());
         current.user.RemoveAccuracyModifier(GetName());
     }
 
 
-    public void RemoveAccuracyModifierFromUser(string name)
+    public void RemoveAccuracyModifier(EffectTarget target, string name)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.RemoveAccuracyModifier(name);
+        if (target.Equals(EffectTarget.user))
+            current.user.RemoveAccuracyModifier(name);
+        else if (target.Equals(EffectTarget.target))
+            current.target.RemoveAccuracyModifier(name);
     }
 
 
-    public void ChangeUserAttackStage(int amt)
+    public void ChangeAttackStage(EffectTarget target, int amt)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.user.ChangeAttackModifier(amt);
+        if (target.Equals(EffectTarget.user))
+            current.user.ChangeAttackModifier(amt);
+        else if (target.Equals(EffectTarget.target))
+            current.target.ChangeAttackModifier(amt);
     }
 
 
-    public void ChangeTargetAttackStage(int amt)
+    public void ChangeDefenseStage(EffectTarget target, int amt)
     {
         if (castSuccess != checkSuccess) return;
 
-        current.target.ChangeAttackModifier(amt);
+        if (target.Equals(EffectTarget.user))
+            current.user.ChangeDefenseModifier(amt);
+        else if (target.Equals(EffectTarget.target))
+            current.target.ChangeDefenseModifier(amt);
     }
 
 
-    public void ChangeUserDefenseStage(int amt)
+    public void ChangeSpeedStage(EffectTarget target, int amt)
     {
         if (castSuccess != checkSuccess) return;
-
-        current.user.ChangeDefenseModifier(amt);
-    }
-
-
-    public void ChangeTargetDefenseStage(int amt)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.target.ChangeDefenseModifier(amt);
-    }
-
-
-    public void ChangeUserSpeedStage(int amt)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.user.ChangeSpeedModifier(amt);
-    }
-
-
-    public void ChangeTargetSpeedStage(int amt)
-    {
-        if (castSuccess != checkSuccess) return;
-
-        current.target.ChangeSpeedModifier(amt);
+        
+        if (target.Equals(EffectTarget.user))
+            current.user.ChangeSpeedModifier(amt);
+        else if (target.Equals(EffectTarget.target))
+            current.target.ChangeSpeedModifier(amt);
     }
 
     #endregion
@@ -800,7 +739,6 @@ public class EffectInstance: IComparable<EffectInstance>
     {
         effect.current = this;
         effect.CheckForCastSuccess();
-        Invoke(effect.CheckEffectSuccess);
         castSuccess = effect.castSuccess;
     }
 
@@ -822,7 +760,7 @@ public class EffectInstance: IComparable<EffectInstance>
         {
             effect.current = this;
             effect.ResetSuccess();
-            effect.OnActivate.Invoke();
+            Invoke(effect.OnActivate);
         }
     }
 
@@ -831,7 +769,7 @@ public class EffectInstance: IComparable<EffectInstance>
     {
         effect.current = this;
         effect.ResetSuccess();
-        effect.OnFailedToActivate.Invoke();
+        Invoke(effect.OnFailedToActivate);
     }
 
 
@@ -841,7 +779,7 @@ public class EffectInstance: IComparable<EffectInstance>
         {
             effect.current = this;
             effect.ResetSuccess();
-            effect.OnApply.Invoke();
+            Invoke(effect.OnApply);
         }
     }
 
@@ -850,7 +788,7 @@ public class EffectInstance: IComparable<EffectInstance>
     {
         effect.current = this;
         effect.ResetSuccess();
-        effect.OnDeactivate.Invoke();
+        Invoke(effect.OnDeactivate);
     }
 
 
@@ -860,7 +798,7 @@ public class EffectInstance: IComparable<EffectInstance>
         {
             effect.current = this;
             effect.ResetSuccess();
-            effect.OnTurnStart.Invoke();
+            Invoke(effect.OnTurnStart);
         }
     }
 
@@ -871,7 +809,7 @@ public class EffectInstance: IComparable<EffectInstance>
         {
             effect.current = this;
             effect.ResetSuccess();
-            effect.OnMoveSelected.Invoke();
+            Invoke(effect.OnMoveSelected);
         }
     }
 
@@ -882,7 +820,7 @@ public class EffectInstance: IComparable<EffectInstance>
         {
             effect.current = this;
             effect.ResetSuccess();
-            effect.OnTurnEnd.Invoke();
+            Invoke(effect.OnTurnEnd);
         }
     }
 
@@ -893,7 +831,7 @@ public class EffectInstance: IComparable<EffectInstance>
         {
             effect.current = this;
             effect.ResetSuccess();
-            effect.OnStack.Invoke();
+            Invoke(effect.OnStack);
         }
     }
 

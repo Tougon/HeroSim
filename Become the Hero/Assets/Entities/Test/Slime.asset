@@ -20,7 +20,7 @@ MonoBehaviour:
     entityMP: 50
     entityAtk: 50
     entityDef: 50
-    entitySpeed: 50
+    entitySpeed: 100
     entitySprite: {fileID: 21300000, guid: b9f986420e1fced479e9f242271f751f, type: 3}
     entityDescription: It's a bad redraw of the famous Smushie from the hit PC game,
       Smush. Available Now!
