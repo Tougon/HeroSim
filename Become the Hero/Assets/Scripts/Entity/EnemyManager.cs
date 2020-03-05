@@ -24,6 +24,34 @@ public class EnemyManager : ScriptableObject
     }
 
 
+    public void AddNewEnemy(Entity entity, int odds)
+    {
+        enemyOdds.Add(new EnemyOdds(entity, odds));
+    }
+
+
+    public EnemyOdds GetEnemy(Entity e)
+    {
+        foreach(var odds in enemyOdds)
+        {
+            if (odds.enemy == e)
+                return odds;
+        }
+
+        return null;
+    }
+
+
+    public void UpdateEnemy(Entity e, int newOdds)
+    {
+        foreach (var odds in enemyOdds)
+        {
+            if (odds.enemy == e)
+                odds.relativeOdds = newOdds;
+        }
+    }
+
+
     #region On Enable
     /// <summary>
     /// Populate the enemy list
@@ -60,4 +88,10 @@ public class EnemyOdds
     public Entity enemy;
     [Range(1, 100)]
     public int relativeOdds = 1;
+
+    public EnemyOdds(Entity e, int o)
+    {
+        enemy = e;
+        relativeOdds = o;
+    }
 }

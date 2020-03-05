@@ -11,7 +11,7 @@ public class SpellEditor : OdinMenuEditorWindow
     private CreateNewSpell createNewSpell;
     private CreateEffectPopup createNewEffect;
     
-    [MenuItem("Tools/Spell Editor")]
+    [MenuItem("Tools/Spell Editor", false, 5)]
     private static void OpenWindow()
     {
         GetWindow<SpellEditor>().Show();
@@ -53,6 +53,13 @@ public class SpellEditor : OdinMenuEditorWindow
             if(SirenixEditorGUI.ToolbarButton("Delete Current"))
             {
                 Spell asset = selected.SelectedValue as Spell;
+
+                if (asset == null)
+                {
+                    this.ShowNotification(new GUIContent("Spell does not exist!"), 1.5f);
+                    return;
+                }
+
                 string path = AssetDatabase.GetAssetPath(asset);
 
                 AssetDatabase.DeleteAsset(path);
