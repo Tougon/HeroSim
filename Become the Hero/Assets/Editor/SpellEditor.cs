@@ -37,7 +37,7 @@ public class SpellEditor : OdinMenuEditorWindow
     protected override void OnBeginDrawEditors()
     {
         base.OnBeginDrawEditors();
-
+        
         OdinMenuTreeSelection selected = this.MenuTree.Selection;
 
         SirenixEditorGUI.BeginHorizontalToolbar();
@@ -80,9 +80,9 @@ public class SpellEditor : OdinMenuEditorWindow
                     !SpellEditorUtilities.CheckIfAssetExists(createNewSpell.spell.spellFamily.name, "Assets/Spells/Families/"))
                 DestroyImmediate(createNewSpell.spell.spellFamily);
 
-            if (createNewSpell.spell.spellAnimation != null &&
-                    !SpellEditorUtilities.CheckIfAssetExists(createNewSpell.spell.spellAnimation.name, "Assets/Spells/" +
-                    SpellEditorUtilities.currentPath + "/"))
+            if (createNewSpell.spell.spellAnimation != null && !SpellEditorUtilities.DoesAssetExist(createNewSpell.spell.spellAnimation) &&
+                    (!SpellEditorUtilities.CheckIfAssetExists(createNewSpell.spell.spellAnimation.name, "Assets/Spells/" +
+                    SpellEditorUtilities.currentPath + "/")))
                 DestroyImmediate(createNewSpell.spell.spellAnimation);
             
             if(createNewSpell.spell.spellEffects != null)
@@ -160,7 +160,9 @@ public class SpellEditor : OdinMenuEditorWindow
         [Button("Create New Spell", ButtonSizes.Large)]
         public void Create()
         {
-            SpellEditorUtilities.CreateAsset(spell, parent + "/" + path + "/" + spell.spellName.Trim());
+            string finalPath = path.Trim().Equals("") ? parent : parent + "/" + path;
+
+            SpellEditorUtilities.CreateAsset(spell, finalPath, spell.spellName.Trim());
 
             // Reset
             ResetWindow();
@@ -208,8 +210,9 @@ public class SpellEditor : OdinMenuEditorWindow
                 showError = true;
                 return false;
             }
-            else if (spell.spellAnimation != null && !SpellEditorUtilities.CheckIfAssetExists
-                (spell.spellAnimation.name, "Assets/Spells/" + SpellEditorUtilities.currentPath + "/"))
+            else if (spell.spellAnimation != null && (!SpellEditorUtilities.DoesAssetExist(spell.spellAnimation) &&
+                !SpellEditorUtilities.CheckIfAssetExists
+                (spell.spellAnimation.name, "Assets/Spells/" + SpellEditorUtilities.currentPath + "/")))
             {
                 errorMessage += "\nSpell's animation does not exist in assets. Click Create to create it.";
                 showError = true;
@@ -312,7 +315,7 @@ public class CreateEffectPopup : PopupWindowContent
             if (GUILayout.Button("Create"))
             {
                 SpellEditorUtilities.CreateAsset(ScriptableObject.CreateInstance<Effect>(), 
-                    "Assets/Spells/Common/Effects/" + (effectName.Replace(" ", "")));
+                    "Assets/Spells/Common/Effects", (effectName.Replace(" ", "")));
 
                 this.editorWindow.Close();
             }

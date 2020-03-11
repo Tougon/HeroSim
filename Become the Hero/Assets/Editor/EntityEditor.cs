@@ -130,7 +130,9 @@ public class EntityEditor : OdinMenuEditorWindow
         [Button("Create New Entity", ButtonSizes.Large)]
         public void Create()
         {
-            SpellEditorUtilities.CreateAsset(entity, parent + "/" + path + "/" + entity.vals.entityName.Trim());
+            string finalPath = path.Trim().Equals("") ? parent : parent + "/" + path;
+
+            SpellEditorUtilities.CreateAsset(entity, finalPath, entity.vals.entityName.Trim());
 
             // Reset
             ResetWindow();

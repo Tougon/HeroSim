@@ -75,7 +75,7 @@ public class Effect : ScriptableObject
         else
         {
             SpellEditorUtilities.CreateAsset(display,
-                "Assets/UI/EffectDisplay/" + this.effectName.Replace(" ", "") + "Display");
+                "Assets/UI/EffectDisplay", this.effectName.Replace(" ", "") + "Display");
             display = null;
             effectDisplayButtonName = "Create New Effect Display";
         }

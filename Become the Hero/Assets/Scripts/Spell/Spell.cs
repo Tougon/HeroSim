@@ -49,7 +49,7 @@ public class Spell : ScriptableObject
         else
         {
             SpellEditorUtilities.CreateAsset(spellFamily, 
-                "Assets/Spells/Families/" + spellFamily.familyName.Replace("Family", "").Replace(" ", "") + "Family");
+                "Assets/Spells/Families", spellFamily.familyName.Replace("Family", "").Replace(" ", "") + "Family");
             spellFamily = null;
             spellFamilyButtonName = "Create New Spell Family";
         }
@@ -95,19 +95,19 @@ public class Spell : ScriptableObject
 
             if(animPath != "")
             {
-                animPath = animPath.Replace(this.name + ".asset", "") + spellAnimation.animationName.Replace(" ", "");
-                Debug.Log(animPath);
-                SpellEditorUtilities.CreateAsset(spellAnimation, animPath + "Anim");
-                SpellEditorUtilities.CreateTextFile(animPath + "AnimScript");
+                animPath = animPath.Replace(this.name + ".asset", "");
+                animPath = animPath.Substring(0, animPath.LastIndexOf("/"));
+                SpellEditorUtilities.CreateAsset(spellAnimation, animPath, spellAnimation.animationName.Replace(" ", "") + "Anim");
+                SpellEditorUtilities.CreateTextFile(animPath + "/" + spellAnimation.animationName.Replace(" ", "") + "AnimScript");
             }
             else
             {
-                string slash = SpellEditorUtilities.currentPath == "" ? "" : "/";
-                string output = "Assets/Spells/" + 
-                    SpellEditorUtilities.currentPath + slash + spellAnimation.animationName.Replace(" ", "") + "Anim";
-                Debug.Log(output);
-                SpellEditorUtilities.CreateAsset(spellAnimation, output);
-                SpellEditorUtilities.CreateTextFile(output + "Script");
+                string slash = SpellEditorUtilities.currentPath == "" ? "" : "/" + SpellEditorUtilities.currentPath;
+                string output = "Assets/Spells" + slash;
+
+                SpellEditorUtilities.CreateAsset(spellAnimation, output,
+                    spellAnimation.animationName.Replace(" ", "") + "Anim");
+                SpellEditorUtilities.CreateTextFile(output + spellAnimation.animationName.Replace(" ", "") + "AnimScript");
             }
 
             spellAnimation = null;

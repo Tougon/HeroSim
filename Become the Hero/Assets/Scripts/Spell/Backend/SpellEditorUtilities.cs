@@ -38,22 +38,21 @@ namespace Hero.SpellEditor
         }
 
 
-        public static void CreateAsset(Object asset, string path)
+        public static void CreateAsset(Object asset, string path, string fileName)
         {
             #if UNITY_EDITOR
-            
-            if (!AssetDatabase.IsValidFolder(path.Substring(0, path.LastIndexOf("/"))))
+
+            Debug.Log(path);
+            if (!AssetDatabase.IsValidFolder(path))
             {
-                int end = path.LastIndexOf("/");
-                string temp = path.Substring(0, end);
-                int start = temp.LastIndexOf("/");
-                
-                string folderName = path.Substring(start + 1, (end - start) - 1);
-                string newPath = path.Substring(0, start);
+                Debug.Log("Making Path");
+
+                string folderName = path.Substring(path.LastIndexOf("/")+1);
+                string newPath = path.Substring(0, path.LastIndexOf("/"));
                 AssetDatabase.CreateFolder(newPath, folderName);
             }
             
-            AssetDatabase.CreateAsset(asset, path + ".asset");
+            AssetDatabase.CreateAsset(asset, path + "/" + fileName + ".asset");
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
