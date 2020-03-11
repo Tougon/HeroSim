@@ -1,1 +1,10 @@
-1|TerminateAnimation
+1|Color|Target,1, 0.4375, 0.45, 0.105, 1.0, 0.0
+21|GenerateEffect|Effect/Common/Lightning,Target,0.0,5.0,-3.0,5.0,2.0,2.0,true,false,0,0,0
+27|ApplyDamage|true
+27|Color|Target,30, 0.875, 0.9, 0.105, 1.0, 0.75
+27|GenerateEffect|Effect/Common/Shocked,Target,0.0,0.0,0.0,1.0,1.0,1.0,true,false,0,0,0
+27|UpdateHPUI|Target
+81|TerminateEffect|0
+90|Color|Target,13, 0.875, 0.9, 0.105, 1.0, 0.0
+109|TerminateEffect|1
+115|TerminateAnimation

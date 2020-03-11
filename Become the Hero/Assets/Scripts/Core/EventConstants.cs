@@ -25,6 +25,7 @@ public static class EventConstants
     public const string BEGIN_TRANSITION_OUT = "BeginTransitionOut";
     public const string ON_TRANSITION_OUT_COMPLETE = "OnTransitionOutComplete";
     public const string HIDE_UI = "HideUI";
+    public const string RESET_BACKGROUND_COLOR = "ResetBackgroundColor";
     #endregion
 
     #region Bool Event Constants
@@ -37,6 +38,14 @@ public static class EventConstants
 
     #region String Event Constants
     public const string ON_DIALOGUE_QUEUE = "OnDialogueQueue";
+    #endregion
+
+    #region Vector2 Event Constants
+    public const string START_BACKGROUND_FADE = "StartBackgroundFade";
+    #endregion
+
+    #region Vector3 Event Constants
+    public const string SET_BACKGROUND_COLOR = "SetBackgroundColor";
     #endregion
 
     #region GameObject Event Constants

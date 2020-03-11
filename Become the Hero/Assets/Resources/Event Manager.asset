@@ -28,11 +28,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2a98b48dd76e99b43a7299d38bbac8a5, type: 2}
   - {fileID: 11400000, guid: 6d9dcd561098c184780c6bc7bc99263c, type: 2}
   - {fileID: 11400000, guid: b001b640a055d024bbfdc607ca271e3c, type: 2}
+  - {fileID: 11400000, guid: 3fd98630bb3f1424e87e7629bb952131, type: 2}
   boolEvents: []
   intEvents:
   - {fileID: 11400000, guid: d798f78b05bc05547b4eb1116a43a4cd, type: 2}
   stringEvents:
   - {fileID: 11400000, guid: cdd0cbf797edc8447ade98e44d354157, type: 2}
+  vector2Events:
+  - {fileID: 11400000, guid: 39c16dde0102cc943af3154755cd20e9, type: 2}
+  vector3Events:
+  - {fileID: 11400000, guid: b7a74d3a22f2e6e4eab0b82e5a9014d9, type: 2}
   gameObjectEvents:
   - {fileID: 11400000, guid: a64da83bb5bd2ca44978baf187d3c9b9, type: 2}
   entityControllerEvents:

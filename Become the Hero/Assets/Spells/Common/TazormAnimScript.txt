@@ -1,0 +1,26 @@
+1|Color|Target,1, 0.4375, 0.45, 0.105, 1.0, 0.0
+1|ChangeBGColor|0.15, 0.15, 0.15
+1|StartBGFade|0.85, 55
+61|GenerateEffect|Effect/Common/Lightning,Target,-1.75,5.0,-3.0,5.0,2.0,2.0,true,false,0,0,0
+75|TerminateEffect|0
+76|GenerateEffect|Effect/Common/Lightning,Target,1.15,5.0,-3.0,5.0,2.0,2.0,true,false,0,0,0
+90|TerminateEffect|1
+91|GenerateEffect|Effect/Common/Lightning,Target,0.66,5.0,4.0,5.0,2.0,2.0,true,false,0,0,0
+105|TerminateEffect|2
+105|GenerateEffect|Effect/Common/Electric_Shock_Weak,Target,0.0,5.0,0.0,2.0,2.0,2.0,true,false,0,0,0
+116|GenerateEffect|Effect/Common/LightningMid,Target,0.0,5.0,-3.0,5.0,2.0,2.0,true,false,0,0,0
+122|ApplyDamage|true
+122|UpdateHPUI|Target
+122|Color|Target,30, 0.0, 0.0, 0.105, 1.0, 0.75
+122|GenerateEffect|Effect/Common/Electric_Shock_Weak,Target,0.0,0.0,0.0,1.2,1.2,1.2,true,false,0,0,0
+130|GenerateEffect|Effect/Common/Shocked,Target,0.0,0.0,0.0,1.0,1.0,1.0,true,false,0,0,0
+133|GenerateEffect|Effect/Common/Shocked,Target,0.0,0.0,0.0,1.0,1.0,1.0,true,false,0,0,0
+154|TerminateEffect|3
+154|TerminateEffect|4
+162|Color|Target,13, 0.0, 0.0, 0.0, 1.0, 0.0
+164|StartBGFade|0.0, 55
+184|TerminateEffect|5
+199|TerminateEffect|6
+199|TerminateEffect|8
+199|ResetBGColor
+200|TerminateAnimation

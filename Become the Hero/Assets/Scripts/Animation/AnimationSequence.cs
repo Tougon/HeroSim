@@ -17,7 +17,7 @@ public class AnimationSequence : Hero.Core.Sequence
     {
         public enum Action { ChangeUserAnimation, ChangeTargetAnimation, TerminateAnimation, GenerateEffect, TerminateEffect,
             Move, Rotate, Scale, Color, Vibrate, ChangeAnimationSpeed, ChangeAnimationState, PlaySound, BeginLoop, EndLoop, ApplyDamage,
-            UpdateHPUI, UpdateMPUI, SetOverlayTexture, SetOverlayAnimation }
+            UpdateHPUI, UpdateMPUI, SetOverlayTexture, SetOverlayAnimation, ChangeBGColor, StartBGFade, ResetBGColor }
 
         public int frame;
         public Action action;
@@ -516,6 +516,24 @@ public class AnimationSequence : Hero.Core.Sequence
                 eOA.SetOverlayTween(float.Parse(ovlAnimVals[1].Trim()), 
                     new Vector2(float.Parse(ovlAnimVals[2].Trim()), float.Parse(ovlAnimVals[3].Trim())),
                     float.Parse(ovlAnimVals[4].Trim()) / 60.0f);
+                break;
+
+            case AnimationSequenceAction.Action.ChangeBGColor:
+                // Split the param
+                string[] bgColVals = param.Split(',');
+                EventManager.Instance.RaiseVector3Event(EventConstants.SET_BACKGROUND_COLOR,
+                    new Vector3(float.Parse(bgColVals[0]), float.Parse(bgColVals[1]), float.Parse(bgColVals[2])));
+                break;
+
+            case AnimationSequenceAction.Action.StartBGFade:
+                // Split the param
+                string[] bgFadeVals = param.Split(',');
+                EventManager.Instance.RaiseVector2Event(EventConstants.START_BACKGROUND_FADE,
+                    new Vector2(float.Parse(bgFadeVals[0]), float.Parse(bgFadeVals[1]) / 60.0f));
+                break;
+
+            case AnimationSequenceAction.Action.ResetBGColor:
+                EventManager.Instance.RaiseGameEvent(EventConstants.RESET_BACKGROUND_COLOR);
                 break;
 
             case AnimationSequenceAction.Action.TerminateAnimation:

@@ -107,7 +107,7 @@ public class Spell : ScriptableObject
 
                 SpellEditorUtilities.CreateAsset(spellAnimation, output,
                     spellAnimation.animationName.Replace(" ", "") + "Anim");
-                SpellEditorUtilities.CreateTextFile(output + spellAnimation.animationName.Replace(" ", "") + "AnimScript");
+                SpellEditorUtilities.CreateTextFile(output + "/" + spellAnimation.animationName.Replace(" ", "") + "AnimScript");
             }
 
             spellAnimation = null;
@@ -152,6 +152,8 @@ public class Spell : ScriptableObject
     [PropertyOrder(10)] public List<Effect> spellProperties = new List<Effect>(); // Used to modify the damage roll
 
     #endregion
+
+
 
     /// <summary>
     /// Returns an instance of this spell using the spell data to calculate damage and effects

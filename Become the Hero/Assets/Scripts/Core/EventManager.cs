@@ -38,6 +38,16 @@ public class EventManager : ScriptableObject
     private List<StringGameEvent> stringEvents;
 
     [SerializeField]
+    [Header("String Events")]
+    [Tooltip("Add all Vector2 Events to this list.")]
+    private List<Vector2GameEvent> vector2Events;
+
+    [SerializeField]
+    [Header("String Events")]
+    [Tooltip("Add all Vector3 Events to this list.")]
+    private List<Vector3GameEvent> vector3Events;
+
+    [SerializeField]
     [Header("Game Object Events")]
     [Tooltip("Add all Game Object Events to this list.")]
     private List<GameObjectGameEvent> gameObjectEvents;
@@ -72,6 +82,8 @@ public class EventManager : ScriptableObject
     private Dictionary<string, BoolGameEvent> boolEventMap;
     private Dictionary<string, IntGameEvent> intEventMap;
     private Dictionary<string, StringGameEvent> stringEventMap;
+    private Dictionary<string, Vector2GameEvent> vector2EventMap;
+    private Dictionary<string, Vector3GameEvent> vector3EventMap;
     private Dictionary<string, GameObjectGameEvent> gameObjectEventMap;
     private Dictionary<string, EntityControllerGameEvent> entityControllerEventMap;
     private Dictionary<string, SequenceGameEvent> sequenceEventMap;
@@ -147,7 +159,7 @@ public class EventManager : ScriptableObject
     /// <param name="value">The string value the event is passing in with.</param>
     public void RaiseStringEvent(string eventName, string value)
     {
-        //Raise the Int event if not null, else print an error.
+        //Raise the String event if not null, else print an error.
         StringGameEvent stringEvent = this.GetStringEvent(eventName);
         if (!stringEvent)
         {
@@ -156,6 +168,48 @@ public class EventManager : ScriptableObject
         else
         {
             this.GetStringEvent(eventName).Raise(value);
+        }
+    }
+
+
+    /// <summary>
+    /// Raises the passed in <see cref="Vector2GameEvent"/>, after confirming
+    /// the name is valid.
+    /// </summary>
+    /// <param name="eventName">The name of the event.</param>
+    /// <param name="value">The Vector2 value the event is passing in with.</param>
+    public void RaiseVector2Event(string eventName, Vector2 value)
+    {
+        //Raise the Vector2 event if not null, else print an error.
+        Vector2GameEvent vector2Event = this.GetVector2Event(eventName);
+        if (!vector2Event)
+        {
+            //Debug.LogError("ERROR: Invalid String Event name: " + eventName + ". Double check Event Constants/your spelling.");
+        }
+        else
+        {
+            vector2Event.Raise(value);
+        }
+    }
+
+
+    /// <summary>
+    /// Raises the passed in <see cref="Vector3GameEvent"/>, after confirming
+    /// the name is valid.
+    /// </summary>
+    /// <param name="eventName">The name of the event.</param>
+    /// <param name="value">The Vector3 value the event is passing in with.</param>
+    public void RaiseVector3Event(string eventName, Vector3 value)
+    {
+        //Raise the Vector2 event if not null, else print an error.
+        Vector3GameEvent vector3Event = this.GetVector3Event(eventName);
+        if (!vector3Event)
+        {
+            //Debug.LogError("ERROR: Invalid String Event name: " + eventName + ". Double check Event Constants/your spelling.");
+        }
+        else
+        {
+            vector3Event.Raise(value);
         }
     }
 
@@ -334,6 +388,42 @@ public class EventManager : ScriptableObject
     }
 
     /// <summary>
+    /// Gets a <see cref="Vector2GameEvent"/> from our <see cref="vector2EventMap"/>.
+    /// If no event by string name exists, returns null.
+    /// </summary>
+    /// <param name="eventName">The string name of the event.</param>
+    /// <returns>The Vector2 event associated with the passed in string, if any.</returns>
+    public Vector2GameEvent GetVector2Event(string eventName)
+    {
+        Vector2GameEvent vector2Event;
+
+        //searches our dictionary for the event, outputs it, and returns it
+        if (vector2EventMap.TryGetValue(eventName.ToLower(), out vector2Event))
+        {
+            return vector2Event;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Gets a <see cref="Vector3GameEvent"/> from our <see cref="vector3EventMap"/>.
+    /// If no event by string name exists, returns null.
+    /// </summary>
+    /// <param name="eventName">The string name of the event.</param>
+    /// <returns>The Vector3 event associated with the passed in string, if any.</returns>
+    public Vector3GameEvent GetVector3Event(string eventName)
+    {
+        Vector3GameEvent vector3Event;
+
+        //searches our dictionary for the event, outputs it, and returns it
+        if (vector3EventMap.TryGetValue(eventName.ToLower(), out vector3Event))
+        {
+            return vector3Event;
+        }
+        return null;
+    }
+
+    /// <summary>
     /// Gets a <see cref="GameObjectGameEvent"/> from our <see cref="gameObjectEventMap"/>.
     /// If no event by string name exists, returns null.
     /// </summary>
@@ -473,7 +563,7 @@ public class EventManager : ScriptableObject
     }
 
     /// <summary>
-    /// Maps each string event's name to the int event itself, after 
+    /// Maps each string event's name to the string event itself, after 
     /// filling <see cref="stringEvents"/> via inspector.
     /// </summary>
     private void PopulateStringEventMap()
@@ -482,6 +572,32 @@ public class EventManager : ScriptableObject
         foreach (StringGameEvent stringEvent in this.stringEvents)
         {
             stringEventMap.Add(stringEvent.name.ToLower(), stringEvent);
+        }
+    }
+
+    /// <summary>
+    /// Maps each string event's name to the Vector2 event itself, after 
+    /// filling <see cref="vector2Events"/> via inspector.
+    /// </summary>
+    private void PopulateVector2EventMap()
+    {
+        vector2EventMap = new Dictionary<string, Vector2GameEvent>();
+        foreach (Vector2GameEvent vector2Event in this.vector2Events)
+        {
+            vector2EventMap.Add(vector2Event.name.ToLower(), vector2Event);
+        }
+    }
+
+    /// <summary>
+    /// Maps each string event's name to the Vector3 event itself, after 
+    /// filling <see cref="vector3Events"/> via inspector.
+    /// </summary>
+    private void PopulateVector3EventMap()
+    {
+        vector3EventMap = new Dictionary<string, Vector3GameEvent>();
+        foreach (Vector3GameEvent vector3Event in this.vector3Events)
+        {
+            vector3EventMap.Add(vector3Event.name.ToLower(), vector3Event);
         }
     }
 
@@ -564,6 +680,8 @@ public class EventManager : ScriptableObject
         this.PopulateBoolEventMap();
         this.PopulateIntEventMap();
         this.PopulateStringEventMap();
+        this.PopulateVector2EventMap();
+        this.PopulateVector3EventMap();
         this.PopulateGameObjectEventMap();
         this.PopulateEntityControllerEventMap();
         this.PopulateSequenceEventMap();

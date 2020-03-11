@@ -10,6 +10,7 @@ public class SpellEditor : OdinMenuEditorWindow
 {
     private CreateNewSpell createNewSpell;
     private CreateEffectPopup createNewEffect;
+    private AddSpellToListPopup spellListPopup;
     
     [MenuItem("Tools/Spell Editor", false, 5)]
     private static void OpenWindow()
@@ -50,7 +51,23 @@ public class SpellEditor : OdinMenuEditorWindow
                 PopupWindow.Show(GUILayoutUtility.GetLastRect(), createNewEffect);
             }
 
-            if(SirenixEditorGUI.ToolbarButton("Delete Current"))
+            if (SirenixEditorGUI.ToolbarButton("Add To Player's Spell List"))
+            {
+                Spell asset = selected.SelectedValue as Spell;
+
+                if (asset != null && SpellEditorUtilities.DoesAssetExist(asset))
+                {
+                    spellListPopup = new AddSpellToListPopup();
+                    spellListPopup.spell = asset;
+                    PopupWindow.Show(GUILayoutUtility.GetLastRect(), spellListPopup);
+                }
+                else
+                {
+                    this.ShowNotification(new GUIContent("Spell does not exist!"), 1.5f);
+                }
+            }
+
+            if (SirenixEditorGUI.ToolbarButton("Delete Current"))
             {
                 Spell asset = selected.SelectedValue as Spell;
 
@@ -326,6 +343,45 @@ public class CreateEffectPopup : PopupWindowContent
                 GUILayout.Label("Invalid Effect name!", EditorStyles.boldLabel);
             else
                 GUILayout.Label("An Effect with the given name already exists!", EditorStyles.boldLabel);
+        }
+    }
+}
+
+
+public class AddSpellToListPopup : PopupWindowContent
+{
+    public Spell spell;
+    public int spellOdds = 50;
+
+    public override Vector2 GetWindowSize()
+    {
+        return new Vector2(400, 150);
+    }
+
+    public override void OnGUI(Rect rect)
+    {
+        GUILayout.Label("Enter Relative Odds", EditorStyles.boldLabel);
+        spellOdds = EditorGUILayout.IntSlider(spellOdds, 1, 100);
+
+        if (GUILayout.Button("Add"))
+        {
+            PlayerSpellList list = AssetDatabase.LoadAssetAtPath<PlayerSpellList>("Assets/Spells/Player/SpellList.asset");
+
+            if (list != null)
+            {
+                // Check if manager already has the entity. If it does, update its odds, otherwise, add it
+                var odds = list.GetSpellOdds(spell);
+
+                if (odds == null)
+                    list.AddNewSpell(spell, spellOdds);
+                else
+                    list.UpdateSpell(spell, spellOdds);
+                this.editorWindow.Close();
+            }
+            else
+            {
+                Debug.LogError("Cannot find the Spell List! Check to see if a Spell List exists in the Spells/Player folder.");
+            }
         }
     }
 }

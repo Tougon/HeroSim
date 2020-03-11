@@ -72,7 +72,10 @@ namespace Hero.SpellEditor
                     sw.WriteLine("1|TerminateAnimation");
                 }
             }
-            
+
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
             #endif
         }
 

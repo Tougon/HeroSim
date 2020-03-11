@@ -58,6 +58,34 @@ public class PlayerSpellList : ScriptableObject
 
         return result;
     }
+
+    
+    public SpellOdds GetSpellOdds(Spell s)
+    {
+        foreach (var so in spellList)
+        {
+            if (so.spell == s)
+                return so;
+        }
+
+        return null;
+    }
+
+
+    public void AddNewSpell(Spell s, int odds)
+    {
+        spellList.Add(new SpellOdds(s, odds));
+    }
+
+
+    public void UpdateSpell(Spell s, int newOdds)
+    {
+        foreach (var odds in spellList)
+        {
+            if (odds.spell == s)
+                odds.relativeOdds = newOdds;
+        }
+    }
 }
 
 
@@ -67,4 +95,10 @@ public class SpellOdds
     public Spell spell;
     [Range(0, 100)]
     public int relativeOdds = 1;
+
+    public SpellOdds(Spell s, int odds)
+    {
+        spell = s;
+        relativeOdds = odds;
+    }
 }

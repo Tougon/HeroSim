@@ -31,3 +31,9 @@ MonoBehaviour:
     relativeOdds: 60
   - spell: {fileID: 11400000, guid: b9cd063829c2a7c46819f98dea0e11e1, type: 2}
     relativeOdds: 50
+  - spell: {fileID: 11400000, guid: 335342f0c2613c94eaef7b4f52d7dff4, type: 2}
+    relativeOdds: 60
+  - spell: {fileID: 11400000, guid: c337723df2b92c24a80d42a8b0d50263, type: 2}
+    relativeOdds: 40
+  - spell: {fileID: 11400000, guid: 0c0a36aaf5443ca4da973fa2a3bd1593, type: 2}
+    relativeOdds: 25
