@@ -106,6 +106,10 @@ public class EntityController : EntitySprite, IComparable<EntityController>
             // Reset ID. If we add save data, we'll need a check here
             isIdentified = false;
 
+            // Set the sprite
+            param.entitySprite = current.vals.entitySprite;
+            sprite.sprite = param.entitySprite;
+
             effects = new List<EffectInstance>();
             properties = new List<EffectInstance>();
             offenseModifiers = new Dictionary<string, float>();
