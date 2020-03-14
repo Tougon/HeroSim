@@ -21,6 +21,6 @@
 164|StartBGFade|0.0, 55
 184|TerminateEffect|5
 199|TerminateEffect|6
-199|TerminateEffect|8
+199|TerminateEffect|7
 199|ResetBGColor
-200|TerminateAnimation
+220|TerminateAnimation

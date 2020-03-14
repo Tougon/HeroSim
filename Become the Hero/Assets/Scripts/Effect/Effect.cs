@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 
 #if UNITY_EDITOR
 using Hero.SpellEditor;
@@ -12,9 +13,10 @@ using Hero.SpellEditor;
 /// <summary>
 /// Represents an effect of an attack.
 /// </summary>
+[Serializable]
 [CreateAssetMenu(fileName = "NewEffect", menuName = "Effect/Effect", order = 3)]
 [GUIColor(1.0f, 1.0f, 1.0f)]
-public class Effect : ScriptableObject
+public class Effect : SerializedScriptableObject
 {
     [HideInInspector]
     public delegate void InitialDelegate();
@@ -39,6 +41,7 @@ public class Effect : ScriptableObject
     [PropertyOrder(0)] private bool generic = false;
 
     // Current instance of effect calculations should be ran on
+    [NonSerialized]
     public EffectInstance current;
 
     // Order effects should execute at the end of a turn. Higher priorities execute sooner.
@@ -94,47 +97,57 @@ public class Effect : ScriptableObject
 
     // Used for function callbacks
     [PropertySpace(20)]
+    [NonSerialized, OdinSerialize]
     [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToCheckSuccess")][PropertyOrder(1)]
     public List<BetterEventEntry> CheckSuccess = new List<BetterEventEntry>();
     private void AssignThisToCheckSuccess(){ CheckSuccess.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
 
     [GUIColor(0.9f, 0.9f, 0.9f)]
+    [NonSerialized, OdinSerialize]
     [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToCheckRemainActive")][PropertyOrder(1)]
     public List<BetterEventEntry> CheckRemainActive = new List<BetterEventEntry>();
     private void AssignThisToCheckRemainActive() { CheckRemainActive.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
-    
+
+    [NonSerialized, OdinSerialize]
     [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToOnActivate")][PropertyOrder(1)]
     public List<BetterEventEntry> OnActivate = new List<BetterEventEntry>();
     private void AssignThisToOnActivate() { OnActivate.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
 
     [GUIColor(0.9f, 0.9f, 0.9f)]
+    [NonSerialized, OdinSerialize]
     [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToActivateFailed")][PropertyOrder(1)]
     public List<BetterEventEntry> OnFailedToActivate = new List<BetterEventEntry>();
     private void AssignThisToActivateFailed() { OnFailedToActivate.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
 
+    [NonSerialized, OdinSerialize]
     [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToOnApply")][PropertyOrder(1)]
     public List<BetterEventEntry> OnApply = new List<BetterEventEntry>();
     private void AssignThisToOnApply() { OnApply.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
 
     [GUIColor(0.9f, 0.9f, 0.9f)]
+    [NonSerialized, OdinSerialize]
     [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToMoveSelected")][PropertyOrder(1)]
     public List<BetterEventEntry> OnMoveSelected = new List<BetterEventEntry>();
     private void AssignThisToMoveSelected() { OnMoveSelected.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
-    
+
+    [NonSerialized, OdinSerialize]
     [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToDeactivate")][PropertyOrder(1)]
     public List<BetterEventEntry> OnDeactivate = new List<BetterEventEntry>();
     private void AssignThisToDeactivate() { OnDeactivate.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
 
     [GUIColor(0.9f, 0.9f, 0.9f)]
+    [NonSerialized, OdinSerialize]
     [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToTurnStart")][PropertyOrder(1)]
     public List<BetterEventEntry> OnTurnStart = new List<BetterEventEntry>();
     private void AssignThisToTurnStart() { OnTurnStart.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
 
+    [NonSerialized, OdinSerialize]
     [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToTurnEnd")][PropertyOrder(1)]
     public List<BetterEventEntry> OnTurnEnd = new List<BetterEventEntry>();
     private void AssignThisToTurnEnd() { OnTurnEnd.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
 
     [GUIColor(0.9f, 0.9f, 0.9f)]
+    [NonSerialized, OdinSerialize]
     [HideReferenceObjectPicker, ListDrawerSettings(CustomAddFunction = "AssignThisToOnStack")][PropertyOrder(1)]
     public List<BetterEventEntry> OnStack = new List<BetterEventEntry>();
     private void AssignThisToOnStack() { OnStack.Add(new BetterEventEntry(new InitialDelegate(this.NONE))); }
@@ -190,6 +203,9 @@ public class Effect : ScriptableObject
     {
         castSuccess = true;
 
+        if (CheckSuccess == null)
+            return;
+
         for (int i = 0; i < CheckSuccess.Count; i++)
         {
             CheckSuccess[i].Invoke();
@@ -203,6 +219,9 @@ public class Effect : ScriptableObject
     public void CheckForRemainActive()
     {
         castSuccess = true;
+
+        if (CheckRemainActive == null)
+            return;
 
         for (int i = 0; i < CheckRemainActive.Count; i++)
         {
@@ -566,7 +585,7 @@ public class Effect : ScriptableObject
 
         if (target.Equals(EffectTarget.user))
             current.user.AddDefenseModifier(amt, GetName());
-        else if(target.Equals(EffectTarget.target))
+        else if (target.Equals(EffectTarget.target))
             current.target.AddDefenseModifier(amt, GetName());
     }
 
@@ -842,6 +861,7 @@ public class EffectInstance: IComparable<EffectInstance>
     private void Invoke(List<BetterEventEntry> Events)
     {
         if (Events == null) return;
+
         for (int i = 0; i < Events.Count; i++)
         {
             Events[i].Invoke();
