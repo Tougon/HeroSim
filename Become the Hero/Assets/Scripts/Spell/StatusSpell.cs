@@ -21,7 +21,7 @@ public class StatusSpell : Spell
     /// <summary>
     /// Override for spell hit that factors accuracy
     /// </summary>
-    public override bool CheckSpellHit(EntityController user, EntityController target)
+    public override bool CheckSpellHit(EntityController user, EntityController target, float amount = -1)
     {
         if (!checkAccuracy)
             return true;

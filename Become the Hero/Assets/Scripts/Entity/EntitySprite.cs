@@ -47,6 +47,15 @@ public class EntitySprite : EntityBase
 
 
     /// <summary>
+    /// Sets an entity's sprite
+    /// </summary>
+    public override void SetSprite(Sprite s)
+    {
+        sprite.sprite = s;
+    }
+
+
+    /// <summary>
     /// Starts a color tween
     /// </summary>
     public override void SetColorTween(Color c, float amt, float duration)

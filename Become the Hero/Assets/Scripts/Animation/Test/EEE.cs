@@ -9,8 +9,8 @@ public class EEE : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        AnimationSequence seq = new AnimationSequence(aso, GetComponent<EntityController>(), null, null);
-        seq.SequenceStart();
-        StartCoroutine(seq.SequenceLoop());
+        //AnimationSequence seq = new AnimationSequence(aso, GetComponent<EntityController>(), null, null);
+        //seq.SequenceStart();
+        //dStartCoroutine(seq.SequenceLoop());
     }
 }

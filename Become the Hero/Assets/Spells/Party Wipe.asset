@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 955669ae195bf9043b837837b0adc9c9, type: 3}
+  m_Name: Party Wipe
+  m_EditorClassIdentifier: 
+  spellName: Party Wipe
+  spellType: 1
+  spellTarget: 2
+  spellCost: 0
+  spellPriority: 0
+  spellDescription: 
+  spellCastMessage: '[user] wipes the party!'
+  spellFamily: {fileID: 0}
+  spellAnimation: {fileID: 11400000, guid: 8d1419234680a434f97dfc3a56517e8e, type: 2}
+  spellEffects: []
+  spellProperties: []
+  spellPower: 20
+  checkAccuracy: 1
+  spellAccuracy: 100
+  accuracyPerHit: 0
+  checkAccuracyPerHit: 1
+  minNumberOfHits: 1
+  maxNumberOfHits: 9
+  varyHitCount: 1
+  hitCountCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.2923687
+      outSlope: 3.2923687
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.090379
+    - serializedVersion: 3
+      time: 0.5
+      value: 0.40334272
+      inSlope: 2.5031886
+      outSlope: 2.5031886
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.09621
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.06561441
+      outSlope: 0.06561441
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.0743441
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  canCritical: 0
+  criticalHitChance: 2

@@ -16,6 +16,7 @@ public class Spell : ScriptableObject
     #region Variables
 
     public enum SpellType { Other, Attack, Status, Buff, Debuff, Heal }
+    public enum SpellTarget { SingleEnemy, RandomEnemy, AllEnemy, Self, SingleParty, AllParty, All }
 
     public const int DAMAGE_CONSTANT = 50;
 
@@ -23,6 +24,7 @@ public class Spell : ScriptableObject
 
     [Header("Standard Spell Params")]
     [SerializeField] [PropertyOrder(1)] private SpellType spellType = SpellType.Other;
+    [SerializeField] [PropertyOrder(1)] private SpellTarget spellTarget = SpellTarget.SingleEnemy;
     [PropertyOrder(1)] [Range(0, 250)] [GUIColor(0.05f, 0.80f, 0.85f)] public int spellCost;
     [PropertyOrder(2)] [Range(-6, 6)] [GUIColor(0.90f, 0.90f, 0.05f)] public int spellPriority = 0;
     [PropertyOrder(3)] [GUIColor(0.98f, 0.95f, 0.5f)] public string spellDescription;
@@ -158,76 +160,80 @@ public class Spell : ScriptableObject
     /// <summary>
     /// Returns an instance of this spell using the spell data to calculate damage and effects
     /// </summary>
-    public SpellCast Cast(EntityController user, EntityController target)
+    public List<SpellCast> Cast(EntityController user, List<EntityController> targets)
     {
-        // Result of the cast spell
-        SpellCast result = new SpellCast();
-        spellFailMessage = "";
+        List<SpellCast> result = new List<SpellCast>();
 
-        result.spell = this;
-        result.user = user;
-        result.target = target;
-
-        // Check for MP. If MP is inadequate, don't proceed.
-        result.success = CheckMP(user);
-
-        if (result.success)
+        foreach(var target in targets)
         {
-            // Check for additional requirements. If they aren't met, don't proceed.
-            result.success = CheckCanCast(user, target);
+            // Result of the cast spell
+            SpellCast cast = new SpellCast();
+            spellFailMessage = "";
 
-            if (result.success)
+            cast.spell = this;
+            cast.user = user;
+            cast.target = target;
+
+            // Check for MP. If MP is inadequate, don't proceed.
+            cast.success = CheckMP(user);
+
+            if (cast.success)
             {
-                // Apply properties before dealing damage, as properties may affect damage or accuracy.
-                List<EffectInstance> properties = new List<EffectInstance>();
+                // Check for additional requirements. If they aren't met, don't proceed.
+                cast.success = CheckCanCast(user, target);
 
-                // Activate all properties on this spell
-                foreach (Effect e in spellProperties)
+                if (cast.success)
                 {
-                    if (e != null && !properties.Exists(f => f.effect == e) || (properties.Exists(f => f.effect == e) && e.IsStackable()))
+                    // Apply properties before dealing damage, as properties may affect damage or accuracy.
+                    List<EffectInstance> properties = new List<EffectInstance>();
+
+                    // Activate all properties on this spell
+                    foreach (Effect e in spellProperties)
                     {
-                        EffectInstance eff = e.CreateEffectInstance(user, target, result);
-                        eff.CheckSuccess();
-                        eff.OnActivate();
-                        properties.Add(eff);
+                        if (e != null && !properties.Exists(f => f.effect == e) || (properties.Exists(f => f.effect == e) && e.IsStackable()))
+                        {
+                            EffectInstance eff = e.CreateEffectInstance(user, target, cast);
+                            eff.CheckSuccess();
+                            eff.OnActivate();
+                            properties.Add(eff);
+                        }
                     }
-                }
 
-                // Get the user's active propeties. This will differ from the above list.
-                List<EffectInstance> userProperties = user.GetProperties();
+                    // Get the user's active propeties. This will differ from the above list.
+                    List<EffectInstance> userProperties = user.GetProperties();
 
-                foreach (EffectInstance ef in userProperties)
-                {
-                    ef.CheckSuccess();
-                    ef.OnActivate();
-                    properties.Add(ef);
-                }
-
-                // Check for spell hit. If spell misses, don't proceed.
-                result.success = CheckSpellHit(user, target);
-
-                if (result.success)
-                {
-                    // Calculate damage
-                    CalculateDamage(user, target, result);
-
-                    // If damage is 0, check to see if any effects were applied.
-                    if (result.GetDamage() == 0)
+                    foreach (EffectInstance ef in userProperties)
                     {
-                        result.success = result.GetEffectProcSuccess() ? true : IsFlavorSpell();
+                        ef.CheckSuccess();
+                        ef.OnActivate();
+                        properties.Add(ef);
+                    }
 
-                        if (!result.success)
+                    // Check for spell hit. If spell misses, don't proceed.
+                    cast.success = CheckSpellHit(user, target);
+
+                    if (cast.success)
+                    {
+                        // Calculate damage
+                        CalculateDamage(user, target, cast);
+
+
+                        cast.success = IsFlavorSpell() ? true : cast.HasDoneAnything();
+
+                        if (!cast.success)
                             spellFailMessage = "";
                     }
+
+                    // Deactivate all properties
+                    foreach (EffectInstance e in properties)
+                        e.OnDeactivate();
+
+                    // Clear properties from player
+                    user.ClearProperties();
                 }
-
-                // Deactivate all properties
-                foreach (EffectInstance e in properties)
-                    e.OnDeactivate();
-
-                // Clear properties from player
-                user.ClearProperties();
             }
+
+            result.Add(cast);
         }
         
         // Return spell cast.
@@ -263,7 +269,7 @@ public class Spell : ScriptableObject
     /// <summary>
     /// Skeleton function. This checks if the spell will hit the target.
     /// </summary>
-    public virtual bool CheckSpellHit(EntityController user, EntityController target)
+    public virtual bool CheckSpellHit(EntityController user, EntityController target, float amount = -1)
     {
         return true;
     }
@@ -327,7 +333,7 @@ public class SpellCast
     /// </summary>
     public EntityController user;
     /// <summary>
-    /// The target of the spell.
+    /// The targets of the spell.
     /// </summary>
     public EntityController target;
 
@@ -348,11 +354,26 @@ public class SpellCast
     /// Indicates which hit is critical
     /// </summary>
     private bool[] crits;
+    /// <summary>
+    /// Indicates if the spell hit
+    /// </summary>
+    private bool[] hits;
 
     /// <summary>
     /// Spell Effect params
     /// </summary>
     private List<EffectInstance> effects = new List<EffectInstance>();
+
+
+    public virtual bool HasDoneAnything()
+    {
+        if (GetDamage() == 0 && !GetEffectProcSuccess() && (hits == null || (hits != null && hits.Length == 0)))
+        {
+            return false;
+        }
+
+        return true;
+    }
     
 
     public virtual int GetDamage()
@@ -363,7 +384,7 @@ public class SpellCast
 
     public virtual int GetDamage(int index)
     {
-        return damage[index];
+        return damage == null || index >= damage.Length || index < 0 ? 0 : damage[index];
     }
 
 
@@ -375,15 +396,59 @@ public class SpellCast
     }
 
 
-    public virtual bool GetIsCurrentHitCritical()
+    public virtual bool GetHitSuccess(int index)
     {
-        bool result = crits[currentHit];
+        if (hits == null)
+            return true;
+
+        return index >= hits.Length || index < 0 ? false : hits[index];
+    }
+
+
+    public virtual bool GetCurrentHitSuccess()
+    {
+        bool result = GetHitSuccess(currentHit);
 
         return result;
     }
 
 
-    public virtual void IncrementHit() { currentHit = currentHit < damage.Length ? currentHit + 1 : 0; }
+    public virtual bool SpellMissed()
+    {
+        bool result = false;
+
+        foreach(var hit in hits)
+        {
+            if (hit)
+                result = true;
+        }
+
+        return result;
+    }
+
+
+    public virtual int GetDamageOfPreviousHit()
+    {
+        int result = GetDamage(currentHit - 1);
+
+        return result;
+    }
+
+
+    public virtual bool GetIsCurrentHitCritical()
+    {
+        bool result = false;
+
+        if(crits != null && currentHit < crits.Length)
+            result = crits[currentHit];
+
+        return result;
+    }
+
+
+    public virtual void IncrementHit() { currentHit++; }
+    // Original function commented out below. I have absolutely no clue why it was looking around like this.
+    // public virtual void IncrementHit() { currentHit = damage != null && currentHit < damage.Length ? currentHit + 1 : 0; }
 
 
     /// <summary>
@@ -422,11 +487,11 @@ public class SpellCast
 
             for(int n = 0; n < spell.spellEffects.Count; n++)
             {
-                Effect e = spell.spellEffects[i].GetEffect();
+                Effect e = spell.spellEffects[n].GetEffect();
 
                 float proc = Random.value;
 
-                if (proc < spell.spellEffects[i].chance &&
+                if (proc < spell.spellEffects[n].chance &&
                     (e != null && !effects.Exists(f => f.effect == e) || (effects.Exists(f => f.effect == e) && e.IsStackable())))
                 {
                     EffectInstance eff = e.CreateEffectInstance(user, target, this);
@@ -440,7 +505,7 @@ public class SpellCast
 
     public virtual int GetNumHits()
     {
-        return damage.Length;
+        return damage == null ? 0 : damage.Length;
     }
 
 
@@ -459,6 +524,15 @@ public class SpellCast
                 return;
             }
         }
+    }
+
+
+    /// <summary>
+    /// Sets hit status.
+    /// </summary>
+    public virtual void SetHits(bool[] h)
+    {
+        hits = h;
     }
 
 

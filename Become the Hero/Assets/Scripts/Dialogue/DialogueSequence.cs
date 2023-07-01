@@ -44,11 +44,13 @@ public class DialogueSequence : Sequence
         // Begin text print animation
         running = true;
         printAnimation = manager.BeginTextAnimation(text);
+        yield return null;
 
         while (running)
         {
             // If the player attempts to advance
-            if (Input.GetMouseButtonDown(0)) // Replace this with touch when we build to platform
+            // Legacy input
+            /*if (Input.GetMouseButtonDown(0)) // Replace this with touch when we build to platform
             {
                 // Stop printing and fully display text if the animation is still going
                 if (manager.isPrinting)
@@ -56,6 +58,11 @@ public class DialogueSequence : Sequence
                 // Otherwise end sequence
                 else
                     running = false;
+            }*/
+
+            if(!manager.isPrinting)
+            {
+                break;
             }
 
             yield return null;

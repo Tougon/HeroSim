@@ -16,12 +16,17 @@ MonoBehaviour:
     entityName: Ptoed
     article: 
     useArticle: 0
-    entityHP: 90
+    entityHP: 100
     entityMP: 100
-    entityAtk: 90
+    entityAtk: 5
     entityDef: 75
-    entitySpeed: 70
+    entityMgAtk: 0
+    entityMgDef: 0
+    entitySpeed: 90
+    entityCritModifier: 1
+    entityDodgeModifier: 1
     entitySprite: {fileID: 21300000, guid: 8ecfad83d4052244ba742b687df8b591, type: 3}
+    additionalEntitySprites: []
     entityDescription: THE Hero. Be careful, he may try to top-deck his way to victory!
   moveList:
   - {fileID: 11400000, guid: 8bd727b76a4ef6c4fae3e5ce1a837c19, type: 2}

@@ -38,7 +38,7 @@ public class EntityEditor : OdinMenuEditorWindow
     {
         base.OnBeginDrawEditors();
 
-        OdinMenuTreeSelection selected = this.MenuTree.Selection;
+        OdinMenuTreeSelection selected = this.MenuTree != null ? this.MenuTree.Selection : null;
 
         SirenixEditorGUI.BeginHorizontalToolbar();
         {

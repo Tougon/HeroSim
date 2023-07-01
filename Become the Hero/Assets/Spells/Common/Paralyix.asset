@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Paralyix
   m_EditorClassIdentifier: 
   spellName: Paralyix
+  spellType: 2
+  spellTarget: 0
   spellCost: 9
   spellPriority: 0
   spellDescription: The user stuns the target with a zap of lightning. It will leave
@@ -26,6 +28,5 @@ MonoBehaviour:
     - chance: 1
       effect: {fileID: 11400000, guid: b1a76c56a64f8d647a76450857f0a289, type: 2}
   spellProperties: []
-  spellType: 2
   checkAccuracy: 1
-  spellAccuracy: 75
+  spellAccuracy: 100

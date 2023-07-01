@@ -16,8 +16,9 @@ public class AnimationSequence : Hero.Core.Sequence
     public class AnimationSequenceAction
     {
         public enum Action { ChangeUserAnimation, ChangeTargetAnimation, TerminateAnimation, GenerateEffect, TerminateEffect,
-            Move, Rotate, Scale, Color, Vibrate, ChangeAnimationSpeed, ChangeAnimationState, PlaySound, BeginLoop, EndLoop, ApplyDamage,
-            UpdateHPUI, UpdateMPUI, SetOverlayTexture, SetOverlayAnimation, ChangeBGColor, StartBGFade, ResetBGColor }
+            Move, Rotate, Scale, Sprite, Color, Vibrate, ChangeAnimationSpeed, ChangeAnimationState, PlaySound, BeginLoop, EndLoop, 
+            ApplyDamage, UpdateHPUI, UpdateMPUI, SetOverlayTexture, SetOverlayAnimation, ChangeBGColor, StartBGFade, ResetBGColor,
+            SetTargetIndex, BeginOnSuccess, EndOnSuccess }
 
         public int frame;
         public Action action;
@@ -27,36 +28,46 @@ public class AnimationSequence : Hero.Core.Sequence
     private bool initialized = false;
     private bool running;
     private bool looping;
+    private bool onSuccess;
     private int currentFrame = 0;
     private int loop = 1;
     private float directionX = 1;
     private float directionY = 1;
 
+    private List<AnimationSequenceAction.Action> IgnoreSuccess =  new List<AnimationSequenceAction.Action>() {
+        AnimationSequenceAction.Action.BeginOnSuccess,
+        AnimationSequenceAction.Action.EndOnSuccess,
+        AnimationSequenceAction.Action.BeginLoop,
+        AnimationSequenceAction.Action.EndLoop
+    };
+
     public string sequenceName { get; private set; }
 
     private EntityController user;
-    private EntityController target;
-    private SpellCast spell;
+    private List<EntityController> allTargets = new List<EntityController>();
+
+    private List<SpellCast> spell;
     private AnimationSequenceObject aso;
+    private int targetIndex;
 
     #region Initial Values
     /// <summary>
     /// Initial position of the user and target
     /// </summary>
     private Vector3 userPosition;
-    private Vector3 targetPosition;
+    private Vector3[] targetPosition;
     private Vector3 userRotation;
-    private Vector3 targetRotation;
+    private Vector3[] targetRotation;
     private Vector3 userScale;
-    private Vector3 targetScale;
+    private Vector3[] targetScale;
     private Color userColor;
-    private Color targetColor;
+    private Color[] targetColor;
     private float userAmount;
-    private float targetAmount;
+    private float[] targetAmount;
     #endregion
 
     private SpriteRenderer userSprite;
-    private SpriteRenderer targetSprite;
+    private SpriteRenderer[] targetSprite;
 
     private List<EntityBase> effects = new List<EntityBase>();
 
@@ -67,11 +78,18 @@ public class AnimationSequence : Hero.Core.Sequence
     /// <summary>
     /// Creates a sequence cast from the given spell with all loops matching the number of hits
     /// </summary>
-    public AnimationSequence(AnimationSequenceObject obj, EntityController u, EntityController t, SpellCast s)
+    public AnimationSequence(AnimationSequenceObject obj, EntityController u, List<EntityController> t, List<SpellCast> s)
     {
-        InitSequence(obj, u, t);
+        allTargets = t;
+        InitSequence(obj, u);
+
         spell = s;
-        loop = s.GetNumHits();
+
+        foreach(var sp in spell)
+        {
+            if(sp.GetNumHits() > loop)
+                loop = sp.GetNumHits();
+        }
     }
 
 
@@ -80,18 +98,18 @@ public class AnimationSequence : Hero.Core.Sequence
     /// </summary>
     public AnimationSequence(AnimationSequenceObject obj, EntityController u, EntityController t)
     {
-        InitSequence(obj, u, t);
+        allTargets.Add(t);
+        InitSequence(obj, u);
     }
 
 
     /// <summary>
     /// Initializes a sequence
     /// </summary>
-    public void InitSequence(AnimationSequenceObject obj, EntityController u, EntityController t)
+    public void InitSequence(AnimationSequenceObject obj, EntityController u)
     {
         aso = obj;
         user = u;
-        target = t;
 
         // Iinitialize position of user and target
         userPosition = user.transform.position;
@@ -105,14 +123,21 @@ public class AnimationSequence : Hero.Core.Sequence
         directionX = user.transform.localScale.x / Mathf.Abs(user.transform.localScale.x);
         directionY = user.transform.localScale.y / Mathf.Abs(user.transform.localScale.y);
 
-        if (target != null)
+        targetPosition = new Vector3[allTargets.Count];
+        targetRotation = new Vector3[allTargets.Count];
+        targetScale = new Vector3[allTargets.Count];
+        targetSprite = new SpriteRenderer[allTargets.Count];
+        targetColor = new Color[allTargets.Count];
+        targetAmount = new float[allTargets.Count];
+
+        for(int i=0; i<allTargets.Count; ++i)
         {
-            targetPosition = target.transform.position;
-            targetRotation = target.transform.eulerAngles;
-            targetScale = target.transform.localScale;
-            targetSprite = target.GetSpriteRenderer();
-            targetColor = targetSprite.color;
-            targetAmount = target.GetMaterial().GetFloat("_Amount");
+            targetPosition[i] = allTargets[i].transform.position;
+            targetRotation[i] = allTargets[i].transform.eulerAngles;
+            targetScale[i] = allTargets[i].transform.localScale;
+            targetSprite[i] = allTargets[i].GetSpriteRenderer();
+            targetColor[i] = targetSprite[i].color;
+            targetAmount[i] = allTargets[i].GetMaterial().GetFloat("_Amount");
         }
 
         // Split the animation script.
@@ -201,13 +226,13 @@ public class AnimationSequence : Hero.Core.Sequence
         userSprite.color = userColor;
         user.GetMaterial().SetFloat("_Amount", userAmount);
 
-        if (target != null)
+        for (int i = 0; i < allTargets.Count; ++i)
         {
-            target.transform.position = targetPosition;
-            target.transform.eulerAngles = targetRotation;
-            target.transform.localScale = targetScale;
-            targetSprite.color = targetColor;
-            target.GetMaterial().SetFloat("_Amount", targetAmount);
+            allTargets[i].transform.position = targetPosition[i];
+            allTargets[i].transform.eulerAngles = targetRotation[i];
+            allTargets[i].transform.localScale = targetScale[i];
+            targetSprite[i].color = targetColor[i];
+            allTargets[i].GetMaterial().SetFloat("_Amount", targetAmount[i]);
         }
     }
 
@@ -220,6 +245,9 @@ public class AnimationSequence : Hero.Core.Sequence
     /// </summary>
     private void CallSequenceFunction(AnimationSequenceAction.Action a, string param)
     {
+        if (onSuccess && !IgnoreSuccess.Contains(a) && !spell[targetIndex].HasDoneAnything())
+            return;
+
         switch (a)
         {
             case AnimationSequenceAction.Action.ChangeUserAnimation:
@@ -263,7 +291,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 if (sM.Equals("User"))
                     tM = user.transform;
                 else if (sM.Equals("Target"))
-                    tM = target.transform;
+                    tM = allTargets[targetIndex].transform;
                 else
                     tM = effects[int.Parse(moveVals[5].Trim())].transform;
 
@@ -290,7 +318,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 if (sR.Equals("User"))
                     tR = user.transform;
                 else if (sR.Equals("Target"))
-                    tR = target.transform;
+                    tR = allTargets[targetIndex].transform;
                 else
                     tR = effects[int.Parse(rotateVals[5].Trim())].transform;
 
@@ -317,7 +345,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 if (sS.Equals("User"))
                     tS = user.transform;
                 else if (sS.Equals("Target"))
-                    tS = target.transform;
+                    tS = allTargets[targetIndex].transform;
                 else
                     tS = effects[int.Parse(scaleVals[5].Trim())].transform;
 
@@ -346,7 +374,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 if (sC.Equals("User"))
                     eC = user;
                 else if (sC.Equals("Target"))
-                    eC = target;
+                    eC = allTargets[targetIndex];
                 else
                     eC = effects[int.Parse(colorVals[7].Trim())];
 
@@ -375,7 +403,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 if (sV.Equals("User"))
                     tV = user.transform;
                 else if (sV.Equals("Target"))
-                    tV = target.transform;
+                    tV = allTargets[targetIndex].transform;
                 else
                     tV= effects[int.Parse(vibrateVals[5].Trim())].transform;
 
@@ -403,7 +431,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 if (sSp.Equals("User"))
                     user.FrameSpeedModify(sSpeed);
                 else if (sSp.Equals("Target"))
-                    target.FrameSpeedModify(sSpeed);
+                    allTargets[targetIndex].FrameSpeedModify(sSpeed);
                 else
                     effects[int.Parse(speedVals[2].Trim())].FrameSpeedModify(sSpeed);
                 break;
@@ -421,7 +449,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 if (sAS.Equals("User"))
                     eAS = user;
                 else if (sAS.Equals("Target"))
-                    eAS = target;
+                    eAS = allTargets[targetIndex];
                 else
                     eAS = effects[int.Parse(stateVals[3].Trim())];
 
@@ -430,10 +458,15 @@ public class AnimationSequence : Hero.Core.Sequence
 
             case AnimationSequenceAction.Action.BeginLoop:
                 // Begins a loop
-                int numLoops = int.Parse(param);
+                int numLoops = allTargets.Count;
 
-                if (numLoops < 0)
-                    numLoops = loop;
+                if (!param.Trim().Equals("#"))
+                {
+                    numLoops = int.Parse(param.Trim());
+
+                    if (numLoops < 0)
+                        numLoops = loop;
+                }
 
                 loops.Add(new AnimationSequenceLoop(currentFrame, numLoops));
                 looping = true;
@@ -454,8 +487,11 @@ public class AnimationSequence : Hero.Core.Sequence
 
             case AnimationSequenceAction.Action.ApplyDamage:
                 // Applies damage
-                target.ApplyDamage(spell.GetDamageOfCurrentHit(), spell.GetIsCurrentHitCritical(), bool.Parse(param));
-                spell.IncrementHit();
+                allTargets[targetIndex].ApplyDamage
+                    (spell[targetIndex].GetDamageOfCurrentHit(), 
+                    spell[targetIndex].GetIsCurrentHitCritical(), bool.Parse(param), 
+                    spell[targetIndex].success && spell[targetIndex].GetCurrentHitSuccess());
+                spell[targetIndex].IncrementHit();
                 break;
 
             case AnimationSequenceAction.Action.PlaySound:
@@ -465,12 +501,15 @@ public class AnimationSequence : Hero.Core.Sequence
 
             case AnimationSequenceAction.Action.UpdateHPUI:
 
+                if (spell[targetIndex].GetDamageOfPreviousHit() == 0)
+                    break;
+
                 param = param.Trim();
 
                 if (param.Equals("User"))
                     user.UpdateHPUI();
                 else if (param.Equals("Target"))
-                    target.UpdateHPUI();
+                    allTargets[targetIndex].UpdateHPUI();
                 break;
 
             case AnimationSequenceAction.Action.SetOverlayTexture:
@@ -486,7 +525,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 if (sOT.Equals("User"))
                     eOT = user;
                 else if (sOT.Equals("Target"))
-                    eOT = target;
+                    eOT = allTargets[targetIndex];
                 else
                     eOT = effects[int.Parse(texVals[4].Trim())];
 
@@ -509,7 +548,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 if (sOA.Equals("User"))
                     eOA = user;
                 else if (sOA.Equals("Target"))
-                    eOA = target;
+                    eOA = allTargets[targetIndex];
                 else
                     eOA = effects[int.Parse(ovlAnimVals[5].Trim())];
 
@@ -540,6 +579,40 @@ public class AnimationSequence : Hero.Core.Sequence
                 // End the animation
                 running = false;
                 break;
+
+            case AnimationSequenceAction.Action.Sprite:
+                string[] spriteVals = param.Split(',');
+                bool spriteUser = spriteVals[0].ToLower().Equals("user");
+
+                if (spriteVals[1].ToLower().Equals("entity"))
+                {
+                    int index = int.Parse(spriteVals[2]);
+
+                    if (spriteUser)
+                        user.SetSprite(user.GetEntity().vals.additionalEntitySprites[index]);
+                    else
+                        allTargets[targetIndex].SetSprite(allTargets[targetIndex].GetEntity().vals.additionalEntitySprites[index]);
+                }
+                else
+                {
+                    // TODO: Load a custom sprite
+                }
+                break;
+
+            case AnimationSequenceAction.Action.SetTargetIndex:
+                if (param.Trim().Equals("#"))
+                    targetIndex = loops[loops.Count - 1].numIterations;
+                else
+                    int.TryParse(param, out targetIndex);
+                break;
+
+            case AnimationSequenceAction.Action.BeginOnSuccess:
+                onSuccess = true;
+                break;
+
+            case AnimationSequenceAction.Action.EndOnSuccess:
+                onSuccess = false;
+                break;
         }
     }
 
@@ -547,7 +620,7 @@ public class AnimationSequence : Hero.Core.Sequence
     /// Change animator animation
     /// </summary>
     private void ChangeUserAnimation(string t) { user.SetAnimation(t.Trim()); }
-    private void ChangeTargetAnimation(string t) { target.SetAnimation(t.Trim()); }
+    private void ChangeTargetAnimation(string t) { allTargets[targetIndex].SetAnimation(t.Trim()); }
     
 
     /// <summary>
@@ -579,16 +652,16 @@ public class AnimationSequence : Hero.Core.Sequence
         }
         else if(relative == "Target")
         {
-            Vector3 rel = target.transform.position;
+            Vector3 rel = allTargets[targetIndex].transform.position;
 
             x = (rel.x) + (x * directionX);
             y = (rel.y) + (y * directionY);
             z += rel.z;
 
             if(child)
-                par = target.transform;
+                par = allTargets[targetIndex].transform;
 
-            effect.Init(target);
+            effect.Init(allTargets[targetIndex]);
         }
 
         if (par != null)
@@ -616,6 +689,7 @@ public class AnimationSequence : Hero.Core.Sequence
     private void TerminateEffect(int id)
     {
         effects[id].gameObject.SetActive(false);
+        effects.RemoveAt(id);
     }
 
 
@@ -624,6 +698,7 @@ public class AnimationSequence : Hero.Core.Sequence
     /// </summary>
     private void TweenPosition(Transform t, float x, float y, float z, float duration)
     {
+        t.DOComplete();
         t.DOMove(new Vector3(x, y, z), duration);
     }
 
@@ -633,6 +708,7 @@ public class AnimationSequence : Hero.Core.Sequence
     /// </summary>
     private void TweenRotation(Transform t, float x, float y, float z, float duration)
     {
+        t.DOComplete();
         t.DORotate(new Vector3(x, y, z), duration, RotateMode.Fast);
     }
 
@@ -643,6 +719,7 @@ public class AnimationSequence : Hero.Core.Sequence
     private void TweenScale(Transform t, float x, float y, float z, float duration)
     {
         //t.DOScale(new Vector3(x, y, z), duration);
+        t.DOComplete();
         t.DOScaleX(x, duration);
         t.DOScaleY(y, duration);
     }
@@ -662,6 +739,7 @@ public class AnimationSequence : Hero.Core.Sequence
     /// </summary>
     private void Vibrate(Transform t, float duration, Vector3 strength, int vibrato)
     {
+        t.DOComplete();
         t.transform.DOShakePosition(duration, strength, vibrato);
     }
 

@@ -244,10 +244,29 @@ public class Effect : SerializedScriptableObject
 
     public void IsLastMoveSuccessful(EffectTarget target)
     {
-        if(target.Equals(EffectTarget.user))
-            castSuccess = !castSuccess ? false : current.user.actionResult.success;
+        EntityController instance = null;
+
+        if (target.Equals(EffectTarget.user))
+        {
+            instance = current.user;
+        }
         else if (target.Equals(EffectTarget.target))
-            castSuccess = !castSuccess ? false : current.target.actionResult.success;
+        {
+            instance = current.target;
+        }
+
+        bool bSucceeded = false;
+
+        foreach(var cast in instance.actionResult)
+        {
+            if(cast.success)
+            {
+                bSucceeded = true;
+                break;
+            }
+        }
+
+        castSuccess = !castSuccess ? false : bSucceeded;
     }
 
 

@@ -10,6 +10,7 @@ public class TurnManager : MonoBehaviour
     private List<EntityController> enemies = new List<EntityController>();
     private Sequencer sequencer;
     private IEnumerator current;
+    private int playerIndex;
 
     void Awake()
     {
@@ -21,13 +22,18 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_END).AddListener(OnTurnEnd);
         EventManager.Instance.GetGameEvent(EventConstants.ON_MOVE_SELECTED).AddListener(OnMoveSelected);
 
-        // Placeholder. The TurnManager WILL NOT handle scene transitions in the final game.
-        EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_OUT_COMPLETE).AddListener(Reload);
-
         EventManager.Instance.GetSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE).AddListener(QueueSequence);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_INITIALIZE).AddListener(AddEnemy);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_PLAYER_INITIALIZE).AddListener(AddPlayer);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_DEFEAT).AddListener(EnemyDefeated);
+
+        // Player action events
+        EventManager.Instance.GetGameEvent(EventConstants.ATTACK_SELECTED).AddListener(SetActionToAttack);
+        EventManager.Instance.GetGameEvent(EventConstants.DEFEND_SELECTED).AddListener(SetActionToDefend);
+        EventManager.Instance.GetIntEvent(EventConstants.SPELL_SELECTED).AddListener(SetActionToSpell);
+
+        // Placeholder. The TurnManager WILL NOT handle scene transitions in the final game.
+        EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_OUT_COMPLETE).AddListener(Reload);
     }
 
     
@@ -48,6 +54,12 @@ public class TurnManager : MonoBehaviour
     /// Returns the number of active entities
     /// </summary>
     public int GetNumEntities() { return entities.Count; }
+
+
+    /// <summary>
+    /// Returns the number of hostile entities
+    /// </summary>
+    public int GetNumEnemies() { return enemies.Count; }
 
 
     /// <summary>
@@ -85,6 +97,33 @@ public class TurnManager : MonoBehaviour
         }
 
         return null;
+    }
+
+
+    /// <summary>
+    /// Returns the first Enemy in the list
+    /// </summary>
+    public EntityController GetEnemy(EntityController val)
+    {
+        foreach (EntityController ec in enemies)
+        {
+            if (ec != val)
+                return ec;
+        }
+
+        return null;
+    }
+
+
+    private bool AllPlayersDefeated()
+    {
+        foreach(var player in players)
+        {
+            if (!player.dead)
+                return false;
+        }
+
+        return true;
     }
 
 
@@ -147,19 +186,20 @@ public class TurnManager : MonoBehaviour
         // Reset all entity actions for the turn.
         foreach (EntityController ec in entities)
         {
-            ec.target = null;
+            ec.target.Clear();
             ec.ResetDamageTaken();
             ec.ResetAction();
             ec.acceptTouch = true;
+            ec.ready = false;
         }
 
-        int index = 0;
+        playerIndex = 0;
 
         // Loop while a player has not chosen their action for the turn
-        while(index < players.Count)
+        while(playerIndex < players.Count)
         {
-            if (players[index].action != null)
-                index++;
+            if (players[playerIndex].ready || (!players[playerIndex].ready && players[playerIndex].dead))
+                playerIndex++;
 
             yield return null;
         }
@@ -167,11 +207,55 @@ public class TurnManager : MonoBehaviour
         // Select an action for all AI entities
         foreach (EntityController ec in enemies)
         {
-            ec.target = players[Random.Range(0, players.Count)];
+            // TODO: modify targetting behavior
+
+            // See above. This is not a substitute for proper targetting behavior and will be removed
+            List<EntityController> targetTemp = new List<EntityController>();
+
+            foreach (var player in players)
+                targetTemp.Add(player);
+
+            ec.target = targetTemp;
             ec.SelectAction();
+            ec.ready = true;
         }
 
         EventManager.Instance.RaiseGameEvent(EventConstants.ON_MOVE_SELECTED);
+    }
+
+    #endregion
+
+    #region Player Action
+
+    public void SetActionToSpell(int index)
+    {
+        if (playerIndex >= players.Count)
+            return;
+
+        players[playerIndex].SelectAction(index);
+        // TODO: Remove
+        players[playerIndex].ready = true;
+    }
+
+
+    public void SetActionToAttack()
+    {
+        if (playerIndex >= players.Count)
+            return;
+
+        players[playerIndex].SelectAction("attack");
+        // TODO: Remove
+        players[playerIndex].ready = true;
+
+    }
+
+
+    public void SetActionToDefend()
+    {
+        if (playerIndex >= players.Count)
+            return;
+
+        players[playerIndex].SelectAction("defend");
     }
 
     #endregion
@@ -187,7 +271,7 @@ public class TurnManager : MonoBehaviour
             ec.acceptTouch = false;
         }
 
-
+        // Cancel current routine and begin action phase
         if (current != null)
             StopCoroutine(current);
 
@@ -202,7 +286,9 @@ public class TurnManager : MonoBehaviour
         List<EntityController> turnOrder = new List<EntityController>();
 
         foreach (EntityController ec in entities)
+        {
             turnOrder.Add(ec);
+        }
 
         turnOrder.Sort((x, y) => x.CompareTo(y));
 
@@ -214,67 +300,109 @@ public class TurnManager : MonoBehaviour
             if (ec.dead)
                 continue;
 
-            // Tweak later so that the target can change
-            if (ec.target.dead)
+            bool bValidTargets = true;
+
+            foreach(var target in ec.target)
+            {
+                if(target.dead)
+                {
+                    bValidTargets = true;
+                    break;
+                }
+            }
+
+            // Tweak later so that the target can change if there are no valid targets
+            if (!bValidTargets)
                 continue;
 
             ec.ExecuteMoveSelectedEffects();
 
             // Cast the spell
-            SpellCast spellCast = ec.action.Cast(ec, ec.target);
+            List<SpellCast> spellCast = ec.action.Cast(ec, ec.target);
             ec.actionResult = spellCast;
-            ec.target.IncreaseDamageTaken(spellCast.GetDamageApplied());
 
-            // NOTE: Replace with a spell specific method later because "Player casts attack!" sounds awful.
-            string dialogueSeq = spellCast.GetCastMessage();
-            EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, dialogueSeq);
+            List<string> preAnimDialogue = new List<string>();
+            List<string> postAnimDialogue = new List<string>();
+            // Originally checked for a spell success state before animating. May restore this, but should be separate
+            bool bWillPlayAnimation = true;
 
-            // If spell is successful, queue up its animation
-            if (spellCast.success)
+            foreach(var cast in spellCast)
             {
-                Sequence animationSeq = new AnimationSequence(spellCast.spell.spellAnimation, ec, ec.target, spellCast);
+                cast.target.IncreaseDamageTaken(cast.GetDamageApplied());
+
+                string dialogueSeq = cast.GetCastMessage();
+                if (!preAnimDialogue.Contains(dialogueSeq))
+                    preAnimDialogue.Add(dialogueSeq);
+
+                if (!cast.GetFailMessage().Equals(""))
+                {
+                    postAnimDialogue.Add(cast.GetFailMessage());
+                }
+
+                if(cast.spell is OffensiveSpell)
+                {
+                    // Prepare damage messages
+                    if (cast.GetDamageApplied() > 0)
+                    {
+                        if (cast.critical)
+                        {
+                            string critSeq = spellCast.Count > 1 ? $"Critical Hit on {cast.target.param.GetEntityName()}!" : "Critical Hit!";
+                            postAnimDialogue.Add(critSeq);
+                        }
+
+                        string damageSeq = cast.target.param.GetEntityName() + " takes " + cast.GetDamageApplied() + " damage!";
+                        postAnimDialogue.Add(damageSeq);
+                    }
+                    else
+                    {
+                        // Check if all hits of the spell missed
+                        if(!cast.SpellMissed())
+                        {
+                            string critSeq = $"{cast.target.param.GetEntityName()} blocks the attack!";
+                            postAnimDialogue.Add(critSeq);
+                        }
+                    }
+                }
+            }
+
+            foreach(var msg in preAnimDialogue)
+                EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, msg);
+
+            if(bWillPlayAnimation)
+            {
+                Sequence animationSeq = new AnimationSequence(ec.action.spellAnimation, ec, ec.target, spellCast);
                 EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, animationSeq);
             }
-            // Otherwise, output a failure message
-            else if(!spellCast.GetFailMessage().Equals(""))
-                EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, spellCast.GetFailMessage());
+
+            foreach (var msg in postAnimDialogue)
+                EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, msg);
 
             // Start the sequence
             sequencer.StartSequence();
-
-            // Output damage messages
-            if(spellCast.GetDamageApplied() > 0)
-            {
-                if (spellCast.critical)
-                {
-                    string critSeq = "Critical Hit!";
-                    EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, critSeq);
-                }
-                
-                string damageSeq = ec.target.param.GetEntityName() + " takes " + spellCast.GetDamageApplied() + " damage!";
-                EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, damageSeq);
-            }
 
             // Wait until sequence is done
             while (sequencer.active)
                 yield return null;
 
             // apply effects from the spell if the target is still alive.
-
-            List<EffectInstance> effects = spellCast.GetEffects();
-
-            foreach(EffectInstance ef in effects)
+            // TODO: try and get this within the main loop if at all possible
+            foreach (var spell in spellCast)
             {
-                if (ef.castSuccess)
-                    ef.OnActivate();
-                else
-                    ef.OnFailedToActivate();
+                List<EffectInstance> effects = spell.GetEffects();
+
+                foreach (EffectInstance ef in effects)
+                {
+                    if (ef.castSuccess)
+                        ef.OnActivate();
+                    else
+                        ef.OnFailedToActivate();
+                }
+
+                sequencer.StartSequence();
+
+                while (sequencer.active)
+                    yield return null;
             }
-
-            sequencer.StartSequence();
-
-            while (sequencer.active)
-                yield return null;
         }
 
         yield return null;
@@ -331,8 +459,8 @@ public class TurnManager : MonoBehaviour
 
         // Multiplayer: check for a winner
 
-        // Call game over if the player is still dead. Player is able to be revived through certain spells.
-        if (players[0].dead)
+        // Call game over all players are defeated. Player is able to be revived through certain spells.
+        if (AllPlayersDefeated())
         {
             // This will trigger a Game Over sequence on the UI controller. For now, I'm just going to reload the scene.
             EventManager.Instance.RaiseGameEvent(EventConstants.ON_PLAYER_DEFEAT);
@@ -391,12 +519,16 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_END).RemoveListener(OnTurnEnd);
         EventManager.Instance.GetGameEvent(EventConstants.ON_MOVE_SELECTED).RemoveListener(OnMoveSelected);
 
-        // Placeholder. The TurnManager WILL NOT handle scene transitions in the final game.
-        EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_OUT_COMPLETE).RemoveListener(Reload);
-
         EventManager.Instance.GetSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE).RemoveListener(QueueSequence);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_INITIALIZE).RemoveListener(AddEnemy);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_PLAYER_INITIALIZE).RemoveListener(AddPlayer);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_DEFEAT).RemoveListener(EnemyDefeated);
+
+        EventManager.Instance.GetGameEvent(EventConstants.ATTACK_SELECTED).RemoveListener(SetActionToAttack);
+        EventManager.Instance.GetGameEvent(EventConstants.DEFEND_SELECTED).RemoveListener(SetActionToDefend);
+        EventManager.Instance.GetIntEvent(EventConstants.SPELL_SELECTED).RemoveListener(SetActionToSpell);
+
+        // Placeholder. The TurnManager WILL NOT handle scene transitions in the final game.
+        EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_OUT_COMPLETE).RemoveListener(Reload);
     }
 }

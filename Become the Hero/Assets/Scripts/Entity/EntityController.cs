@@ -9,15 +9,16 @@ using DG.Tweening;
 /// </summary>
 public class EntityController : EntitySprite, IComparable<EntityController>
 {
-    protected TurnManager turnManger;
+    protected TurnManager turnManager;
 
     [SerializeField]
     protected Entity current;
-    public EntityController target { get; set; }
+    public List<EntityController> target { get; set; }
     public EntityParams param { get; private set; }
 
     public Spell action { get; protected set; }
-    public SpellCast actionResult { get; set; }
+    public List<SpellCast> actionResult { get; set; }
+    public bool ready { get; set; }
     public bool dead { get; protected set; }
     
     public int damageTaken { get; private set; }
@@ -62,6 +63,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
         Init();
         acceptTouch = false;
+        target = new List<EntityController>();
 
         if(spawn == null)
             spawn = (Resources.Load("Animation/Appear", typeof(AnimationSequenceObject))) as AnimationSequenceObject;
@@ -88,10 +90,14 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
             // Get stats
             param.entityHP = ((current.vals.entityHP * 2 * Spell.DAMAGE_CONSTANT) / 100) + Spell.DAMAGE_CONSTANT + 10;
-            param.entityMP = current.vals.entityMP;
+            param.entityMP = ((current.vals.entityMP * 2 * Spell.DAMAGE_CONSTANT) / 100) + Spell.DAMAGE_CONSTANT + 10;
             param.entityAtk = ((current.vals.entityAtk * 2 * Spell.DAMAGE_CONSTANT) / 100) + 5;
             param.entityDef = ((current.vals.entityDef * 2 * Spell.DAMAGE_CONSTANT) / 100) + 5;
+            param.entityMgAtk = ((current.vals.entityMgAtk * 2 * Spell.DAMAGE_CONSTANT) / 100) + 5;
+            param.entityMgDef = ((current.vals.entityMgDef * 2 * Spell.DAMAGE_CONSTANT) / 100) + 5;
             param.entitySpeed = ((current.vals.entitySpeed * 2 * Spell.DAMAGE_CONSTANT) / 100) + 5;
+            param.entityCritModifier = current.vals.entityCritModifier;
+            param.entityDodgeModifier = current.vals.entityDodgeModifier;
 
             maxHP = param.entityHP;
             maxMP = param.entityMP;
@@ -139,28 +145,54 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     /// <summary>
     /// Apply damage to this entity
     /// </summary>
-    public void ApplyDamage(int val, bool crit, bool vibrate)
+    public void ApplyDamage(int val, bool crit, bool vibrate, bool hit = true)
     {
         // If dead, do not apply damage
         if (dead) return;
 
-        param.entityHP -= val;
-        lastHit = val;
-
-        param.entityHP = Mathf.Clamp(param.entityHP, 0, maxHP);
-
-        if (param.entityHP <= 0)
+        if(val == 0)
         {
-            OnDeath();
-            dead = true;
+            // TODO: Dodge animation
+            if (vibrate)
+            {
+                sprite.transform.DOComplete();
+
+                if (hit)
+                {
+                    sprite.gameObject.transform.DOShakePosition(0.2f, new Vector3(0.24f, 0.0f, 0.0f), 150);
+                }
+                else
+                {
+                    sprite.transform.DOLocalMove(new Vector3(-0.24f, 0, 0), 0.1f).OnComplete(() => 
+                        sprite.transform.DOLocalMove(new Vector3(0, 0, 0), 0.1f).SetDelay(0.1f));
+                }
+            }
         }
-
-        if (vibrate)
+        else
         {
-            if (crit || dead)
-                sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.59f, 0.0f, 0.0f), 300, 90, false, false);
-            else
-                sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.34f, 0.0f, 0.0f), 200, 90, false, false);
+            param.entityHP -= val;
+            lastHit = val;
+
+            param.entityHP = Mathf.Clamp(param.entityHP, 0, maxHP);
+
+            if (param.entityHP <= 0)
+            {
+                OnDeath();
+                dead = true;
+            }
+
+            if (vibrate)
+            {
+                if (hit)
+                {
+                    sprite.transform.DOComplete();
+
+                    if (crit || dead)
+                        sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.59f, 0.0f, 0.0f), 300, 90, false, false);
+                    else
+                        sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.34f, 0.0f, 0.0f), 200, 90, false, false);
+                }
+            }
         }
     }
 
@@ -251,7 +283,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     public float GetEvasion()
     {
-        return 1;
+        return param.entityDodgeModifier;
     }
 
 
@@ -285,7 +317,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     public TurnManager GetTurnManager()
     {
-        return turnManger;
+        return turnManager;
     }
 
 
@@ -296,7 +328,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     public void SetTurnManager(TurnManager tm)
     {
-        turnManger = tm;
+        turnManager = tm;
     }
 
 
@@ -315,6 +347,19 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     }
 
 
+    public virtual void SelectAction(string name)
+    {
+        foreach(var move in current.moveList)
+        {
+            if (move.name == name)
+            {
+                action = move;
+                break;
+            }
+        }
+    }
+
+
     public void ResetAction()
     {
         action = null;
@@ -325,6 +370,16 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     public void SetAction(Spell a)
     {
         action = a;
+    }
+
+    #endregion
+
+
+    #region Targetting
+
+    public virtual void SetTarget()
+    {
+
     }
 
     #endregion
@@ -407,6 +462,8 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     /// </summary>
     public void ApplyEffect(EffectInstance eff)
     {
+        if (dead) return;
+
         if (eff.effect.IsStackable())
         {
             EffectInstance curr = effects.Find(f => f.effect.GetName() == eff.effect.GetName());
@@ -688,8 +745,8 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     /// <returns>1 if this object is slower, -1 if this it is faster, random otherwise.</returns>
     public int CompareTo(EntityController other)
     {
-        int priorityA = action.spellPriority;
-        int priorityB = other.action.spellPriority;
+        int priorityA = action ? action.spellPriority : -10;
+        int priorityB = other.action ? other.action.spellPriority : -10;
 
         if (priorityA > priorityB)
             return -1;

@@ -24,6 +24,7 @@ public class EnemyController : EntityController
         // Until we have "real" AI, an enemy's choice of action should be random, but it should check if the effect will proc.
         action = current.moveList[UnityEngine.Random.Range(0, current.moveList.Count)];
 
+        // TODO: really bad. Rework this function entirely
         while (!CheckEffectProc())
             action = current.moveList[UnityEngine.Random.Range(0, current.moveList.Count)];
     }
@@ -33,21 +34,24 @@ public class EnemyController : EntityController
     {
         bool result = true;
 
-        foreach(var ec in action.spellEffects)
+        foreach(var t in target)
         {
-            foreach (var e in ec.effects)
+            foreach (var ec in action.spellEffects)
             {
-                var effInst = e.effect.CreateEffectInstance(this, target, null);
+                foreach (var e in ec.effects)
+                {
+                    var effInst = e.effect.CreateEffectInstance(this, t, null);
+                    effInst.CheckSuccess();
+                    result = effInst.castSuccess;
+                }
+            }
+
+            foreach (Effect p in action.spellProperties)
+            {
+                var effInst = p.CreateEffectInstance(this, t, null);
                 effInst.CheckSuccess();
                 result = effInst.castSuccess;
             }
-        }
-
-        foreach(Effect p in action.spellProperties)
-        {
-            var effInst = p.CreateEffectInstance(this, target, null);
-            effInst.CheckSuccess();
-            result = effInst.castSuccess;
         }
 
         return result;

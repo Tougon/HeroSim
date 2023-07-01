@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellName: Afoost
   spellType: 3
+  spellTarget: 2
   spellCost: 10
   spellPriority: 0
   spellDescription: The user casts an incantation that increases their strength for

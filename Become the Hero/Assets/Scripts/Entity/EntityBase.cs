@@ -33,6 +33,12 @@ public class EntityBase : MonoBehaviour
 
 
     /// <summary>
+    /// Sets an entity's sprite
+    /// </summary>
+    public virtual void SetSprite(Sprite s) { }
+
+
+    /// <summary>
     /// Starts a color tween
     /// </summary>
     public virtual void SetColorTween(Color c, float amt, float duration){ }

@@ -1,0 +1,12 @@
+18|BeginLoop|-1
+19|BeginLoop|#
+20|Move|User,7, 2.3, 0.0, 0.0
+20|SetTargetIndex|#
+21|GenerateEffect|Effect/Common/Slash,Target,0.0,0.5,0.0,1.0,1.0,1.0,true,false,0,0,0
+27|ApplyDamage|true
+27|UpdateHPUI|Target
+28|Move|User,8, -2.3, 0.0, 0.0
+39|TerminateEffect|0
+42|EndLoop
+43|EndLoop
+75|TerminateAnimation

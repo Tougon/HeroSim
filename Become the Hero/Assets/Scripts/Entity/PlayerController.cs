@@ -24,10 +24,6 @@ public class PlayerController : EntityController
 
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).AddListener(OnTurnBegin);
 
-        EventManager.Instance.GetGameEvent(EventConstants.ATTACK_SELECTED).AddListener(SetActionToAttack);
-        EventManager.Instance.GetGameEvent(EventConstants.DEFEND_SELECTED).AddListener(SetActionToDefend);
-        EventManager.Instance.GetIntEvent(EventConstants.SPELL_SELECTED).AddListener(SetActionToSpell);
-
         // The player should always be ID'd.
         isIdentified = true;
     }
@@ -45,6 +41,7 @@ public class PlayerController : EntityController
 
     public void OnTurnBegin()
     {
+        // TODO: Remove RNG Spell List and MP gain. This is only relevant for Hero Sim.
         ModifyMP(amountMPGainPerTurn);
         PopulateSpellList();
     }
@@ -78,39 +75,45 @@ public class PlayerController : EntityController
 
     #region Action Selection
 
-    public void SetActionToSpell(int index)
+    public override void SelectAction(int index)
     {
         index = Mathf.Clamp(index, 0, availableSpells.Length);
         action = availableSpells[index];
 
-        // Don't do this if the spell affects the user.
+        // TODO: Remove
         SetTarget();
     }
 
-
-    public void SetActionToAttack()
+    public override void SelectAction(string name)
     {
-        action = attack;
+        name = name.ToLower();
 
-        SetTarget();
+        if (name == "defend")
+        {
+            action = defend;
+            target.Add(this);
+            ready = true;
+        }
+        else if (name == "attack")
+        {
+            action = attack;
+            // TODO: Remove
+            SetTarget();
+        }
+        else
+            base.SelectAction(name);
     }
 
-
-    public void SetActionToDefend()
+    public override void SetTarget()
     {
-        action = defend;
-        target = this;
-    }
-
-    
-    public void SetTarget()
-    {
-        if (turnManger.GetNumEntities() > 2)
+        if (turnManager.GetNumEnemies() > 2)
         {
             // This is where we add targeting options
         }
         else
-            target = turnManger.GetOther(this);
+            target.Add(turnManager.GetEnemy(this));
+
+        //ready = true;
     }
 
     #endregion
@@ -118,9 +121,5 @@ public class PlayerController : EntityController
     void OnDestroy()
     {
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).RemoveListener(OnTurnBegin);
-
-        EventManager.Instance.GetGameEvent(EventConstants.ATTACK_SELECTED).RemoveListener(SetActionToAttack);
-        EventManager.Instance.GetGameEvent(EventConstants.DEFEND_SELECTED).RemoveListener(SetActionToDefend);
-        EventManager.Instance.GetIntEvent(EventConstants.SPELL_SELECTED).RemoveListener(SetActionToSpell);
     }
 }

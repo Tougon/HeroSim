@@ -13,10 +13,13 @@ MonoBehaviour:
   m_Name: Block
   m_EditorClassIdentifier: 
   spellName: Block
+  spellType: 0
+  spellTarget: 2
   spellCost: 0
   spellPriority: 6
   spellDescription: 
   spellCastMessage: '[user] guards against incoming attacks!'
+  spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: 11a81225baec5b243a82f6bf54cb9d54, type: 2}
   spellEffects:
   - chance: 1

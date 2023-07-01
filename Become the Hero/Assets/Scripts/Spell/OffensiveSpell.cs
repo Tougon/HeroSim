@@ -20,6 +20,11 @@ public class OffensiveSpell : Spell
     [Range(0, 100)]
     [ShowIf("checkAccuracy")][GUIColor(0.90f, 0.90f, 0.05f)]
     public float spellAccuracy = 100;
+    [Range(0, 100)]
+    [ShowIf("checkAccuracy")][GUIColor(0.90f, 0.90f, 0.05f)]
+    public float accuracyPerHit = 100;
+    [ShowIf("checkAccuracy")][GUIColor(0.90f, 0.90f, 0.05f)]
+    public bool checkAccuracyPerHit = true;
 
 
     [Header("Multi-Hit Params")]
@@ -42,6 +47,8 @@ public class OffensiveSpell : Spell
     // If checked, hit count will vary between the min and max number of hits.
     [ShowIf("@maxNumberOfHits != minNumberOfHits")]
     public bool varyHitCount = false;
+    [ShowIf("@maxNumberOfHits != minNumberOfHits")]
+    public AnimationCurve hitCountCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
 
     [Header("Critical Hit Params")]
     public bool canCritical = true;
@@ -55,7 +62,7 @@ public class OffensiveSpell : Spell
     /// <summary>
     /// Override for spell hit that factors accuracy
     /// </summary>
-    public override bool CheckSpellHit(EntityController user, EntityController target)
+    public override bool CheckSpellHit(EntityController user, EntityController target, float amount = -1)
     {
         if (!checkAccuracy)
             return true;
@@ -64,7 +71,7 @@ public class OffensiveSpell : Spell
         float evasion = target.GetEvasion();
 
         float baseCheck = (accuracy / evasion);
-        float hit = spellAccuracy * baseCheck;
+        float hit = (amount != -1 ? amount : spellAccuracy) * baseCheck;
 
         // Get user's accuracy modifiers to decrease hit chance.
         var accuracyModifiers = user.GetAccuracyModifiers();
@@ -109,20 +116,32 @@ public class OffensiveSpell : Spell
             if (minNumberOfHits > maxNumberOfHits)
                 minNumberOfHits = maxNumberOfHits;
 
-            // We may want to weight this eventually
-            numHits = Random.Range(minNumberOfHits, maxNumberOfHits);
+            float time = hitCountCurve.Evaluate(Random.value);
+            numHits = Mathf.RoundToInt(Mathf.Lerp(minNumberOfHits, maxNumberOfHits, time));
         }
 
         int[] result = new int[numHits];
         bool[] crits = new bool[numHits];
+        bool[] hit = new bool[numHits];
 
         // Run damage calculation for each hit
         for(int i=0; i<result.Length; i++)
         {
-            float critChance = (float)criticalHitChance;
+            if(checkAccuracyPerHit && !CheckSpellHit(user, target, accuracyPerHit))
+            {
+                // TODO: Accuracy check
+                continue;
+            }
+
+            hit[i] = true;
+            float critChance = user.param.entityCritModifier == 0 ? 0 :
+                (float)criticalHitChance / user.param.entityCritModifier;
 
             // Indicate if this hit is critical
-            bool critical = canCritical && (Random.value < (1.0f / critChance));
+            bool critical = false;
+
+            if(critChance > 0)
+                critical = canCritical && (Random.value < (1.0f / critChance));
             crits[i] = critical;
 
             // Get attack and defense modifications
@@ -135,7 +154,7 @@ public class OffensiveSpell : Spell
 
             // Calculate damage
             float damage = ((((2 * DAMAGE_CONSTANT) / 5 + 2) * spellPower *
-                (((float)user.GetAttack() * atkMod) / ((float)target.GetDefense() * defMod))) / 50.0f) + 1.0f;
+                (((float)user.GetAttack() * atkMod) / ((float)target.GetDefense() * defMod))) / 50.0f);
 
             // Other modifier applied at the end. Includes critical hit and move specific modifiers
             var offenseModifiers = user.GetOffenseModifiers();
@@ -151,12 +170,13 @@ public class OffensiveSpell : Spell
             damage *= Random.Range(0.85f, 1.0f);
             damage = critical ? damage * 1.5f : damage;
 
-            result[i] = (int)damage;
+            result[i] = Mathf.RoundToInt(damage);
         }
 
         // Set the damage and critical
         cast.SetDamage(result);
         cast.SetCritical(crits);
+        cast.SetHits(hit);
     }
 
 
