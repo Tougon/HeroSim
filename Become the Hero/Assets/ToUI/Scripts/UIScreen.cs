@@ -17,6 +17,11 @@ namespace ToUI
     {
         [PropertyTooltip("Only recommended for testing")]
         [SerializeField] private bool bOpenOnAwake;
+
+        [SerializeField]
+        private Position3DTweenConfigAsset OpenAnimation;
+        private Position3DTweenConfigAsset CloseAnimation;
+
         protected bool bActive { get => UIScreenQueue.Instance.CurrentScreen == this; }
 
         protected bool bShowing;
@@ -26,14 +31,23 @@ namespace ToUI
         {
             if(bOpenOnAwake)
             {
-
+                Show();
             }
         }
 
 
         public void Show()
         {
+            UIScreenQueue.Instance.AddToQueue(this);
 
+            Vector3 startPos = OpenAnimation.TweenConfig.UseFrom ?
+                OpenAnimation.TweenConfig.From : transform.position;
+
+            transform.DOMove(OpenAnimation.TweenConfig).
+                SetDelay(OpenAnimation.TweenConfig.Delay).
+                SetEase(OpenAnimation.TweenConfig.Ease).
+                ChangeStartValue(startPos).
+                OnComplete(() => Debug.Log("Complete"));
         }
 
 

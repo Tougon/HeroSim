@@ -25,7 +25,7 @@ namespace ToUI
             }
         }
 
-        private List<UIScreen> _queue;
+        private List<UIScreen> _queue = new List<UIScreen>();
 
 
         public void AddToQueue(UIScreen screen)
