@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Sirenix.OdinInspector;
+using DG.Tweening;
+using DOTweenConfigs;
 
 namespace ToUI
 {
@@ -24,7 +26,7 @@ namespace ToUI
         {
             if(bOpenOnAwake)
             {
-                
+
             }
         }
 
