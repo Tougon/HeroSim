@@ -159,7 +159,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
                 if (hit)
                 {
-                    sprite.gameObject.transform.DOShakePosition(0.2f, new Vector3(0.24f, 0.0f, 0.0f), 150);
+                    sprite.gameObject.transform.DOShakePosition(0.2f, new Vector3(0.12f, 0.0f, 0.0f), 150);
                 }
                 else
                 {
@@ -188,9 +188,9 @@ public class EntityController : EntitySprite, IComparable<EntityController>
                     sprite.transform.DOComplete();
 
                     if (crit || dead)
-                        sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.59f, 0.0f, 0.0f), 300, 90, false, false);
+                        sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.32f, 0.0f, 0.0f), 300, 90, false, false);
                     else
-                        sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.34f, 0.0f, 0.0f), 200, 90, false, false);
+                        sprite.gameObject.transform.DOShakePosition(0.26f, new Vector3(0.24f, 0.0f, 0.0f), 200, 90, false, false);
                 }
             }
         }
