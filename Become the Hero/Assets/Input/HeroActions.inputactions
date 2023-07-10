@@ -11,7 +11,26 @@
                     "id": "f777a772-1bc0-4ec1-8eb2-03d2d89ca530",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "UI Confirm",
+                    "type": "Button",
+                    "id": "575869af-9ecf-4096-b217-f3747157ba82",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "UI Cancel",
+                    "type": "Button",
+                    "id": "aa3554b1-f69b-41fb-bd5b-c643adb84b8f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -69,6 +88,28 @@
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "dbb840bf-3a0e-4c99-8184-2e12c2deeebc",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "UI Confirm",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c8cb4d71-31ea-42d8-a67c-b197d8dcbd60",
+                    "path": "<Keyboard>/backspace",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "UI Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
