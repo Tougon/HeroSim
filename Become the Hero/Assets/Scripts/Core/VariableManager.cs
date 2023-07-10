@@ -21,11 +21,17 @@ public class VariableManager : ScriptableObject
     [Tooltip("Add all bools to this list.")]
     private List<BoolVariable> bools;
 
+    [SerializeField]
+    [Header("Booleans")]
+    [Tooltip("Add all Vector2 to this list.")]
+    private List<Vector2Variable> vector2s;
+
     public static VariableManager Instance;
     #endregion
 
     #region Variable Maps - For String & Var Lookup
     private Dictionary<string, BoolVariable> boolMap;
+    private Dictionary<string, Vector2Variable> vector2Map;
     #endregion
 
     #region Get Variable Values
@@ -48,6 +54,27 @@ public class VariableManager : ScriptableObject
         //Debug.LogError("ERROR: No variable of name " + varName + " exists. Returning false.");
         return false;
     }
+
+
+    /// <summary>
+    /// Gets a <see cref="Vector2Variable"/> from our <see cref="vector2Map"/>.
+    /// If no variable by string name exists, returns null.
+    /// </summary>
+    /// <param name="varName">The string name of the variable.</param>
+    /// <returns>The value of the variable associated with the passed in string, if any.</returns>
+    public Vector2 GetVector2VariableValue(string varName)
+    {
+        Vector2Variable value;
+
+        //searches our dictionary for the variable, outputs it, and returns it
+        if (vector2Map.TryGetValue(varName.ToLower(), out value))
+        {
+            return value.Value;
+        }
+
+        //Debug.LogError("ERROR: No variable of name " + varName + " exists. Returning false.");
+        return Vector2.zero;
+    }
     #endregion
 
     #region Set Variable Values
@@ -62,6 +89,26 @@ public class VariableManager : ScriptableObject
 
         //searches our dictionary for the variable, outputs it, and returns it
         if (boolMap.TryGetValue(varName.ToLower(), out value))
+        {
+            value.Value = val;
+            return;
+        }
+
+        //Debug.LogError("ERROR: No variable of name " + varName + " exists.");
+    }
+
+
+    /// <summary>
+    /// Sets the value of a <see cref="Vector2Variable"/> in our <see cref="vector2Map"/>.
+    /// </summary>
+    /// <param name="varName">The string name of the variable.</param>
+    /// <param name="val">The value to set.</param>
+    public void SetVector2VariableValue(string varName, Vector2 val)
+    {
+        Vector2Variable value;
+
+        //searches our dictionary for the variable, outputs it, and returns it
+        if (vector2Map.TryGetValue(varName.ToLower(), out value))
         {
             value.Value = val;
             return;
@@ -84,6 +131,19 @@ public class VariableManager : ScriptableObject
             boolMap.Add(boolVar.name.ToLower(), boolVar);
         }
     }
+
+    /// <summary>
+    /// Maps each Vector2 variables's name to the Vector2 itself, after 
+    /// filling <see cref="vector2Map"/> via inspector.
+    /// </summary>
+    private void PopulateVector2Map()
+    {
+        vector2Map = new Dictionary<string, Vector2Variable>();
+        foreach (Vector2Variable vector2Var in this.vector2s)
+        {
+            vector2Map.Add(vector2Var.name.ToLower(), vector2Var);
+        }
+    }
     #endregion
 
     #region On Enable
@@ -93,6 +153,7 @@ public class VariableManager : ScriptableObject
     private void OnEnable()
     {
         this.PopulateBoolMap();
+        this.PopulateVector2Map();
 
         if (!Instance)
         {

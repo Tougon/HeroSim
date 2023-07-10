@@ -7,10 +7,6 @@ namespace ToUI
 {
     public class UIMenu : UIScreen
     {
-        [Header("Menu Options")]
-        [SerializeField]
-        private List<GameObject> MenuOptions;
-
         private bool bAllowInput;
 
 

@@ -9,10 +9,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6a7fe24be142cd4f9d80fc4952ea0c9, type: 3}
-  m_Name: Variable Manager
+  m_Script: {fileID: 11500000, guid: d6a231661af38844caae4ded01abd631, type: 3}
+  m_Name: UIInputValue
   m_EditorClassIdentifier: 
-  bools:
-  - {fileID: 11400000, guid: c35c213d4399cf7499f336f9ad2472f2, type: 2}
-  vector2s:
-  - {fileID: 11400000, guid: d347b9b7244a3fa488b4c2701d39fa8e, type: 2}
+  DeveloperDescription:
+    _value: 
+  _value: {x: 0, y: 0}
+  _readOnly: 0
+  _raiseWarning: 1
+  _isClamped: 0
+  _minClampedValue: {x: 0, y: 0}
+  _maxClampedValue: {x: 0, y: 0}

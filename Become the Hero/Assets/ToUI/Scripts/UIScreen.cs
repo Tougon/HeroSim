@@ -123,6 +123,22 @@ namespace ToUI
         #region Input Responses
 
         /// <summary>
+        /// Executs the proper movement functions based on provided value
+        /// </summary>
+        public virtual void OnMovementUpdate(Vector2 movement)
+        {
+            if (movement.y > 0.5f)
+                OnUpPressed();
+            else if (movement.y < -0.5f)
+                OnDownPressed();
+
+            if (movement.x > 0.5f)
+                OnRightPressed();
+            else if (movement.x < -0.5f)
+                OnLeftPressed();
+        }
+
+        /// <summary>
         /// Action to execute when up is pressed
         /// </summary>
         public virtual void OnUpPressed()

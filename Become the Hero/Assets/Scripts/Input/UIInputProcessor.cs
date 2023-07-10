@@ -1,11 +1,10 @@
+using ScriptableObjectArchitecture;
 using ToUI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class UIInputProcessor : MonoBehaviour
 {
-    private Vector2 MovementValue;
-
     private PlayerInput PlayerInput;
     private InputAction MovementAction;
 
@@ -31,6 +30,7 @@ public class UIInputProcessor : MonoBehaviour
 
     private void UpdateInputValues()
     {
-        MovementValue = MovementAction.ReadValue<Vector2>();
+        VariableManager.Instance.SetVector2VariableValue(VariableConstants.UI_INPUT_VALUE, 
+            MovementAction.ReadValue<Vector2>());
     }
 }
