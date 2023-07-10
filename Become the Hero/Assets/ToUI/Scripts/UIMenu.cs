@@ -13,11 +13,18 @@ namespace ToUI
 
         private bool bAllowInput;
 
+
+        public override void Show()
+        {
+            base.Show();
+            bAllowInput = false;
+        }
+
         protected override void OnScreenShown()
         {
             base.OnScreenShown();
 
-            bAllowInput = false;
+            bAllowInput = true;
         }
 
         public override void FocusChanged(bool bFocus)

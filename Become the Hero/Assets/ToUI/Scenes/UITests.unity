@@ -330,7 +330,7 @@ GameObject:
   m_Component:
   - component: {fileID: 944976416}
   - component: {fileID: 944976415}
-  - component: {fileID: 944976414}
+  - component: {fileID: 944976417}
   m_Layer: 0
   m_Name: PlayerInputManager
   m_TagString: Untagged
@@ -338,18 +338,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &944976414
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 944976413}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 827297baac086704b970c75e36c7a7d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &944976415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,7 +366,7 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 944976414}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: 
         m_MethodName: OnMove
         m_Mode: 0
@@ -393,16 +381,32 @@ MonoBehaviour:
     m_ActionId: f777a772-1bc0-4ec1-8eb2-03d2d89ca530
     m_ActionName: Hero/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
   - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 575869af-9ecf-4096-b217-f3747157ba82
-    m_ActionName: Hero/UI Confirm[/Keyboard/enter]
+      m_Calls:
+      - m_Target: {fileID: 944976417}
+        m_TargetAssemblyTypeName: UIInputProcessor, Assembly-CSharp
+        m_MethodName: OnMove
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: b5d01ff3-09ea-47c8-89f4-67ea25922df8
+    m_ActionName: UI/Movement[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d,/XInputControllerWindows/leftStick/up,/XInputControllerWindows/leftStick/down,/XInputControllerWindows/leftStick/left,/XInputControllerWindows/leftStick/right]
   - m_PersistentCalls:
       m_Calls: []
-    m_ActionId: aa3554b1-f69b-41fb-bd5b-c643adb84b8f
-    m_ActionName: Hero/UI Cancel[/Keyboard/backspace]
+    m_ActionId: 2713fb97-d860-4671-ad39-a2ab8b1bbf00
+    m_ActionName: UI/Confirm[/Keyboard/enter,/XInputControllerWindows/buttonEast]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f0a76f38-5356-4297-bdd2-53a1e77cc32e
+    m_ActionName: UI/Cancel[/Keyboard/backspace,/XInputControllerWindows/buttonSouth]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard
-  m_DefaultActionMap: Hero
+  m_DefaultActionMap: UI
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!4 &944976416
@@ -420,6 +424,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &944976417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 944976413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a6b96df47e6934479d8eddb85bb20dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1165753736
 GameObject:
   m_ObjectHideFlags: 0
