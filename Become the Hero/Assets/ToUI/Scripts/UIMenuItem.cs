@@ -30,12 +30,10 @@ namespace ToUI
 
             if (bSelected)
             {
-                Debug.Log("Selected!!!!" + this.name);
                 Temp.DOColor(SelectedAnimation.TweenConfig);
             }
             else
             {
-                Debug.Log("Unselected!!!! " + this.name);
                 Temp.DOColor(UnselectedAnimation.TweenConfig);
             }
         }

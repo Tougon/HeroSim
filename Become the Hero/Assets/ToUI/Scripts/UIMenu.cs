@@ -2,6 +2,9 @@ using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +14,7 @@ namespace ToUI
     {
         [Header("Menu Properties")]
         [SerializeField]
-        [TableMatrix(HorizontalTitle = "Menu Selection", DrawElementMethod = "DrawElement", ResizableColumns = false)]
+        [TableMatrix(HorizontalTitle = "Menu Selection", DrawElementMethod = "DrawElement")]
         protected UIMenuItem[,] SelectionMatrix = new UIMenuItem[0, 0];
         [SerializeField]
         protected UIMenuItem InitialSelection;
@@ -26,10 +29,76 @@ namespace ToUI
 
         #region Editor Only
 #if UNITY_EDITOR
-        private static UIMenuItem DrawElement(Rect rect, UIMenuItem value)
+        private UIMenuItem DrawElement(Rect rect, UIMenuItem value)
         {
-            UnityEditor.EditorGUI.DrawRect(rect.Padding(1), value ? new Color(0.1f, 0.8f, 0.2f) : new Color(0, 0, 0, 0.5f));
-            UnityEditor.EditorGUI.DropShadowLabel(rect.Padding(2), value ? value.name : "None");
+            Event evt = Event.current;
+
+            bool inBounds = rect.Contains(evt.mousePosition);
+            UIMenuItem target = null;
+
+            foreach (var item in DragAndDrop.objectReferences)
+            {
+                if (item is GameObject)
+                {
+                    if ((item as GameObject).GetComponent<UIMenuItem>())
+                    {
+                        target = (item as GameObject).GetComponent<UIMenuItem>();
+                        break;
+                    }
+                }
+            }
+
+            string name = "None";
+            Color color = new Color(0, 0, 0, 0.5f);
+
+            if (inBounds && target != null)
+            {
+                name = target.name;
+                color = new Color(0.25f, 0.85f, 0.76f);
+            }
+            else if(value != null)
+            {
+                name = value.name;
+                color = new Color(0.1f, 0.8f, 0.2f);
+            }
+
+            EditorGUI.DrawRect(rect.Padding(1), color);
+            GUI.Box(rect, name);
+
+            switch (evt.type)
+            {
+                case EventType.MouseDown:
+
+                    if (!inBounds)
+                        break;
+
+                    if (Event.current.button == 1)
+                    {
+                        value = null;
+                    }
+
+                    GUI.changed = true;
+                    Event.current.Use();
+
+                    break;
+                case EventType.DragUpdated:
+                case EventType.DragPerform:
+
+                    if (!inBounds || target == null)
+                        break;
+
+                    DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+
+                    if (evt.type == EventType.DragPerform)
+                    {
+                        DragAndDrop.AcceptDrag();
+                        value = target;
+
+                        GUI.changed = true;
+                        Event.current.Use();
+                    }
+                    break;
+            }
 
             return value;
         }
