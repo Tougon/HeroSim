@@ -501,7 +501,8 @@ public class AnimationSequence : Hero.Core.Sequence
 
             case AnimationSequenceAction.Action.UpdateHPUI:
 
-                if (spell[targetIndex].GetDamageOfPreviousHit() == 0)
+                if (spell != null && spell[targetIndex] != null &&
+                    spell[targetIndex].GetDamageOfPreviousHit() == 0)
                     break;
 
                 param = param.Trim();
@@ -688,6 +689,7 @@ public class AnimationSequence : Hero.Core.Sequence
     /// </summary>
     private void TerminateEffect(int id)
     {
+        id = Mathf.Clamp(id, 0, effects.Count - 1);
         effects[id].gameObject.SetActive(false);
         effects.RemoveAt(id);
     }

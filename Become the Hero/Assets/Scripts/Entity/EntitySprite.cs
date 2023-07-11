@@ -80,7 +80,7 @@ public class EntitySprite : EntityBase
     /// </summary>
     public override void SetOverlayTexture(Texture t, Vector2 tiling)
     {
-        mat.SetTexture("_OverlayTex", t);
+        mat.SetTexture("_OverlayTexture", t);
         mat.SetVector("_OverlayOffset", tiling);
     }
 

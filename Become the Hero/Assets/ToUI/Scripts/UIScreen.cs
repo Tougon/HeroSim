@@ -14,7 +14,7 @@ namespace ToUI
     /// be it cutscenes, menus, selection, etc. UIScreen handles all
     /// basic open/close operations.
     /// </summary>
-    public class UIScreen : MonoBehaviour
+    public class UIScreen : SerializedMonoBehaviour
     {
         [Header("Properties")]
         [PropertyTooltip("Opens this screen on Awake. Only recommended for testing")]

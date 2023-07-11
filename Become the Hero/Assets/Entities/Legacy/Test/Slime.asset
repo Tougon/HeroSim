@@ -30,4 +30,4 @@ MonoBehaviour:
     entityDescription: It's a bad redraw of the famous Smushie from the hit PC game,
       Smush. Available Now!
   moveList:
-  - {fileID: 11400000, guid: 72ae8e16e0d55ef4581c6f5161d03bd0, type: 2}
+  - {fileID: 11400000, guid: 8bd727b76a4ef6c4fae3e5ce1a837c19, type: 2}

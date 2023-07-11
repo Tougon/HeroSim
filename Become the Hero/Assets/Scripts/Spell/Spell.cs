@@ -417,6 +417,9 @@ public class SpellCast
     {
         bool result = false;
 
+        if (hits == null)
+            return result;
+
         foreach(var hit in hits)
         {
             if (hit)
