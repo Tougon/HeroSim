@@ -14,6 +14,7 @@ namespace ToUI
     {
         [Header("Menu Properties")]
         [SerializeField]
+        [InfoBox("Drag UIMenuItems into the matrix to define navigation. Right click to remove an element.")]
         [TableMatrix(HorizontalTitle = "Menu Selection", DrawElementMethod = "DrawElement")]
         protected UIMenuItem[,] SelectionMatrix = new UIMenuItem[0, 0];
         [SerializeField]

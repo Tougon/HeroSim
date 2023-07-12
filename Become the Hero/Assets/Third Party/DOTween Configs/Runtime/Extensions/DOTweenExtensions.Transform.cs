@@ -24,6 +24,14 @@ namespace DOTweenConfigs
         {
             return target.DOMoveZ(c.To, c.Duration, c.Snapping);
         }
+        public static Tweener DORotate(this Transform target, Position3DTweenConfig c)
+        {
+            return target.DORotate(c.To, c.Duration);
+        }
+        public static Tweener DOLocalRotate(this Transform target, Position3DTweenConfig c)
+        {
+            return target.DOLocalRotate(c.To, c.Duration);
+        }
 
         public static Tweener DOLocalMove(this Transform target, Position3DTweenConfig c)
         {

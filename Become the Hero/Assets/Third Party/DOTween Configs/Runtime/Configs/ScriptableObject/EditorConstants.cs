@@ -3,7 +3,7 @@
     public static class EditorConstants
     {
         public const string CreateAssetMenuPathRoot = "DOTweenConfigs";
-        public const int CreateAssetMenuOrder = 2000;
+        public const int CreateAssetMenuOrder = -2000;
 
         // Position configs
         public const string PositionConfigsPath = CreateAssetMenuPathRoot + "/Position Configs/";

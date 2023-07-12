@@ -1025,6 +1025,7 @@ GameObject:
   - component: {fileID: 1165753740}
   - component: {fileID: 1165753739}
   - component: {fileID: 1165753741}
+  - component: {fileID: 1165753742}
   m_Layer: 5
   m_Name: Menu
   m_TagString: Untagged
@@ -1152,9 +1153,64 @@ MonoBehaviour:
       Data: 
   bOpenOnAwake: 1
   bCloseOnLoseFocus: 0
-  OpenAnimation: {fileID: 11400000, guid: da29d56bb30c72344bc783c411d3627f, type: 2}
+  AnimationSource: {fileID: 1165753742}
   CloseAnimation: {fileID: 11400000, guid: c8862a7d6f149b94ab3b82cdafdc3bad, type: 2}
   InitialSelection: {fileID: 53077927}
+--- !u!114 &1165753742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1165753736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9fb01ab7d1c15e4faa6f2974342210c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 1165753737}
+    - {fileID: 1165753739}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: target
+      Entry: 7
+      Data: DOTweenConfigs.TweenActionCache, Assembly-CSharp
+    - Name: transform
+      Entry: 6
+      Data: 
+    - Name: rectTransform
+      Entry: 10
+      Data: 0
+    - Name: sprite
+      Entry: 6
+      Data: 
+    - Name: image
+      Entry: 10
+      Data: 1
+    - Name: text
+      Entry: 6
+      Data: 
+    - Name: canvasGroup
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  animationList:
+  - animName: Open
+    nextAnimName: 
+    tweenState: {fileID: 11400000, guid: eb336a0bed823d34789b1209809290e2, type: 2}
+    OnCompleteStatic:
+      Events: []
+  useStartAnimation: 0
+  startAnimation: 
 --- !u!1 &1329359801
 GameObject:
   m_ObjectHideFlags: 0

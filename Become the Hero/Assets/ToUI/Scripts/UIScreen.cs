@@ -24,9 +24,7 @@ namespace ToUI
 
         [Header("Animation")]
         [SerializeField]
-        private Position2DTweenConfigAsset OpenAnimation;
-        [SerializeField]
-        private Position2DTweenConfigAsset CloseAnimation;
+        protected TweenSystem AnimationSource;
 
         private RectTransform rectTransform;
 
@@ -54,14 +52,7 @@ namespace ToUI
         {
             UIScreenQueue.Instance.AddToQueue(this);
 
-            Vector2 startPos = OpenAnimation.TweenConfig.UseFrom ?
-                OpenAnimation.TweenConfig.From : rectTransform.anchoredPosition;
-
-            rectTransform.DOAnchorPos(OpenAnimation.TweenConfig).
-                SetDelay(OpenAnimation.TweenConfig.Delay).
-                SetEase(OpenAnimation.TweenConfig.Ease).
-                ChangeStartValue(startPos).
-                OnComplete(() => OnScreenShown());
+            AnimationSource.PlayAnimation("Open", OnScreenShown);
         }
 
 
@@ -109,14 +100,7 @@ namespace ToUI
         {
             UIScreenQueue.Instance.RemoveFromQueue(this);
 
-            Vector2 startPos = CloseAnimation.TweenConfig.UseFrom ?
-                CloseAnimation.TweenConfig.From : rectTransform.anchoredPosition;
-
-            rectTransform.DOAnchorPos(CloseAnimation.TweenConfig).
-                SetDelay(CloseAnimation.TweenConfig.Delay).
-                SetEase(CloseAnimation.TweenConfig.Ease).
-                ChangeStartValue(startPos).
-                OnComplete(() => OnScreenHide());
+            AnimationSource.PlayAnimation("Close", OnScreenShown);
         }
 
 
