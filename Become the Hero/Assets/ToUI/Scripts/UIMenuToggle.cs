@@ -20,6 +20,7 @@ namespace ToUI
         private bool bToggled = false;
         public bool Toggle { get => bToggled; }
 
+
         protected override void Awake()
         {
             base.Awake();

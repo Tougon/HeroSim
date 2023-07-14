@@ -171,6 +171,14 @@ namespace ToUI
 
             if (lastDirection.sqrMagnitude > 0)
             {
+                if(CurrentSelection != null)
+                {
+                    if(lastDirection.x > 0) CurrentSelection.OnRightPressed();
+                    if(lastDirection.x < 0) CurrentSelection.OnLeftPressed();
+                    if(lastDirection.y > 0) CurrentSelection.OnUpPressed();
+                    if(lastDirection.y < 0) CurrentSelection.OnDownPressed();
+                }
+
                 repeatTimer += Time.deltaTime;
 
                 if ((bWaitInitial && repeatTimer >= InitialRepeatDelay) ||
