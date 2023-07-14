@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using Sirenix.OdinInspector;
+using UnityEngine.Rendering;
 
 namespace ToUI
 {
@@ -29,7 +30,7 @@ namespace ToUI
         [ShowIf("@Type == SliderType.Hinged")]
         [PropertyTooltip("Percent at which to insert a hinge.")]
         [SerializeField] protected float HingePercentage = 0.5f;
-        private const float HINGE_DELAY_TIME = 0.1f;
+        private const float HINGE_DELAY_TIME = 0.2f;
 
         /// <summary>
         /// Validates the initial values of the slider
@@ -90,7 +91,6 @@ namespace ToUI
 
                 while (currentHinge < 1)
                 {
-                    Debug.LogError("ADDING: " + currentHinge);
                     hinges.Add(currentHinge);
                     currentHinge += HingePercentage;
                 }
@@ -104,6 +104,8 @@ namespace ToUI
             // Calculate the current hinge index.
             float percentage = currentValue / MaxValue;
 
+            nextHingeIndex = 0;
+
             for (int i = 0; i < HingePoints.Length; i++)
             {
                 if (HingePoints[i] < percentage)
@@ -112,8 +114,7 @@ namespace ToUI
             }
 
             bUseHinge = HingePoints.Length > 0;
-            nextHingeIndex = Mathf.Clamp(nextHingeIndex, 0, HingePoints.Length - 1);
-            prevHingeIndex = Mathf.Clamp(nextHingeIndex - 1, 0, HingePoints.Length - 1);
+            prevHingeIndex = nextHingeIndex - 1;
         }
 
 
@@ -202,40 +203,37 @@ namespace ToUI
             {
                 if (bUseHinge)
                 {
-                    // Check if hinge index is valid
-                    if (nextHingeIndex >= 0 && nextHingeIndex < HingePoints.Length)
+                    // Calculate percentage.
+                    float newPercent = NewValue / MaxValue;
+
+                    // If the next hinge index is valid and the new percentage exceeds the limit, advance.
+                    if ((nextHingeIndex >= 0 && nextHingeIndex < HingePoints.Length) &&
+                        currentDirection > 0 && newPercent >= HingePoints[nextHingeIndex])
                     {
-                        // Calculate percentages.
-                        // We only care about the hinge if the old value is before and the new value is after.
-                        float currentPercent = currentValue / MaxValue;
-                        float newPercent = NewValue / MaxValue;
+                        // Clamp new value
+                        NewValue = HingePoints[nextHingeIndex] * MaxValue;
 
-                        bool temp = false;
+                        // Update indices
+                        prevHingeIndex = nextHingeIndex;
+                        nextHingeIndex++;
 
-                        if (currentDirection > 0 && currentPercent < HingePoints[nextHingeIndex] &&
-                            newPercent >= HingePoints[nextHingeIndex])
-                        {
-                            NewValue = HingePoints[nextHingeIndex] * MaxValue;
+                        // Start the delay
+                        HingeDelay = HingeRoutine();
+                        StartCoroutine(HingeDelay);
+                    }
+                    // If the previous hinge index is valid and the new percentage is less than the limit, advance.
+                    else if ((prevHingeIndex >= 0 && prevHingeIndex < HingePoints.Length) &&
+                        currentDirection < 0 && newPercent <= HingePoints[prevHingeIndex])
+                    {
+                        // Clamp new value
+                        NewValue = HingePoints[prevHingeIndex] * MaxValue;
 
-                            nextHingeIndex++;
-                            HingeDelay = HingeRoutine();
-                            StartCoroutine(HingeDelay);
-                            temp = true;
-                        }
-                        else if (currentDirection < 0 && currentPercent > HingePoints[prevHingeIndex] &&
-                            newPercent <= HingePoints[prevHingeIndex])
-                        {
-                            NewValue = HingePoints[prevHingeIndex] * MaxValue;
+                        // Update indices
+                        nextHingeIndex = prevHingeIndex;
+                        prevHingeIndex--;
 
-                            nextHingeIndex--;
-                            HingeDelay = HingeRoutine();
-                            StartCoroutine(HingeDelay);
-                            temp = true;
-                        }
-
-                        // Clamp the hinge value
-                        nextHingeIndex = Mathf.Clamp(nextHingeIndex, 0, HingePoints.Length - 1);
-                        prevHingeIndex = Mathf.Clamp(nextHingeIndex - 1, 0, HingePoints.Length - 1);
+                        HingeDelay = HingeRoutine();
+                        StartCoroutine(HingeDelay);
                     }
                 }
 

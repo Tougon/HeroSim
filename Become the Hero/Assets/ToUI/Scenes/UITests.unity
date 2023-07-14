@@ -1068,8 +1068,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AnimationSource: {fileID: 367798662}
-  Type: 1
-  StartValue: 0.25
+  Type: 0
+  StartValue: 0.45
   MinValue: 0
   MaxValue: 1
   HingePoints:
