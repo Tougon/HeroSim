@@ -37,8 +37,12 @@ namespace ToUI
         protected virtual void Awake()
         {
             rectTransform = transform as RectTransform;
+        }
 
-            if(bOpenOnAwake)
+
+        protected virtual void Start()
+        {
+            if (bOpenOnAwake)
             {
                 Show();
             }
@@ -52,7 +56,7 @@ namespace ToUI
         {
             UIScreenQueue.Instance.AddToQueue(this);
 
-            AnimationSource.PlayAnimation("Open", OnScreenShown);
+            AnimationSource?.PlayAnimation("Open", OnScreenShown);
         }
 
 
@@ -100,7 +104,7 @@ namespace ToUI
         {
             UIScreenQueue.Instance.RemoveFromQueue(this);
 
-            AnimationSource.PlayAnimation("Close", OnScreenShown);
+            AnimationSource?.PlayAnimation("Close", OnScreenShown);
         }
 
 

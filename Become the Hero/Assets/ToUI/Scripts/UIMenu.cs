@@ -60,7 +60,11 @@ namespace ToUI
             else if(value != null)
             {
                 name = value.name;
-                color = new Color(0.1f, 0.8f, 0.2f);
+
+                if(!value.enabled || !value.gameObject.activeInHierarchy)
+                    color = new Color(0.8f, 0.2f, 0.1f);
+                else
+                    color = new Color(0.1f, 0.8f, 0.2f);
             }
 
             EditorGUI.DrawRect(rect.Padding(1), color);
@@ -83,6 +87,9 @@ namespace ToUI
 
                     break;
                 case EventType.DragUpdated:
+                    DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                    Event.current.Use();
+                    break;
                 case EventType.DragPerform:
 
                     if (!inBounds || target == null)
@@ -107,9 +114,9 @@ namespace ToUI
         #endregion
 
 
-        protected override void Awake()
+        protected override void Start()
         {
-            base.Awake();
+            base.Start();
 
             if(SelectionMatrix != null)
             {
@@ -201,7 +208,8 @@ namespace ToUI
 
                 AttemptedSelection = SelectionMatrix[targetColumn, targetRow];
 
-            } while (AttemptedSelection == null);
+            } while (AttemptedSelection == null || !AttemptedSelection.enabled || 
+                !AttemptedSelection.gameObject.activeInHierarchy);
 
             if(AttemptedSelection != CurrentSelection)
             {
@@ -288,7 +296,6 @@ namespace ToUI
         public override void OnConfirmPressed()
         {
             if (!bAllowInput) return;
-            Debug.Log("Pressed");
 
             if (CurrentSelection != null)
                 CurrentSelection.OnConfirmPressed();

@@ -1,4 +1,5 @@
 using DOTweenConfigs;
+using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,17 +9,30 @@ namespace ToUI
 {
     public class UIMenuItem : MonoBehaviour
     {
-        // TODO: Unselect Idle, Select Idle, Confirm, Disable, Disable Idle
+        private const string AnimInfo = "Menu Item Animations are named Normal, Select, and Disable";
+
         [Header("Animation")]
+        [InfoBox("@AnimInfo")]
         [SerializeField]
-        private ColorTweenConfigAsset SelectedAnimation;
-        [SerializeField]
-        private ColorTweenConfigAsset UnselectedAnimation;
+        protected TweenSystem AnimationSource;
         // Temp
         [SerializeField]
         private Image Temp;
 
         protected bool bSelected;
+
+
+        protected virtual void Awake()
+        {
+            if (!this.enabled)
+                AnimationSource?.PlayAnimation("Disable");
+        }
+
+
+        protected virtual void OnEnable()
+        {
+            AnimationSource?.PlayAnimation("Normal");
+        }
 
         /// <summary>
         /// Sets the selected state of this menu item
@@ -26,16 +40,27 @@ namespace ToUI
         /// <param name="selected"></param>
         public void SetSelected(bool selected)
         {
+            if (!this.enabled)
+            {
+                return;
+            }
+
             bSelected = selected;
 
             if (bSelected)
             {
-                Temp.DOColor(SelectedAnimation.TweenConfig);
+                AnimationSource?.PlayAnimation("Select");
             }
             else
             {
-                Temp.DOColor(UnselectedAnimation.TweenConfig);
+                AnimationSource?.PlayAnimation("Normal");
             }
+        }
+
+        protected virtual void OnDisable()
+        {
+            if(gameObject.activeInHierarchy)
+                AnimationSource?.PlayAnimation("Disable");
         }
 
         #region Input Responses

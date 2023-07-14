@@ -71,17 +71,7 @@ public class TweenSystem : SerializedMonoBehaviour
 
         if(animationCache.TryGetValue(animName, out TweenData data))
         {
-            currentTweenData = null;
-
-            // Stop existing playback if any
-            playbackInstance?.StopInstance();
-
-            // Reset the animation delegate
-            OnAnimationCompletedDelegate = new OnAnimationCompletedSignature(callback);
-
-            currentTweenData = data;
-            currentTweenData.tweenState.ExecuteState(target, OnAnimationCompleted);
-            
+            PlayAnimation_Internal(data, callback);
         }
         else
         {
@@ -89,6 +79,30 @@ public class TweenSystem : SerializedMonoBehaviour
             Debug.LogWarning($"Cannot play animation. {animName} does not exist in the cache.");
 #endif
         }
+    }
+
+
+    public void PlayAnimation(TweenData data)
+    {
+        PlayAnimation_Internal(data, null);
+    }
+
+
+    private void PlayAnimation_Internal(TweenData data, OnAnimationCompletedSignature callback)
+    {
+        currentTweenData = null;
+
+        // Stop existing playback if any
+        playbackInstance?.StopInstance();
+
+        // Reset the animation delegate
+        if (callback != null)
+            OnAnimationCompletedDelegate = new OnAnimationCompletedSignature(callback);
+        else
+            callback = null;
+
+        currentTweenData = data;
+        playbackInstance = currentTweenData.tweenState.ExecuteState(target, OnAnimationCompleted);
     }
 
 
@@ -106,7 +120,9 @@ public class TweenSystem : SerializedMonoBehaviour
         if(currentTweenData != null)
         {
             currentTweenData.OnCompleteStatic.Invoke();
-            PlayAnimation(currentTweenData.nextAnimName);
+
+            if(!string.IsNullOrEmpty(currentTweenData.nextAnimName))
+                PlayAnimation(currentTweenData.nextAnimName);
         }
     }
 }

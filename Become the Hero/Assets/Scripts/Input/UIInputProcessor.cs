@@ -1,5 +1,4 @@
 using ScriptableObjectArchitecture;
-using ToUI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,6 +6,8 @@ public class UIInputProcessor : MonoBehaviour
 {
     private PlayerInput PlayerInput;
     private InputAction MovementAction;
+    private InputAction ConfirmAction;
+    private InputAction CancelAction;
 
 
     void Awake()
@@ -19,6 +20,8 @@ public class UIInputProcessor : MonoBehaviour
     private void BindInputActions()
     {
         MovementAction = PlayerInput.actions["Movement"];
+        ConfirmAction = PlayerInput.actions["Confirm"];
+        CancelAction = PlayerInput.actions["Cancel"];
     }
 
 
@@ -32,5 +35,16 @@ public class UIInputProcessor : MonoBehaviour
     {
         VariableManager.Instance.SetVector2VariableValue(VariableConstants.UI_INPUT_VALUE, 
             MovementAction.ReadValue<Vector2>());
+
+
+        if (ConfirmAction.WasPressedThisFrame())
+        {
+            // TODO: Proper input events instead of this crap
+            ToUI.UIScreenQueue.Instance.CurrentScreen.OnConfirmPressed();
+        }
+        else if (CancelAction.WasPressedThisFrame())
+        {
+
+        }
     }
 }

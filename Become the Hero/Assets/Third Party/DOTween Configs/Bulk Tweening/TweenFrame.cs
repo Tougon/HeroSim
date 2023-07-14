@@ -75,6 +75,7 @@ namespace DOTweenConfigs
                             ChangeStartValue(position3dTweenConfig.TweenConfig.UseFrom ? 
                                 position3dTweenConfig.TweenConfig.From : target.transform.localPosition).
                             SetDelay(position3dTweenConfig.TweenConfig.Delay).
+                            SetEase(position3dTweenConfig.TweenConfig.Ease).
                             OnComplete(() => source.OnTweenActionEnd());
                     }
                     break;
@@ -88,6 +89,7 @@ namespace DOTweenConfigs
                             ChangeStartValue(position3dTweenConfig.TweenConfig.UseFrom ?
                                 position3dTweenConfig.TweenConfig.From : target.transform.localEulerAngles).
                             SetDelay(position3dTweenConfig.TweenConfig.Delay).
+                            SetEase(position3dTweenConfig.TweenConfig.Ease).
                             OnComplete(() => source.OnTweenActionEnd());
                     }
                     break;
@@ -101,6 +103,7 @@ namespace DOTweenConfigs
                             ChangeStartValue(scale3dTweenConfig.TweenConfig.UseFrom ?
                                 scale3dTweenConfig.TweenConfig.From : target.transform.localScale).
                             SetDelay(scale3dTweenConfig.TweenConfig.Delay).
+                            SetEase(scale3dTweenConfig.TweenConfig.Ease).
                             OnComplete(() => source.OnTweenActionEnd());
                     }
                     break;
@@ -114,6 +117,7 @@ namespace DOTweenConfigs
                             ChangeStartValue(position2dTweenConfig.TweenConfig.UseFrom ?
                                 position2dTweenConfig.TweenConfig.From : target.rectTransform.anchoredPosition).
                             SetDelay(position2dTweenConfig.TweenConfig.Delay).
+                            SetEase(position2dTweenConfig.TweenConfig.Ease).
                             OnComplete(() => source.OnTweenActionEnd());
                     }
                     break;
@@ -127,6 +131,7 @@ namespace DOTweenConfigs
                             ChangeStartValue(colorTweenConfig.TweenConfig.UseFrom ?
                                 colorTweenConfig.TweenConfig.From : target.sprite.color).
                             SetDelay(colorTweenConfig.TweenConfig.Delay).
+                            SetEase(colorTweenConfig.TweenConfig.Ease).
                             OnComplete(() => source.OnTweenActionEnd());
                     }
                     break;
@@ -140,6 +145,7 @@ namespace DOTweenConfigs
                             ChangeStartValue(colorTweenConfig.TweenConfig.UseFrom ?
                                 colorTweenConfig.TweenConfig.From : target.text.color).
                             SetDelay(colorTweenConfig.TweenConfig.Delay).
+                            SetEase(colorTweenConfig.TweenConfig.Ease).
                             OnComplete(() => source.OnTweenActionEnd());
                     }
                     break;
@@ -153,6 +159,7 @@ namespace DOTweenConfigs
                             ChangeStartValue(colorTweenConfig.TweenConfig.UseFrom ?
                                 colorTweenConfig.TweenConfig.From : target.image.color).
                             SetDelay(colorTweenConfig.TweenConfig.Delay).
+                            SetEase(colorTweenConfig.TweenConfig.Ease).
                             OnComplete(() => source.OnTweenActionEnd());
                     }
                     break;
@@ -166,6 +173,7 @@ namespace DOTweenConfigs
                             ChangeStartValue(alphaTweenConfig.TweenConfig.UseFrom ?
                                 alphaTweenConfig.TweenConfig.From : target.canvasGroup.alpha).
                             SetDelay(alphaTweenConfig.TweenConfig.Delay).
+                            SetEase(alphaTweenConfig.TweenConfig.Ease).
                             OnComplete(() => source.OnTweenActionEnd());
                     }
                     break;

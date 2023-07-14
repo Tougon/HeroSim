@@ -38,6 +38,7 @@ namespace DOTweenConfigs
         private TweenActionCache target;
         private int currentFrame = -1;
         private int currentNumActions = 0;
+        private bool bFinished;
 
         public TweenStateInstance(TweenState state, TweenActionCache target, 
             OnTweenStateCompletedSignature onComplete)
@@ -52,6 +53,8 @@ namespace DOTweenConfigs
 
         public void StopInstance(bool complete = false)
         {
+            if (bFinished) return;
+
             target.KillAllTweens();
 
             if (complete)
@@ -100,6 +103,7 @@ namespace DOTweenConfigs
                 }
                 else
                 {
+                    bFinished = true;
                     OnStateEnd();
                     return;
                 }
