@@ -14,6 +14,12 @@ namespace ToUI
     {
         [Header("Menu Properties")]
         [SerializeField]
+        protected float InitialRepeatDelay = 1.0f;
+        [SerializeField]
+        protected float RepeatRate = 0.3f;
+        [SerializeField]
+        protected bool WrapSelection = true;
+        [SerializeField]
         [InfoBox("Drag UIMenuItems into the matrix to define navigation. Right click to remove an element.")]
         [TableMatrix(HorizontalTitle = "Menu Selection", DrawElementMethod = "DrawElement")]
         protected UIMenuItem[,] SelectionMatrix = new UIMenuItem[0, 0];
@@ -26,6 +32,8 @@ namespace ToUI
         protected bool bAllowInput;
 
         private Vector2 lastDirection;
+        private float repeatTimer;
+        private bool bWaitInitial = true;
 
 
         #region Editor Only
@@ -125,7 +133,7 @@ namespace ToUI
                     for(int r=0; r < SelectionMatrix.GetLength(1); r++)
                     {
                         // If no initial selection is assigned, go for the first available item
-                        if (InitialSelection == null && SelectionMatrix[c, r] != null)
+                        if (SelectionIsInvalid(InitialSelection) && SelectionMatrix[c, r] != null)
                         {
                             InitialSelection = SelectionMatrix[c, r];
                             row = r;
@@ -133,7 +141,7 @@ namespace ToUI
                             break;
                         }
                         // Otherwise, find the row and column of the first selection
-                        else if (InitialSelection != null && SelectionMatrix[c, r] == InitialSelection)
+                        else if (!SelectionIsInvalid(InitialSelection) && SelectionMatrix[c, r] == InitialSelection)
                         {
                             row = r;
                             column = c;
@@ -157,6 +165,26 @@ namespace ToUI
         }
 
 
+        protected virtual void Update()
+        {
+            if (!bAllowInput) return;
+
+            if (lastDirection.sqrMagnitude > 0)
+            {
+                repeatTimer += Time.deltaTime;
+
+                if ((bWaitInitial && repeatTimer >= InitialRepeatDelay) ||
+                    (!bWaitInitial && repeatTimer >= RepeatRate))
+                {
+                    ChangeSelection(lastDirection);
+
+                    repeatTimer = 0;
+                    bWaitInitial = false;
+                }
+            }
+        }
+
+
         public override void Show()
         {
             base.Show();
@@ -168,6 +196,8 @@ namespace ToUI
             base.OnScreenShown();
 
             bAllowInput = true;
+            bWaitInitial = true;
+            repeatTimer = 0;
         }
 
         public override void FocusChanged(bool bFocus)
@@ -191,27 +221,41 @@ namespace ToUI
 
             do
             {
-                targetRow -= (int)Direction.y;
-                targetColumn += (int)Direction.x;
+                targetRow -= Mathf.RoundToInt(Direction.y);
+                targetColumn += Mathf.RoundToInt(Direction.x);
 
                 // Wrap around the target row
                 if (targetRow >= SelectionMatrix.GetLength(1))
-                    targetRow = 0;
-                else if (targetRow < 0)
-                    targetRow = SelectionMatrix.GetLength(1) - 1;
+                {
+                    if (WrapSelection) targetRow = 0;
+                    else break;
+                }
+                    
+                if (targetRow < 0)
+                {
+                    if (WrapSelection) targetRow = SelectionMatrix.GetLength(1) - 1;
+                    else break;
+                }
 
                 // Wrap around the target column
                 if (targetColumn >= SelectionMatrix.GetLength(0))
-                    targetColumn = 0;
-                else if (targetColumn < 0)
-                    targetColumn = SelectionMatrix.GetLength(0) - 1;
+                {
+                    if (WrapSelection) targetColumn = 0;
+                    else break;
+                }
+
+                if (targetColumn < 0)
+                {
+                    if (WrapSelection) targetColumn = SelectionMatrix.GetLength(0) - 1;
+                    else break;
+                }
 
                 AttemptedSelection = SelectionMatrix[targetColumn, targetRow];
 
-            } while (AttemptedSelection == null || !AttemptedSelection.enabled || 
-                !AttemptedSelection.gameObject.activeInHierarchy);
+            } while ((SelectionIsInvalid(AttemptedSelection) || AttemptedSelection == CurrentSelection) &&
+                !(targetRow == row && targetColumn == column));
 
-            if(AttemptedSelection != CurrentSelection)
+            if(AttemptedSelection != CurrentSelection && !SelectionIsInvalid(AttemptedSelection))
             {
                 CurrentSelection.SetSelected(false);
 
@@ -221,6 +265,13 @@ namespace ToUI
 
                 CurrentSelection.SetSelected(true);
             }
+        }
+
+
+        protected bool SelectionIsInvalid(UIMenuItem AttemptedSelection)
+        {
+            return AttemptedSelection == null || !AttemptedSelection.enabled ||
+                !AttemptedSelection.gameObject.activeInHierarchy;
         }
 
 
@@ -235,6 +286,9 @@ namespace ToUI
             {
                 lastDirection = movement;
                 base.OnMovementUpdate(movement);
+
+                bWaitInitial = true;
+                repeatTimer = 0;
             }
         }
 
