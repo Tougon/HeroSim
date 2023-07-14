@@ -15,9 +15,6 @@ namespace ToUI
         [InfoBox("@AnimInfo")]
         [SerializeField]
         protected TweenSystem AnimationSource;
-        // Temp
-        [SerializeField]
-        private Image Temp;
 
         protected bool bSelected;
 
