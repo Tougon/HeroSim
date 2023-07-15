@@ -61,6 +61,7 @@ namespace ToUI
         [SerializeField]
         protected InputDirection inputDirection;
         public Image Fill;
+        public RectTransform Handle;
         [SerializeField]
         protected float FillRate = 1.0f;
 
@@ -263,9 +264,25 @@ namespace ToUI
         /// </summary>
         private void UpdateSliderVisuals()
         {
+            if (Handle == null) return;
+
             Fill.fillAmount = (currentValue / MaxValue);
 
-            // TODO: handle
+            RectTransform fillTransform = Fill.transform as RectTransform;
+            Vector2 fillSize = (fillTransform.sizeDelta + (transform as RectTransform).sizeDelta) / 2;
+            int direction = Fill.fillOrigin == 0 ? 1 : -1;
+
+            switch (Fill.fillMethod)
+            {
+                case Image.FillMethod.Horizontal:
+                    Handle.anchoredPosition = 
+                        new Vector2(Mathf.Lerp(-fillSize.x, fillSize.x, currentValue) * direction, 0);
+                    break;
+                case Image.FillMethod.Vertical:
+                    Handle.anchoredPosition =
+                        new Vector2(0, Mathf.Lerp(-fillSize.y, fillSize.y, currentValue) * direction);
+                    break;
+            }
         }
     }
 }
