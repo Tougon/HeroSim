@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using System.Collections;
@@ -13,6 +14,14 @@ namespace ToUI
     public class UIMenu : UIScreen
     {
         [Header("Menu Properties")]
+        [SerializeField]
+        private RectTransform ScrollArea;
+        [SerializeField]
+        private RectTransform Viewport;
+        [SerializeField]
+        protected float ScrollSpeed = 5.0f;
+        [SerializeField]
+        protected float ScrollBuffer = 20.0f;
         [SerializeField]
         protected float InitialRepeatDelay = 1.0f;
         [SerializeField]
@@ -273,6 +282,88 @@ namespace ToUI
 
                 CurrentSelection.SetSelected(true);
             }
+
+            ScrollToTarget();
+        }
+
+
+        protected virtual void ScrollToTarget()
+        {
+            if (ScrollArea != null)
+            {
+                if(!RectFullyContainsElement(Viewport, CurrentSelection.transform as RectTransform,
+                    out Vector2 dif))
+                {
+                    Vector2 offset = new Vector2(
+                        dif.x == 0 ? 0 : dif.x / Mathf.Abs(dif.x), 
+                        dif.y == 0 ? 0 : dif.y / Mathf.Abs(dif.y));
+                    Debug.Log(offset);
+
+                    ScrollArea.DOKill();
+                    ScrollArea.DOAnchorPos(ScrollArea.anchoredPosition + dif + (offset * ScrollBuffer), 
+                        1 / ScrollSpeed);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Checks if a rect transform fully contains another rect transform and calculates the difference
+        /// </summary>
+        protected bool RectFullyContainsElement(RectTransform rect, RectTransform target, out Vector2 difference)
+        {
+            var sourceRect = GetWorldRect(rect);
+            var otherRect = GetWorldRect(target);
+
+            difference = Vector2.zero;
+            bool result = true;
+
+            if(sourceRect.xMin > otherRect.xMin)
+            {
+                result = false;
+                difference.x = -((otherRect.xMin) - sourceRect.xMin);
+            }
+            if (sourceRect.yMin > otherRect.yMin)
+            {
+                result = false;
+                difference.y = -((otherRect.yMin) - sourceRect.yMin);
+            }
+            if (sourceRect.xMax < otherRect.xMax)
+            {
+                result = false;
+                difference.x = -((otherRect.xMax) - sourceRect.xMax);
+            }
+            if (sourceRect.yMax < otherRect.yMax)
+            {
+                result = false;
+                difference.y = -((otherRect.yMax) - sourceRect.yMax);
+            }
+
+            if (!result)
+            {
+                float ratio = target.rect.width / otherRect.width;
+                difference *= ratio;
+            }
+
+            return result;
+        }
+
+
+        private Rect GetWorldRect(RectTransform rectTransform)
+        {
+            // This returns the world space positions of the corners in the order
+            // [0] bottom left,
+            // [1] top left
+            // [2] top right
+            // [3] bottom right
+            var corners = new Vector3[4];
+            rectTransform.GetWorldCorners(corners);
+
+            Vector2 min = corners[0];
+            Vector2 max = corners[2];
+            Vector2 size = max - min;
+
+            return new Rect(min, size);
         }
 
 
