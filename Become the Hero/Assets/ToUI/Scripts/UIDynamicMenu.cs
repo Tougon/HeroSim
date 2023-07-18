@@ -49,7 +49,7 @@ namespace ToUI
                     SelectionFallbackType.SameRow : SelectionFallbackType.SameColumn;
 
                 // This is testing nonsense, aight?
-                SetMaxItems(51);
+                SetMaxItems(52);
                 // End testing
 
                 CalculateGridBounds();
@@ -283,6 +283,7 @@ namespace ToUI
         protected override Vector2 ScrollToTarget()
         {
             var dif = base.ScrollToTarget();
+            bool bWarped = false;
 
             if (dif.sqrMagnitude > 0 && 
                 ((StartAxis == GridLayoutGroup.Axis.Horizontal && dif.y != 0) ||
@@ -291,6 +292,13 @@ namespace ToUI
                 int delta = StartAxis == GridLayoutGroup.Axis.Horizontal ?
                     cachedRowDelta : cachedColumnDelta;
                 int direction = delta / Mathf.Abs(delta);
+
+                if(Mathf.Abs(delta) > 1)
+                {
+                    if (delta > 0) WarpToEnd(StartAxis == GridLayoutGroup.Axis.Horizontal);
+                    else WarpToStart(StartAxis == GridLayoutGroup.Axis.Horizontal);
+                    bWarped = true;
+                }
 
                 // Only scroll if we reach the end, horizontally or vertically
                 bool bScroll = (direction > 0 && (GroupPool[GroupPool.Count - 1].Contains(CurrentSelection) ||
@@ -306,9 +314,6 @@ namespace ToUI
                         (GroupPool.Count > 1 && vRow != VirtualSelectionMatrix.GetLength(1) - 2);
                     bScroll &= Mathf.Abs(delta) <= 1 && vRow != 0 && (GroupPool.Count > 1 && vRow != 1);
                 }
-
-                // Indicates a warp
-                Debug.Log(delta > 1);
 
                 if (bScroll)
                 {
@@ -330,7 +335,7 @@ namespace ToUI
                         var rect = (item.transform as RectTransform);
                         rect.anchoredPosition = StartAxis == GridLayoutGroup.Axis.Horizontal ?
                             new Vector2(rect.anchoredPosition.x, referenceOffset.y) + (Vector2.down * offset * direction) :
-                            new Vector2(rect.anchoredPosition.y, referenceOffset.x) + (Vector2.right * offset * direction);
+                            new Vector2(referenceOffset.x, rect.anchoredPosition.y) + (Vector2.right * offset * direction);
 
                         // Refresh the element sense it now displays different data
                         if (StartAxis == GridLayoutGroup.Axis.Horizontal)
@@ -344,12 +349,81 @@ namespace ToUI
                 }
             }
 
-            Grid.DOKill();
-            Grid.DOAnchorPos(Grid.anchoredPosition + dif, 1 / ScrollSpeed);
+            // Move the grid if we didn't warp
+            if (!bWarped)
+            {
+                Grid.DOKill();
+                Grid.DOAnchorPos(Grid.anchoredPosition + dif, 1 / ScrollSpeed);
+            }
 
             //RefreshData();
 
             return dif;
+        }
+
+
+        /// <summary>
+        /// Warps list to the beginning
+        /// </summary>
+        protected virtual void WarpToStart(bool horizontal)
+        {
+
+        }
+
+
+        /// <summary>
+        /// Warps list to the end
+        /// </summary>
+        protected virtual void WarpToEnd(bool horizontal)
+        {
+            int amountToMove = horizontal ? (cachedRowDelta - GridSize.y + 1) : cachedRowDelta - GridSize.x;
+
+            float distancePerItem = horizontal ? ItemSize.y + GridSpacing.y : 
+                ItemSize.x + GridSpacing.x;
+
+            float delta = amountToMove * distancePerItem;
+
+            for (int i = 0; i < GroupPool.Count; i++)
+            {
+                for(int j=0; j < GroupPool[i].Count; j++)
+                {
+                    var rect = (GroupPool[i][j].transform as RectTransform);
+                    rect.anchoredPosition = StartAxis == GridLayoutGroup.Axis.Horizontal ?
+                        new Vector2(rect.anchoredPosition.x, rect.anchoredPosition.y - delta) :
+                        new Vector2(rect.anchoredPosition.x + delta, rect.anchoredPosition.y);
+
+                    // Refresh the element sense it now displays different data
+                    if (StartAxis == GridLayoutGroup.Axis.Horizontal)
+                        RefreshData(GroupPool[i][j], VirtualSelectionMatrix[j, vRow - (amountToMove - i)]);
+                }
+            }
+
+            // Handle fallbacks
+            while (Fallback == SelectionFallbackType.SameRow && !CurrentSelection.gameObject.activeInHierarchy)
+            {
+                column -= 1;
+                CurrentSelection.SetSelected(false);
+                CurrentSelection = SelectionMatrix[column, row];
+                CurrentSelection.SetSelected(true);
+
+                if (column <= 0)
+                    break;
+            }
+
+            while (Fallback == SelectionFallbackType.SameColumn && !CurrentSelection.gameObject.activeInHierarchy)
+            {
+                row -= 1;
+                CurrentSelection.SetSelected(false);
+                CurrentSelection = SelectionMatrix[column, row];
+                CurrentSelection.SetSelected(true);
+
+                if (row <= 0)
+                    break;
+            }
+
+            var dif = base.ScrollToTarget();
+            Grid.DOKill();
+            Grid.DOAnchorPos(Grid.anchoredPosition + dif, 1 / ScrollSpeed);
         }
 
         /// <summary>
