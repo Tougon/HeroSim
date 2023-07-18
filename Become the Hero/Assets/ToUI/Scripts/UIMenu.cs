@@ -3,6 +3,7 @@ using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -15,9 +16,9 @@ namespace ToUI
     {
         [Header("Menu Properties")]
         [SerializeField]
-        private RectTransform ScrollArea;
+        protected RectTransform ScrollArea;
         [SerializeField]
-        private RectTransform Viewport;
+        protected RectTransform Viewport;
         [SerializeField]
         protected float ScrollSpeed = 5.0f;
         [SerializeField]
@@ -28,17 +29,20 @@ namespace ToUI
         protected float RepeatRate = 0.3f;
         [SerializeField]
         protected bool WrapSelection = true;
-        [SerializeField]
+        [SerializeField]//[HideIf("@this.GetType() != typeof(UIMenu)")]
         [InfoBox("Drag UIMenuItems into the matrix to define navigation. Right click to remove an element.")]
         [TableMatrix(HorizontalTitle = "Menu Selection", DrawElementMethod = "DrawElement")]
         protected UIMenuItem[,] SelectionMatrix = new UIMenuItem[0, 0];
-        [SerializeField]
+        [SerializeField][HideIf("@this.GetType() != typeof(UIMenu)")]
         protected UIMenuItem InitialSelection;
 
         protected UIMenuItem CurrentSelection;
         protected int column;
         protected int row;
         protected bool bAllowInput;
+
+        protected enum SelectionFallbackType { Next, SameRow, SameColumn }
+        protected SelectionFallbackType Fallback = SelectionFallbackType.Next;
 
         private Vector2 lastDirection;
         private float repeatTimer;
@@ -170,7 +174,9 @@ namespace ToUI
             }
 
             CurrentSelection = InitialSelection;
-            CurrentSelection.SetSelected(true);
+
+            if(CurrentSelection != null)
+                CurrentSelection.SetSelected(true);
         }
 
 
@@ -228,7 +234,7 @@ namespace ToUI
         /// <summary>
         /// Moves the selection in the given direction to select a new item if possible.
         /// </summary>
-        protected void ChangeSelection(Vector2 Direction)
+        protected virtual void ChangeSelection(Vector2 Direction)
         {
             // Initialize selection variables
             int targetRow = row;
@@ -272,7 +278,28 @@ namespace ToUI
             } while ((SelectionIsInvalid(AttemptedSelection) || AttemptedSelection == CurrentSelection) &&
                 !(targetRow == row && targetColumn == column));
 
-            if(AttemptedSelection != CurrentSelection && !SelectionIsInvalid(AttemptedSelection))
+
+            // Handle fallbacks
+            while(Fallback == SelectionFallbackType.SameRow && !AttemptedSelection.gameObject.activeInHierarchy)
+            {
+                targetColumn -= 1;
+                AttemptedSelection = SelectionMatrix[targetColumn, targetRow];
+
+                if (targetColumn < 0)
+                    break;
+            }
+
+            while (Fallback == SelectionFallbackType.SameColumn && !AttemptedSelection.gameObject.activeInHierarchy)
+            {
+                targetRow -= 1;
+                AttemptedSelection = SelectionMatrix[targetColumn, targetRow];
+
+                if (targetRow < 0)
+                    break;
+            }
+
+            // Select the element and change the row and column
+            if (AttemptedSelection != CurrentSelection && !SelectionIsInvalid(AttemptedSelection))
             {
                 CurrentSelection.SetSelected(false);
 
@@ -287,7 +314,7 @@ namespace ToUI
         }
 
 
-        protected virtual void ScrollToTarget()
+        protected virtual Vector2 ScrollToTarget()
         {
             if (ScrollArea != null)
             {
@@ -297,13 +324,16 @@ namespace ToUI
                     Vector2 offset = new Vector2(
                         dif.x == 0 ? 0 : dif.x / Mathf.Abs(dif.x), 
                         dif.y == 0 ? 0 : dif.y / Mathf.Abs(dif.y));
-                    Debug.Log(offset);
 
                     ScrollArea.DOKill();
                     ScrollArea.DOAnchorPos(ScrollArea.anchoredPosition + dif + (offset * ScrollBuffer), 
                         1 / ScrollSpeed);
+
+                    return dif + (offset * ScrollBuffer);
                 }
             }
+
+            return Vector2.zero;
         }
 
 
@@ -369,6 +399,11 @@ namespace ToUI
 
         protected bool SelectionIsInvalid(UIMenuItem AttemptedSelection)
         {
+            switch (Fallback)
+            {
+                case SelectionFallbackType.SameRow: return AttemptedSelection == null;
+                case SelectionFallbackType.SameColumn: return AttemptedSelection == null;
+            }
             return AttemptedSelection == null || !AttemptedSelection.enabled ||
                 !AttemptedSelection.gameObject.activeInHierarchy;
         }
