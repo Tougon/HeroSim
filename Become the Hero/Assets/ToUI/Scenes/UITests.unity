@@ -8301,6 +8301,9 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
+    - Name: VirtualSelectionMatrix
+      Entry: 6
+      Data: 
   bOpenOnAwake: 1
   bCloseOnLoseFocus: 0
   AnimationSource: {fileID: 2106384602}

@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 using static UnityEngine.Rendering.DebugUI.Table;
 using UnityEngine.UIElements;
+using System;
 
 namespace ToUI
 {
@@ -24,7 +25,7 @@ namespace ToUI
         [SerializeField] private GridLayoutGroup.Axis StartAxis;
 
         protected int ItemsToDisplay;
-        protected int[,] VirtualSelectionMatrix;
+        public int[,] VirtualSelectionMatrix;
         protected List<UIMenuItem> DynamicItems = new List<UIMenuItem>();
 
         // Virtual column and row used to scroll the grid
@@ -367,7 +368,31 @@ namespace ToUI
         /// </summary>
         protected virtual void WarpToStart(bool horizontal)
         {
+            int amountToMove = horizontal ? (cachedRowDelta + GridSize.y - 1) : cachedRowDelta - GridSize.x;
 
+            float distancePerItem = horizontal ? ItemSize.y + GridSpacing.y :
+                ItemSize.x + GridSpacing.x;
+
+            float delta = amountToMove * distancePerItem;
+
+            for (int i = 0; i < GroupPool.Count; i++)
+            {
+                for (int j = 0; j < GroupPool[i].Count; j++)
+                {
+                    var rect = (GroupPool[i][j].transform as RectTransform);
+                    rect.anchoredPosition = StartAxis == GridLayoutGroup.Axis.Horizontal ?
+                        new Vector2(rect.anchoredPosition.x, rect.anchoredPosition.y - delta) :
+                        new Vector2(rect.anchoredPosition.x + delta, rect.anchoredPosition.y);
+
+                    // Refresh the element sense it now displays different data
+                    if (StartAxis == GridLayoutGroup.Axis.Horizontal)
+                        RefreshData(GroupPool[i][j], VirtualSelectionMatrix[j, i]);
+                }
+            }
+
+            var dif = base.ScrollToTarget();
+            Grid.DOKill();
+            Grid.DOAnchorPos(Grid.anchoredPosition + dif, 1 / ScrollSpeed);
         }
 
 
@@ -392,9 +417,9 @@ namespace ToUI
                         new Vector2(rect.anchoredPosition.x, rect.anchoredPosition.y - delta) :
                         new Vector2(rect.anchoredPosition.x + delta, rect.anchoredPosition.y);
 
-                    // Refresh the element sense it now displays different data
+                    // Refresh the element since it now displays different data
                     if (StartAxis == GridLayoutGroup.Axis.Horizontal)
-                        RefreshData(GroupPool[i][j], VirtualSelectionMatrix[j, vRow - (amountToMove - i)]);
+                        RefreshData(GroupPool[i][j], VirtualSelectionMatrix[j, amountToMove + i]);
                 }
             }
 
@@ -435,8 +460,16 @@ namespace ToUI
             {
                 for(int j=0; j < GroupPool[i].Count; j++)
                 {
-                    int index = VirtualSelectionMatrix[j, i];
-                    RefreshData(GroupPool[i][j], index);
+                    if(VirtualSelectionMatrix.GetLength(0) <= j || 
+                        VirtualSelectionMatrix.GetLength(1) <= i)
+                    {
+                        RefreshData(GroupPool[i][j], -1);
+                    }
+                    else
+                    {
+                        int index = VirtualSelectionMatrix[j, i];
+                        RefreshData(GroupPool[i][j], index);
+                    }
                 }
             }
         }
