@@ -317,6 +317,13 @@ namespace ToUI
                         (GroupPool.Count > 1 && vRow != VirtualSelectionMatrix.GetLength(1) - 2);
                     bScroll &= Mathf.Abs(delta) <= 1 && vRow != 0 && (GroupPool.Count > 1 && vRow != 1);
                 }
+                else
+                {
+                    // Check if at the end of the list horizontally
+                    bScroll &= Mathf.Abs(delta) <= 1 && vColumn != VirtualSelectionMatrix.GetLength(0) - 1 &&
+                        (GroupPool.Count > 1 && vColumn != VirtualSelectionMatrix.GetLength(0) - 2);
+                    bScroll &= Mathf.Abs(delta) <= 1 && vColumn != 0 && (GroupPool.Count > 1 && vColumn != 1);
+                }
 
                 if (bScroll)
                 {
@@ -340,9 +347,11 @@ namespace ToUI
                             new Vector2(rect.anchoredPosition.x, referenceOffset.y) + (Vector2.down * offset * direction) :
                             new Vector2(referenceOffset.x, rect.anchoredPosition.y) + (Vector2.right * offset * direction);
 
-                        // Refresh the element sense it now displays different data
+                        // Refresh the element since it now displays different data
                         if (StartAxis == GridLayoutGroup.Axis.Horizontal)
                             RefreshData(item, VirtualSelectionMatrix[j, vRow + (amount * direction)]);
+                        else
+                            RefreshData(item, VirtualSelectionMatrix[vColumn + (amount * direction), j]);
                     }
 
                     // Add this group back into the pool
@@ -370,7 +379,7 @@ namespace ToUI
         /// </summary>
         protected virtual void WarpToStart(bool horizontal)
         {
-            int amountToMove = horizontal ? (cachedRowDelta + GridSize.y - 1) : cachedRowDelta - GridSize.x;
+            int amountToMove = horizontal ? (cachedRowDelta + GridSize.y - 1) : cachedColumnDelta - GridSize.x;
 
             float distancePerItem = horizontal ? ItemSize.y + GridSpacing.y :
                 ItemSize.x + GridSpacing.x;
@@ -387,8 +396,10 @@ namespace ToUI
                         new Vector2(rect.anchoredPosition.x + delta, rect.anchoredPosition.y);
 
                     // Refresh the element sense it now displays different data
-                    if (StartAxis == GridLayoutGroup.Axis.Horizontal)
+                    if (horizontal)
                         RefreshData(GroupPool[i][j], VirtualSelectionMatrix[j, i]);
+                    else
+                        RefreshData(GroupPool[i][j], VirtualSelectionMatrix[i, j]);
                 }
             }
 
@@ -403,8 +414,8 @@ namespace ToUI
         /// </summary>
         protected virtual void WarpToEnd(bool horizontal)
         {
-            int amountToMove = horizontal ? (cachedRowDelta - GridSize.y + 1) : cachedRowDelta - GridSize.x;
-
+            int amountToMove = horizontal ? (cachedRowDelta - GridSize.y + 1) : 
+                (cachedColumnDelta - GridSize.x + 1);
             float distancePerItem = horizontal ? ItemSize.y + GridSpacing.y : 
                 ItemSize.x + GridSpacing.x;
 
@@ -420,8 +431,10 @@ namespace ToUI
                         new Vector2(rect.anchoredPosition.x + delta, rect.anchoredPosition.y);
 
                     // Refresh the element since it now displays different data
-                    if (StartAxis == GridLayoutGroup.Axis.Horizontal)
+                    if (horizontal)
                         RefreshData(GroupPool[i][j], VirtualSelectionMatrix[j, amountToMove + i]);
+                    else
+                        RefreshData(GroupPool[i][j], VirtualSelectionMatrix[amountToMove + i, j]);
                 }
             }
 
@@ -462,14 +475,17 @@ namespace ToUI
             {
                 for(int j=0; j < GroupPool[i].Count; j++)
                 {
-                    if(VirtualSelectionMatrix.GetLength(0) <= j || 
-                        VirtualSelectionMatrix.GetLength(1) <= i)
+                    if ((StartAxis == GridLayoutGroup.Axis.Horizontal && (VirtualSelectionMatrix.GetLength(0) <= j ||
+                        VirtualSelectionMatrix.GetLength(1) <= i)) || (StartAxis == GridLayoutGroup.Axis.Vertical &&
+                        (VirtualSelectionMatrix.GetLength(0) <= i || VirtualSelectionMatrix.GetLength(1) <= j)))
                     {
                         RefreshData(GroupPool[i][j], -1);
                     }
                     else
                     {
-                        int index = VirtualSelectionMatrix[j, i];
+                        int index = StartAxis == GridLayoutGroup.Axis.Horizontal ? 
+                            VirtualSelectionMatrix[j, i] : VirtualSelectionMatrix[i, j];
+
                         RefreshData(GroupPool[i][j], index);
                     }
                 }
