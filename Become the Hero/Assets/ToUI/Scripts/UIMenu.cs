@@ -275,8 +275,8 @@ namespace ToUI
 
                 AttemptedSelection = SelectionMatrix[targetColumn, targetRow];
 
-            } while ((SelectionIsInvalid(AttemptedSelection) || AttemptedSelection == CurrentSelection) &&
-                !(targetRow == row && targetColumn == column));
+            } while ((SelectionIsInvalid(AttemptedSelection, targetRow, targetColumn) || 
+                AttemptedSelection == CurrentSelection) && !(targetRow == row && targetColumn == column));
 
 
             // Handle fallbacks
@@ -397,12 +397,29 @@ namespace ToUI
         }
 
 
-        protected bool SelectionIsInvalid(UIMenuItem AttemptedSelection)
+        protected bool SelectionIsInvalid(UIMenuItem AttemptedSelection, int AttemptedRow = -1, int AttemptedColumn = -1)
         {
             switch (Fallback)
             {
-                case SelectionFallbackType.SameRow: return AttemptedSelection == null;
-                case SelectionFallbackType.SameColumn: return AttemptedSelection == null;
+                case SelectionFallbackType.SameRow:
+
+                    if(AttemptedSelection == null || !AttemptedSelection.enabled ||
+                        !AttemptedSelection.gameObject.activeInHierarchy)
+                    {
+                        // Return false if there are no active elements in the row.
+                        for(int i= SelectionMatrix.GetLength(0) - 1; i>=0; i--)
+                        {
+                            if (SelectionMatrix[i, AttemptedRow].gameObject.activeInHierarchy &&
+                                SelectionMatrix[i, AttemptedRow].enabled)
+                                return false;
+                        }
+
+                        return true;
+                    }
+
+                    return false;
+
+                //case SelectionFallbackType.SameColumn: return AttemptedSelection == null;
             }
             return AttemptedSelection == null || !AttemptedSelection.enabled ||
                 !AttemptedSelection.gameObject.activeInHierarchy;

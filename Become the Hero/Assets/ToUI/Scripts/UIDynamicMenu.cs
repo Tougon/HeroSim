@@ -25,7 +25,7 @@ namespace ToUI
         [SerializeField] private GridLayoutGroup.Axis StartAxis;
 
         protected int ItemsToDisplay;
-        public int[,] VirtualSelectionMatrix;
+        protected int[,] VirtualSelectionMatrix;
         protected List<UIMenuItem> DynamicItems = new List<UIMenuItem>();
 
         // Virtual column and row used to scroll the grid
@@ -294,7 +294,9 @@ namespace ToUI
                     cachedRowDelta : cachedColumnDelta;
                 int direction = delta / Mathf.Abs(delta);
 
-                if(Mathf.Abs(delta) > 1)
+                if(Mathf.Abs(delta) > 1 && 
+                    ((StartAxis == GridLayoutGroup.Axis.Horizontal && Mathf.Abs(delta) > GridSize.y) ||
+                    (StartAxis == GridLayoutGroup.Axis.Vertical && Mathf.Abs(delta) > GridSize.x)))
                 {
                     if (delta > 0) WarpToEnd(StartAxis == GridLayoutGroup.Axis.Horizontal);
                     else WarpToStart(StartAxis == GridLayoutGroup.Axis.Horizontal);

@@ -8301,9 +8301,6 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-    - Name: VirtualSelectionMatrix
-      Entry: 6
-      Data: 
   bOpenOnAwake: 1
   bCloseOnLoseFocus: 0
   AnimationSource: {fileID: 2106384602}
@@ -8318,7 +8315,7 @@ MonoBehaviour:
   Grid: {fileID: 1248022807}
   DynamicItem: {fileID: 1199271668}
   ItemSize: {x: 100, y: 100}
-  GridSize: {x: 5, y: 6}
+  GridSize: {x: 5, y: 9}
   GridSpacing: {x: 10, y: 10}
   Padding:
     m_Left: 10
