@@ -41,6 +41,8 @@ public class DialogueSequence : Sequence
             yield return null;
         }
 
+        EventManager.Instance.GetGameEvent(EventConstants.ON_DIALOGUE_ADVANCE).AddListener(OnDialogueAdvance);
+
         // Begin text print animation
         running = true;
         printAnimation = manager.BeginTextAnimation(text);
@@ -48,23 +50,6 @@ public class DialogueSequence : Sequence
 
         while (running)
         {
-            // If the player attempts to advance
-            // Legacy input
-            /*if (Input.GetMouseButtonDown(0)) // Replace this with touch when we build to platform
-            {
-                // Stop printing and fully display text if the animation is still going
-                if (manager.isPrinting)
-                    manager.EndTextAnimation(printAnimation, text);
-                // Otherwise end sequence
-                else
-                    running = false;
-            }*/
-
-            if(!manager.isPrinting)
-            {
-                break;
-            }
-
             yield return null;
         }
 
@@ -72,8 +57,20 @@ public class DialogueSequence : Sequence
     }
 
 
+    private void OnDialogueAdvance()
+    {
+        // Stop printing and fully display text if the animation is still going
+        if (manager.isPrinting)
+            manager.EndTextAnimation(printAnimation, text);
+        // Otherwise end sequence
+        else
+            running = false;
+    }
+
+
     public override void SequenceEnd()
     {
+        EventManager.Instance.GetGameEvent(EventConstants.ON_DIALOGUE_ADVANCE).RemoveListener(OnDialogueAdvance);
         active = false;
     }
 }

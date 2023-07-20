@@ -16,6 +16,8 @@ namespace ToUI
         {
             if (!this.enabled) return;
 
+            AnimationSource?.PlayAnimation("Press");
+
             base.OnConfirmPressed();
 
             OnConfirm.Invoke();

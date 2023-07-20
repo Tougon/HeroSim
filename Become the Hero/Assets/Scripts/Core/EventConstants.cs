@@ -26,6 +26,7 @@ public static class EventConstants
     public const string ON_TRANSITION_OUT_COMPLETE = "OnTransitionOutComplete";
     public const string HIDE_UI = "HideUI";
     public const string RESET_BACKGROUND_COLOR = "ResetBackgroundColor";
+    public const string ON_DIALOGUE_ADVANCE = "OnDialogueAdvance";
     #endregion
 
     #region Bool Event Constants

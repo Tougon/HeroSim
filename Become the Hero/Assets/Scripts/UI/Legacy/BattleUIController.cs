@@ -4,23 +4,20 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
+using ToUI;
 
-public class UIController : MonoBehaviour
+public class BattleUIController : MonoBehaviour
 {
     private GraphicRaycaster input;
 
     [SerializeField]
-    private GameObject textBox;
+    private DialogueManager dialogueManager;
 
     [SerializeField]
-    private GameObject playerMenu;
+    private UIMenu playerMenu;
 
     [SerializeField]
-    private GameObject spellMenu;
-
-    private RectTransform textBoxRect, playerMenuRect, spellMenuRect;
-    [SerializeField]
-    private float activePosY = 65f;
+    private UIMenu spellMenu;
 
     private bool spellOpen = false;
 
@@ -29,14 +26,6 @@ public class UIController : MonoBehaviour
     void Awake()
     {
         input = GetComponent<GraphicRaycaster>();
-
-        textBoxRect = textBox.GetComponent<RectTransform>();
-        playerMenuRect = playerMenu.GetComponent<RectTransform>();
-        spellMenuRect = spellMenu.GetComponent<RectTransform>();
-
-        textBoxRect.anchoredPosition = new Vector2(0, -activePosY);
-        playerMenuRect.anchoredPosition = new Vector2(0, -activePosY);
-        spellMenuRect.anchoredPosition = new Vector2(0, -activePosY);
 
         VariableManager.Instance.SetBoolVariableValue(VariableConstants.TEXT_BOX_IS_ACTIVE, false);
         EventManager.Instance.GetGameEvent(EventConstants.ON_BATTLE_BEGIN).AddListener(OnBattleBegin);
@@ -50,8 +39,11 @@ public class UIController : MonoBehaviour
     public void OnBattleBegin()
     {
         spellOpen = false;
-        textBoxRect.DOAnchorPosY(activePosY, 1.0f).
-            OnComplete(OnTextBoxAppear);
+
+        dialogueManager.OnScreenShowDelegate += OnTextBoxAppear;
+        dialogueManager.Show();
+        //textBoxRect.DOAnchorPosY(activePosY, 1.0f).
+            //OnComplete(OnTextBoxAppear);
     }
 
 
@@ -72,52 +64,67 @@ public class UIController : MonoBehaviour
         spellOpen = false;
         SetInputState(false);
         SetTextBoxActiveState(false);
-        textBoxRect.DOAnchorPosY(-activePosY, 0.5f).
-            OnComplete(OpenPlayerMenu).SetEase(Ease.InSine);
+
+        dialogueManager.OnScreenHideDelegate += OpenPlayerMenu;
+        dialogueManager.Hide();
+        //textBoxRect.DOAnchorPosY(-activePosY, 0.5f).
+            //OnComplete(OpenPlayerMenu).SetEase(Ease.InSine);
     }
 
 
     public void OnMoveSelected()
     {
         if (spellOpen)
-            spellMenuRect.DOAnchorPosY(-activePosY, 0.5f).
-                OnComplete(OpenTextBox).SetEase(Ease.InSine);
+        {
+            spellMenu.OnScreenHideDelegate += OpenTextBox;
+            spellMenu.Hide();
+        }
         else
-            playerMenuRect.DOAnchorPosY(-activePosY, 0.5f).
-                OnComplete(OpenTextBox).SetEase(Ease.InSine);
+        {
+            playerMenu.OnScreenHideDelegate += OpenTextBox;
+            playerMenu.Hide();
+        }
     }
 
 
     public void OpenTextBox()
     {
-        textBoxRect.DOAnchorPosY(activePosY, 0.5f).SetEase(Ease.OutSine)
-            .OnComplete(EnableInput).OnComplete(OnTextBoxAppear);
+        dialogueManager.OnScreenShowDelegate += EnableInput;
+        dialogueManager.OnScreenShowDelegate += OnTextBoxAppear;
+        dialogueManager.Show();
     }
 
-    public void OpenPlayerMenu() { playerMenuRect.DOAnchorPosY(activePosY, 0.5f).SetEase(Ease.OutSine).OnComplete(EnableInput); }
-    public void OpenSpellMenu() { spellMenuRect.DOAnchorPosY(activePosY, 0.5f).SetEase(Ease.OutSine).OnComplete(EnableInput); }
+    public void OpenPlayerMenu()
+    {
+        playerMenu.OnScreenShowDelegate += EnableInput;
+        playerMenu.Show();
+    }
+
+    public void OpenSpellMenu()
+    {
+        spellMenu.OnScreenShowDelegate += EnableInput;
+        spellMenu.Show();
+    }
 
 
     #region Button Functions
 
-    public void SpellButtonClick(UISpellButton source)
+    public void SpellButtonClick()
     {
-        if (!source.b.interactable || !source.selected) return;
-
         spellOpen = true;
         SetInputState(false);
-        playerMenuRect.DOAnchorPosY(-activePosY, 0.5f).
-            OnComplete(OpenSpellMenu).SetEase(Ease.InSine);
+
+        playerMenu.OnScreenHideDelegate += OpenSpellMenu;
+        playerMenu.Hide();
     }
 
-    public void BackButtonClick(UISpellButton source)
+    public void BackButtonClick()
     {
-        if (!source.b.interactable || !source.selected) return;
-
         spellOpen = false;
         SetInputState(false);
-        spellMenuRect.DOAnchorPosY(-activePosY, 0.5f).
-            OnComplete(OpenPlayerMenu).SetEase(Ease.InSine);
+
+        spellMenu.OnScreenHideDelegate += OpenPlayerMenu;
+        spellMenu.Hide();
     }
 
     #endregion

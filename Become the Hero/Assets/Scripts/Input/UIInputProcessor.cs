@@ -36,15 +36,13 @@ public class UIInputProcessor : MonoBehaviour
         VariableManager.Instance.SetVector2VariableValue(VariableConstants.UI_INPUT_VALUE, 
             MovementAction.ReadValue<Vector2>());
 
-
         if (ConfirmAction.WasPressedThisFrame())
         {
-            // TODO: Proper input events instead of this crap
-            ToUI.UIScreenQueue.Instance.CurrentScreen.OnConfirmPressed();
+            ToUI.UIScreenQueue.Instance?.CurrentScreen?.OnConfirmPressed();
         }
         else if (CancelAction.WasPressedThisFrame())
         {
-
+            ToUI.UIScreenQueue.Instance?.CurrentScreen?.OnCancelPressed();
         }
     }
 }

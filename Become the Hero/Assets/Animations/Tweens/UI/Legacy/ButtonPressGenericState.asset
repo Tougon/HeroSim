@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd36ac55380ac74c9e3209b1f478308, type: 3}
+  m_Name: ButtonPressGenericState
+  m_EditorClassIdentifier: 
+  Loop: 0
+  Frames:
+  - FrameActions:
+    - tweenType: 2
+      position2dTweenConfig: {fileID: 0}
+      position3dTweenConfig: {fileID: 0}
+      scale3dTweenConfig: {fileID: 11400000, guid: 73aa8fb426cfb95429fe4fa9ef53a97e,
+        type: 2}
+      colorTweenConfig: {fileID: 0}
+      alphaTweenConfig: {fileID: 0}
+      shake3dTweenConfig: {fileID: 0}
+  - FrameActions:
+    - tweenType: 2
+      position2dTweenConfig: {fileID: 0}
+      position3dTweenConfig: {fileID: 0}
+      scale3dTweenConfig: {fileID: 11400000, guid: 816d47be53ebae1479d422c83b1da482,
+        type: 2}
+      colorTweenConfig: {fileID: 0}
+      alphaTweenConfig: {fileID: 0}
+      shake3dTweenConfig: {fileID: 0}

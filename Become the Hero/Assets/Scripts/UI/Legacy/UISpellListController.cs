@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using ToUI;
 
-public class UISpellListController : MonoBehaviour
+public class UISpellListController : UIMenu
 {
     public class ColorSpritePair
     {
@@ -10,19 +11,27 @@ public class UISpellListController : MonoBehaviour
         public Sprite sprite;
     }
 
-
-    [SerializeField]
     private List<UISpellButton> spellButtons = new List<UISpellButton>(4);
 
+    // Note: may be deprecated later on
+    [Header("Spell List Properties")]
     [SerializeField]
     private List<SpellButtonData> buttonData = new List<SpellButtonData>(6);
     private Dictionary<Spell.SpellType, ColorSpritePair> buttonTypeDataMap = new Dictionary<Spell.SpellType, ColorSpritePair>();
 
 
     // Start is called before the first frame update
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_SPELL_LIST_INITIALIZE).AddListener(UpdateSpellButtons);
+
+        foreach(var button in SelectionMatrix)
+        {
+            if(button is UISpellButton)
+                spellButtons.Add(button as UISpellButton);
+        }
 
         foreach (UISpellButton sb in spellButtons)
             sb.controller = this;

@@ -16,14 +16,19 @@ namespace ToUI
     /// </summary>
     public class UIScreen : SerializedMonoBehaviour
     {
+        private const string AnimInfo = "Screen Animations are named Open and Close.";
+
         [Header("Properties")]
         [PropertyTooltip("Opens this screen on Awake. Only recommended for testing")]
         [SerializeField] private bool bOpenOnAwake;
         [PropertyTooltip("Closes this screen when focus is lost.")]
         [SerializeField] private bool bCloseOnLoseFocus;
+        [PropertyTooltip("Allows this screen to queue up.")]
+        [SerializeField] private bool bEnqueue = true;
 
         [Header("Animation")]
         [SerializeField]
+        [InfoBox("@AnimInfo")]
         protected TweenSystem AnimationSource;
 
         private RectTransform rectTransform;
@@ -31,8 +36,13 @@ namespace ToUI
         protected bool bActive { get => UIScreenQueue.Instance.CurrentScreen == this; }
 
         protected bool bShowing;
-        // Move to child class
-        //protected bool bAllowInput;
+
+        #region Delegates
+        public delegate void ScreenDelegateSignature();
+        public event ScreenDelegateSignature OnScreenShowDelegate;
+        public event ScreenDelegateSignature OnScreenHideDelegate;
+        #endregion
+
 
         protected virtual void Awake()
         {
@@ -54,7 +64,8 @@ namespace ToUI
         /// </summary>
         public virtual void Show()
         {
-            UIScreenQueue.Instance.AddToQueue(this);
+            if(bEnqueue)
+                UIScreenQueue.Instance.AddToQueue(this);
 
             AnimationSource?.PlayAnimation("Open", OnScreenShown);
         }
@@ -65,7 +76,8 @@ namespace ToUI
         /// </summary>
         protected virtual void OnScreenShown()
         {
-
+            OnScreenShowDelegate?.Invoke();
+            OnScreenShowDelegate = null;
         }
 
 
@@ -74,7 +86,8 @@ namespace ToUI
         /// </summary>
         protected virtual void OnScreenHide()
         {
-
+            OnScreenHideDelegate?.Invoke();
+            OnScreenHideDelegate = null;
         }
 
 
@@ -102,9 +115,10 @@ namespace ToUI
         /// </summary>
         public virtual void Hide()
         {
-            UIScreenQueue.Instance.RemoveFromQueue(this);
+            if (bEnqueue)
+                UIScreenQueue.Instance.RemoveFromQueue(this);
 
-            AnimationSource?.PlayAnimation("Close", OnScreenShown);
+            AnimationSource?.PlayAnimation("Close", OnScreenHide);
         }
 
 

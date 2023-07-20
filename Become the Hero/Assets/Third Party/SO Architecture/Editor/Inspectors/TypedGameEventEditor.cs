@@ -20,11 +20,14 @@ namespace ScriptableObjectArchitecture.Editor
         {
             SerializedProperty property = serializedObject.FindProperty("_debugValue");
 
-            EditorGUILayout.PropertyField(property);
-
-            if (GUILayout.Button("Raise"))
+            if(property != null )
             {
-                CallMethod(GetDebugValue(property));
+                EditorGUILayout.PropertyField(property);
+
+                if (GUILayout.Button("Raise"))
+                {
+                    CallMethod(GetDebugValue(property));
+                }
             }
         }
         private object GetDebugValue(SerializedProperty property)

@@ -43,6 +43,7 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.RaiseGameEvent(EventConstants.ON_BATTLE_BEGIN);
     }
 
+
     // Placeholder function
     public void Reload()
     {
@@ -224,6 +225,7 @@ public class TurnManager : MonoBehaviour
     }
 
     #endregion
+
 
     #region Player Action
 

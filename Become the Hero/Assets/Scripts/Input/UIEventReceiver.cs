@@ -20,7 +20,7 @@ public class UIEventReceiver : MonoBehaviour
         var movementValue = 
             VariableManager.Instance.GetVector2VariableValue(VariableConstants.UI_INPUT_VALUE);
 
-        UIScreenQueue.Instance.CurrentScreen?.OnMovementUpdate(movementValue);
+        UIScreenQueue.Instance?.CurrentScreen?.OnMovementUpdate(movementValue);
     }
 
 

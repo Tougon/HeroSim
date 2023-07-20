@@ -2,27 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using ToUI;
 
 /// <summary>
 /// Handles display of and queueing of all <see cref="DialogueSequence"/>
 /// </summary>
-public class DialogueManager : MonoBehaviour
+public class DialogueManager : UIScreen
 {
     public bool isPrinting { get; private set; }
 
     private float dialogueSpeed = 0.015f;
     private float dialoguePause = 0.0f;
 
+    [Header("Dialogue Manager Properties")]
     [SerializeField]
     private TextMeshProUGUI display;
 
-    [SerializeField]
-    private int charactersPerLine = 51;
-
     IEnumerator result;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         // Whenever the queue event is invoked, queue the string as a dialogue sequence
         EventManager.Instance.GetStringEvent(EventConstants.ON_DIALOGUE_QUEUE).AddListener(QueueDialogue);
     }
@@ -95,6 +96,23 @@ public class DialogueManager : MonoBehaviour
         display.maxVisibleCharacters = target.Length;
         isPrinting = false;
     }
+
+
+    #region Input Handling
+
+    public override void OnConfirmPressed()
+    {
+        EventManager.Instance.RaiseGameEvent(EventConstants.ON_DIALOGUE_ADVANCE);
+        base.OnConfirmPressed();
+    }
+
+    public override void OnCancelPressed()
+    {
+        EventManager.Instance.RaiseGameEvent(EventConstants.ON_DIALOGUE_ADVANCE);
+        base.OnCancelPressed();
+    }
+
+    #endregion
 
 
     void OnDestroy()

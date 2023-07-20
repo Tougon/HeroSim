@@ -29,11 +29,11 @@ namespace ToUI
         protected float RepeatRate = 0.3f;
         [SerializeField]
         protected bool WrapSelection = true;
-        [SerializeField][HideIf("@this.GetType() != typeof(UIMenu)")]
+        [SerializeField][HideIf("@this is UIDynamicMenu")]
         [InfoBox("Drag UIMenuItems into the matrix to define navigation. Right click to remove an element.")]
         [TableMatrix(HorizontalTitle = "Menu Selection", DrawElementMethod = "DrawElement")]
         protected UIMenuItem[,] SelectionMatrix = new UIMenuItem[0, 0];
-        [SerializeField][HideIf("@this.GetType() != typeof(UIMenu)")]
+        [SerializeField][HideIf("@this is UIDynamicMenu")]
         protected UIMenuItem InitialSelection;
 
         protected UIMenuItem CurrentSelection;
@@ -222,6 +222,14 @@ namespace ToUI
             bWaitInitial = true;
             repeatTimer = 0;
         }
+
+
+        public override void Hide()
+        {
+            bAllowInput = false;
+            base.Hide();
+        }
+
 
         public override void FocusChanged(bool bFocus)
         {
