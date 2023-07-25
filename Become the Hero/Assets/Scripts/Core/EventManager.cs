@@ -72,6 +72,11 @@ public class EventManager : ScriptableObject
     [Tooltip("Add all RectTransform Events to this list.")]
     private List<RectTransformGameEvent> rectTransformEvents;
 
+    [SerializeField]
+    [Header("Menu Call Events")]
+    [Tooltip("Add all Menu Call Events to this list.")]
+    private List<UIOpenCloseCallGameEvent> uiEvents;
+
 
     //Singleton PURELY to alleviate EventManager references in other scripts.
     public static EventManager Instance;
@@ -89,6 +94,7 @@ public class EventManager : ScriptableObject
     private Dictionary<string, SequenceGameEvent> sequenceEventMap;
     private Dictionary<string, SpellGameEvent> spellEventMap;
     private Dictionary<string, RectTransformGameEvent> rectTransformEventMap;
+    private Dictionary<string, UIOpenCloseCallGameEvent> uiEventMap;
     #endregion
 
     #region Raise Events
@@ -312,6 +318,26 @@ public class EventManager : ScriptableObject
             this.GetRectTransformGameEvent(eventName).Raise(value);
         }
     }
+
+
+    /// <summary>
+    /// Raises the passed in <see cref="UIOpenCloseCallGameEvent"/>, after confirming
+    /// the name is valid.
+    /// </summary>
+    /// <param name="eventName">The name of the event.</param>
+    public void RaiseUIGameEvent(string eventName, UIOpenCloseCall value)
+    {
+        //Raise the game event if not null, else print an error.
+        UIOpenCloseCallGameEvent mocGameEvent = this.GetUIGameEvent(eventName);
+        if (!mocGameEvent)
+        {
+            //Debug.LogError("ERROR: Invalid RectTransform Game Event name: " + eventName + ". Double check Event Constants/your spelling.");
+        }
+        else
+        {
+            this.GetUIGameEvent(eventName).Raise(value);
+        }
+    }
     #endregion
 
     #region Event Accessors
@@ -515,6 +541,25 @@ public class EventManager : ScriptableObject
         }
         return null;
     }
+
+
+    /// <summary>
+    /// Gets a <see cref="UIOpenCloseCallGameEvent"/> from our <see cref="rectTransformEventMap"/>.
+    /// If no event by string name exists, returns null.
+    /// </summary>
+    /// <param name="eventName">The string name of the event.</param>
+    /// <returns>The recttransform game event associated with the passed in string, if any.</returns>
+    public UIOpenCloseCallGameEvent GetUIGameEvent(string eventName)
+    {
+        UIOpenCloseCallGameEvent uiEvent;
+
+        //searches our dictionary for the event, outputs it, and returns it
+        if (uiEventMap.TryGetValue(eventName.ToLower(), out uiEvent))
+        {
+            return uiEvent;
+        }
+        return null;
+    }
     #endregion
 
     #region Populate Event Map + Overloads
@@ -657,7 +702,7 @@ public class EventManager : ScriptableObject
 
 
     /// <summary>
-    /// Maps each spell event's name to the game event itself, after 
+    /// Maps each rectransform event's name to the game event itself, after 
     /// filling <see cref="rectTransformEvents"/> via inspector.
     /// </summary>
     private void PopulateRectTransformEventMap()
@@ -666,6 +711,20 @@ public class EventManager : ScriptableObject
         foreach (RectTransformGameEvent rtEvent in this.rectTransformEvents)
         {
             rectTransformEventMap.Add(rtEvent.name.ToLower(), rtEvent);
+        }
+    }
+
+
+    /// <summary>
+    /// Maps each ui event's name to the game event itself, after 
+    /// filling <see cref="uiTransformEvents"/> via inspector.
+    /// </summary>
+    private void PopulateUIEventMap()
+    {
+        uiEventMap = new Dictionary<string, UIOpenCloseCallGameEvent>();
+        foreach (UIOpenCloseCallGameEvent uiEvent in this.uiEvents)
+        {
+            uiEventMap.Add(uiEvent.name.ToLower(), uiEvent);
         }
     }
     #endregion
@@ -687,6 +746,7 @@ public class EventManager : ScriptableObject
         this.PopulateSequenceEventMap();
         this.PopulateSpellEventMap();
         this.PopulateRectTransformEventMap();
+        this.PopulateUIEventMap();
 
         if (!Instance)
         {

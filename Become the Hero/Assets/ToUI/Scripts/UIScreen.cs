@@ -36,6 +36,7 @@ namespace ToUI
         protected bool bActive { get => UIScreenQueue.Instance.CurrentScreen == this; }
 
         protected bool bShowing;
+        public bool Showing { get => bShowing; }
 
         #region Delegates
         public delegate void ScreenDelegateSignature();
@@ -67,6 +68,7 @@ namespace ToUI
             if(bEnqueue)
                 UIScreenQueue.Instance.AddToQueue(this);
 
+            bShowing = true;
             AnimationSource?.PlayAnimation("Open", OnScreenShown);
         }
 
@@ -86,6 +88,8 @@ namespace ToUI
         /// </summary>
         protected virtual void OnScreenHide()
         {
+            bShowing = false;
+
             OnScreenHideDelegate?.Invoke();
             OnScreenHideDelegate = null;
         }

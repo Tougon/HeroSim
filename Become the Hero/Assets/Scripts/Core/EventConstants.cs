@@ -27,6 +27,7 @@ public static class EventConstants
     public const string HIDE_UI = "HideUI";
     public const string RESET_BACKGROUND_COLOR = "ResetBackgroundColor";
     public const string ON_DIALOGUE_ADVANCE = "OnDialogueAdvance";
+    public const string ON_ACTION_PHASE_BEGIN = "OnActionPhaseBegin";
     #endregion
 
     #region Bool Event Constants
@@ -71,5 +72,11 @@ public static class EventConstants
 
     #region Rect Transform Constants
     public const string ON_SPELL_INFO_APPEAR = "OnSpellInfoAppear";
+    #endregion
+
+    #region UI Event Constants
+    public const string SHOW_SCREEN = "ShowScreen";
+    public const string HIDE_SCREEN = "HideScreen";
+    public const string HIDE_ALL_SCREENS = "HideAllScreens";
     #endregion
 }

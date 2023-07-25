@@ -30,6 +30,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b001b640a055d024bbfdc607ca271e3c, type: 2}
   - {fileID: 11400000, guid: 3fd98630bb3f1424e87e7629bb952131, type: 2}
   - {fileID: 11400000, guid: 10a0af305451629488f0829a32309bb1, type: 2}
+  - {fileID: 11400000, guid: adbc73f8e49a7774bb8e04604b151115, type: 2}
   boolEvents: []
   intEvents:
   - {fileID: 11400000, guid: d798f78b05bc05547b4eb1116a43a4cd, type: 2}
@@ -53,3 +54,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 362e884b3a9732b47b34ad30b6bad41a, type: 2}
   rectTransformEvents:
   - {fileID: 11400000, guid: 83f5b3d4e5acf184a9ec971fb0538b77, type: 2}
+  uiEvents:
+  - {fileID: 11400000, guid: 32bb973d3cbb720468fb7981a0773cac, type: 2}
+  - {fileID: 11400000, guid: 83e9e793c86343b44816cca252c6cf62, type: 2}
+  - {fileID: 11400000, guid: b1ee5c7c542bd1849af39385830ae905, type: 2}

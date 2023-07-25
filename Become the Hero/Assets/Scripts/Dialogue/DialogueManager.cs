@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using ToUI;
 
+
 /// <summary>
 /// Handles display of and queueing of all <see cref="DialogueSequence"/>
 /// </summary>
@@ -23,6 +24,8 @@ public class DialogueManager : UIScreen
     protected override void Awake()
     {
         base.Awake();
+
+        VariableManager.Instance.SetBoolVariableValue(VariableConstants.TEXT_BOX_IS_ACTIVE, false);
 
         // Whenever the queue event is invoked, queue the string as a dialogue sequence
         EventManager.Instance.GetStringEvent(EventConstants.ON_DIALOGUE_QUEUE).AddListener(QueueDialogue);
@@ -95,6 +98,20 @@ public class DialogueManager : UIScreen
         display.text = target;
         display.maxVisibleCharacters = target.Length;
         isPrinting = false;
+    }
+
+
+    protected override void OnScreenShown()
+    {
+        VariableManager.Instance.SetBoolVariableValue(VariableConstants.TEXT_BOX_IS_ACTIVE, true);
+        base.OnScreenShown();
+    }
+
+
+    public override void Hide()
+    {
+        VariableManager.Instance.SetBoolVariableValue(VariableConstants.TEXT_BOX_IS_ACTIVE, false);
+        base.Hide();
     }
 
 

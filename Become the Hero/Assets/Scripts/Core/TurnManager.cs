@@ -20,7 +20,7 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.GetGameEvent(EventConstants.ON_BATTLE_BEGIN).AddListener(OnBattleBegin);
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).AddListener(OnTurnBegin);
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_END).AddListener(OnTurnEnd);
-        EventManager.Instance.GetGameEvent(EventConstants.ON_MOVE_SELECTED).AddListener(OnMoveSelected);
+        EventManager.Instance.GetGameEvent(EventConstants.ON_ACTION_PHASE_BEGIN).AddListener(OnActionPhaseBegin);
 
         EventManager.Instance.GetSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE).AddListener(QueueSequence);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_INITIALIZE).AddListener(AddEnemy);
@@ -157,6 +157,12 @@ public class TurnManager : MonoBehaviour
         battleStart = e.GetEntityName();
         battleStart += " approaches!";
 
+        EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
+            new UIOpenCloseCall
+            {
+                MenuName = ScreenConstants.TextDisplay.ToString()
+            });
+
         EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, battleStart);
         sequencer.StartSequence();
 
@@ -184,6 +190,22 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator TurnStartSequence()
     {
+        // Hide the dialogue box and show the menu after it closes
+        // Note that this may be reworked later
+        EventManager.Instance.RaiseUIGameEvent(EventConstants.HIDE_SCREEN,
+            new UIOpenCloseCall
+            {
+                MenuName = ScreenConstants.TextDisplay.ToString(),
+                Callback = () =>
+                {
+                    EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
+                        new UIOpenCloseCall
+                        {
+                            MenuName = ScreenConstants.ActionMenu.ToString()
+                        });
+                }
+            });
+
         // Reset all entity actions for the turn.
         foreach (EntityController ec in entities)
         {
@@ -222,6 +244,14 @@ public class TurnManager : MonoBehaviour
         }
 
         EventManager.Instance.RaiseGameEvent(EventConstants.ON_MOVE_SELECTED);
+        EventManager.Instance.RaiseUIGameEvent(EventConstants.HIDE_ALL_SCREENS,
+            new UIOpenCloseCall
+        {
+            Callback = () =>
+            {
+                EventManager.Instance.RaiseGameEvent(EventConstants.ON_ACTION_PHASE_BEGIN);
+            }
+        });
     }
 
     #endregion
@@ -265,7 +295,7 @@ public class TurnManager : MonoBehaviour
 
     #region Turn
 
-    public void OnMoveSelected()
+    public void OnActionPhaseBegin()
     {
         foreach (EntityController ec in entities)
         {
@@ -378,6 +408,19 @@ public class TurnManager : MonoBehaviour
 
             foreach (var msg in postAnimDialogue)
                 EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, msg);
+
+
+            EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
+                new UIOpenCloseCall
+                {
+                    MenuName = ScreenConstants.TextDisplay.ToString()
+                });
+
+            // Wait until the text box shows
+            do
+            {
+                yield return null;
+            } while (VariableManager.Instance.GetBoolVariableValue(VariableConstants.TEXT_BOX_IS_ACTIVE));
 
             // Start the sequence
             sequencer.StartSequence();
@@ -519,7 +562,7 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.GetGameEvent(EventConstants.ON_BATTLE_BEGIN).RemoveListener(OnBattleBegin);
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).RemoveListener(OnTurnBegin);
         EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_END).RemoveListener(OnTurnEnd);
-        EventManager.Instance.GetGameEvent(EventConstants.ON_MOVE_SELECTED).RemoveListener(OnMoveSelected);
+        EventManager.Instance.GetGameEvent(EventConstants.ON_MOVE_SELECTED).RemoveListener(OnActionPhaseBegin);
 
         EventManager.Instance.GetSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE).RemoveListener(QueueSequence);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_INITIALIZE).RemoveListener(AddEnemy);
