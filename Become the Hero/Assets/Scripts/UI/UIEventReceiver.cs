@@ -89,7 +89,6 @@ public class UIEventReceiver : MonoBehaviour
 
     private void OnHideAllScreens(UIOpenCloseCall screenCall)
     {
-        Debug.Log("Hiding all screens");
         bool bRanDelegate = false;
 
         foreach(var screen in ScreenMap.Values)

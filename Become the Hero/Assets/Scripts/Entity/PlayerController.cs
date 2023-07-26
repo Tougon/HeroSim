@@ -50,8 +50,6 @@ public class PlayerController : EntityController
     public void PopulateSpellList()
     {
         availableSpells = spellList.GetSpellListForTurn();
-
-        EventManager.Instance.RaiseEntityControllerEvent(EventConstants.ON_SPELL_LIST_INITIALIZE, this);
     }
 
 

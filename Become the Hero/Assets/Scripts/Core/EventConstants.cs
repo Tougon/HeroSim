@@ -28,6 +28,7 @@ public static class EventConstants
     public const string RESET_BACKGROUND_COLOR = "ResetBackgroundColor";
     public const string ON_DIALOGUE_ADVANCE = "OnDialogueAdvance";
     public const string ON_ACTION_PHASE_BEGIN = "OnActionPhaseBegin";
+    public const string CANCEL_PLAYER_SELECTION = "CancelPlayerSelection";
     #endregion
 
     #region Bool Event Constants

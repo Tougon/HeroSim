@@ -6,6 +6,7 @@ public static class VariableConstants
 {
     #region Boolean Constants
     public const string TEXT_BOX_IS_ACTIVE = "TextBoxIsActive";
+    public const string IS_FIRST_PLAYER = "IsFirstPlayer";
     #endregion
 
     #region Vector2 Constants

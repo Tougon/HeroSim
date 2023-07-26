@@ -28,6 +28,7 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_DEFEAT).AddListener(EnemyDefeated);
 
         // Player action events
+        EventManager.Instance.GetGameEvent(EventConstants.CANCEL_PLAYER_SELECTION).AddListener(OnCancelPlayerSelection);
         EventManager.Instance.GetGameEvent(EventConstants.ATTACK_SELECTED).AddListener(SetActionToAttack);
         EventManager.Instance.GetGameEvent(EventConstants.DEFEND_SELECTED).AddListener(SetActionToDefend);
         EventManager.Instance.GetIntEvent(EventConstants.SPELL_SELECTED).AddListener(SetActionToSpell);
@@ -190,22 +191,6 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator TurnStartSequence()
     {
-        // Hide the dialogue box and show the menu after it closes
-        // Note that this may be reworked later
-        EventManager.Instance.RaiseUIGameEvent(EventConstants.HIDE_SCREEN,
-            new UIOpenCloseCall
-            {
-                MenuName = ScreenConstants.TextDisplay.ToString(),
-                Callback = () =>
-                {
-                    EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
-                        new UIOpenCloseCall
-                        {
-                            MenuName = ScreenConstants.ActionMenu.ToString()
-                        });
-                }
-            });
-
         // Reset all entity actions for the turn.
         foreach (EntityController ec in entities)
         {
@@ -217,12 +202,20 @@ public class TurnManager : MonoBehaviour
         }
 
         playerIndex = 0;
+        if(players.Count > 0) RefreshUIForPlayer(players[playerIndex]);
 
         // Loop while a player has not chosen their action for the turn
-        while(playerIndex < players.Count)
+        while (playerIndex < players.Count)
         {
             if (players[playerIndex].ready || (!players[playerIndex].ready && players[playerIndex].dead))
+            {
                 playerIndex++;
+
+                if (playerIndex < players.Count)
+                {
+                    RefreshUIForPlayer(players[playerIndex]);
+                }
+            }
 
             yield return null;
         }
@@ -265,7 +258,7 @@ public class TurnManager : MonoBehaviour
             return;
 
         players[playerIndex].SelectAction(index);
-        // TODO: Remove
+        // TODO: Remove when targetting is a thing
         players[playerIndex].ready = true;
     }
 
@@ -276,7 +269,7 @@ public class TurnManager : MonoBehaviour
             return;
 
         players[playerIndex].SelectAction("attack");
-        // TODO: Remove
+        // TODO: Remove when targetting is a thing
         players[playerIndex].ready = true;
 
     }
@@ -288,6 +281,44 @@ public class TurnManager : MonoBehaviour
             return;
 
         players[playerIndex].SelectAction("defend");
+    }
+
+
+    private void RefreshUIForPlayer(EntityController controller)
+    {
+        // First, close the current menu. This is so that there's any feedback at all, but may be reworked.
+        // It will look a little silly to open and immediately reopen the same menu.
+        EventManager.Instance.RaiseUIGameEvent(EventConstants.HIDE_ALL_SCREENS,
+            new UIOpenCloseCall
+        {
+            Callback = () =>
+            {
+                // Set if first player
+                VariableManager.Instance.SetBoolVariableValue(VariableConstants.IS_FIRST_PLAYER, playerIndex == 0);
+
+                // Refresh the spell menu
+                EventManager.Instance.RaiseEntityControllerEvent(EventConstants.ON_SPELL_LIST_INITIALIZE, controller);
+
+                // Open the root menu
+                EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
+                    new UIOpenCloseCall
+                {
+                    MenuName = ScreenConstants.ActionMenu.ToString()
+                });
+            }
+        });
+    }
+
+
+    private void OnCancelPlayerSelection()
+    {
+        Debug.Log("Canceling selection for last player");
+
+        playerIndex = Mathf.Clamp(playerIndex - 1, 0, players.Count);
+        players[playerIndex].ready = false;
+
+        // Refresh the UI after canceling
+        RefreshUIForPlayer(players[playerIndex]);
     }
 
     #endregion
@@ -314,6 +345,12 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator ActionSequence()
     {
+        EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
+        new UIOpenCloseCall
+        {
+            MenuName = ScreenConstants.TextDisplay.ToString()
+        });
+
         // Determine turn order using our custom compare method
         List<EntityController> turnOrder = new List<EntityController>();
 
@@ -408,19 +445,6 @@ public class TurnManager : MonoBehaviour
 
             foreach (var msg in postAnimDialogue)
                 EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, msg);
-
-
-            EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
-                new UIOpenCloseCall
-                {
-                    MenuName = ScreenConstants.TextDisplay.ToString()
-                });
-
-            // Wait until the text box shows
-            do
-            {
-                yield return null;
-            } while (VariableManager.Instance.GetBoolVariableValue(VariableConstants.TEXT_BOX_IS_ACTIVE));
 
             // Start the sequence
             sequencer.StartSequence();
@@ -569,6 +593,7 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_PLAYER_INITIALIZE).RemoveListener(AddPlayer);
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_ENEMY_DEFEAT).RemoveListener(EnemyDefeated);
 
+        EventManager.Instance.GetGameEvent(EventConstants.CANCEL_PLAYER_SELECTION).RemoveListener(OnCancelPlayerSelection);
         EventManager.Instance.GetGameEvent(EventConstants.ATTACK_SELECTED).RemoveListener(SetActionToAttack);
         EventManager.Instance.GetGameEvent(EventConstants.DEFEND_SELECTED).RemoveListener(SetActionToDefend);
         EventManager.Instance.GetIntEvent(EventConstants.SPELL_SELECTED).RemoveListener(SetActionToSpell);

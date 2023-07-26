@@ -35,6 +35,8 @@ namespace ToUI
         protected UIMenuItem[,] SelectionMatrix = new UIMenuItem[0, 0];
         [SerializeField][HideIf("@this is UIDynamicMenu")]
         protected UIMenuItem InitialSelection;
+        [SerializeField]
+        protected bool highlightOnOpen = true;
 
         protected UIMenuItem CurrentSelection;
         protected int column;
@@ -141,29 +143,9 @@ namespace ToUI
 
             if(SelectionMatrix != null)
             {
-                for(int c=0; c < SelectionMatrix.GetLength(0); c++)
-                {
-                    for(int r=0; r < SelectionMatrix.GetLength(1); r++)
-                    {
-                        // If no initial selection is assigned, go for the first available item
-                        if (SelectionIsInvalid(InitialSelection) && SelectionMatrix[c, r] != null)
-                        {
-                            InitialSelection = SelectionMatrix[c, r];
-                            row = r;
-                            column = c;
-                            break;
-                        }
-                        // Otherwise, find the row and column of the first selection
-                        else if (!SelectionIsInvalid(InitialSelection) && SelectionMatrix[c, r] == InitialSelection)
-                        {
-                            row = r;
-                            column = c;
-                            break;
-                        }
-                    }
-                }
+                SetSelection(InitialSelection, true);
 
-                if(InitialSelection == null)
+                if (InitialSelection == null)
                 {
                     Debug.LogWarning("UI Menu lacks options. Consider using UIScreen.");
                 }
@@ -172,8 +154,6 @@ namespace ToUI
             {
                 Debug.LogWarning("Selection matrix is empty. Consider using UIScreen.");
             }
-
-            CurrentSelection = InitialSelection;
 
             if(CurrentSelection != null)
                 CurrentSelection.SetSelected(true);
@@ -212,6 +192,11 @@ namespace ToUI
         {
             base.Show();
             bAllowInput = false;
+
+            if(CurrentSelection && highlightOnOpen)
+            {
+                CurrentSelection.SetSelected(true);
+            }
         }
 
         protected override void OnScreenShown()
@@ -236,6 +221,40 @@ namespace ToUI
             base.FocusChanged(bFocus);
 
             bAllowInput = bFocus;
+        }
+
+
+        public virtual void SetSelection(UIMenuItem Item)
+        {
+            SetSelection(Item, false);
+        }
+
+
+        protected virtual void SetSelection(UIMenuItem Item, bool initialize = false)
+        {
+            for (int c = 0; c < SelectionMatrix.GetLength(0); c++)
+            {
+                for (int r = 0; r < SelectionMatrix.GetLength(1); r++)
+                {
+                    // If no initial selection is assigned, go for the first available item
+                    if (initialize && SelectionIsInvalid(Item) && SelectionMatrix[c, r] != null)
+                    {
+                        InitialSelection = SelectionMatrix[c, r];
+                        CurrentSelection = InitialSelection;
+                        row = r;
+                        column = c;
+                        break;
+                    }
+                    // Otherwise, find the row and column of the first selection
+                    else if (!SelectionIsInvalid(Item) && SelectionMatrix[c, r] == Item)
+                    {
+                        CurrentSelection = Item;
+                        row = r;
+                        column = c;
+                        break;
+                    }
+                }
+            }
         }
 
 
