@@ -190,8 +190,8 @@ namespace ToUI
 
         public override void Show()
         {
-            base.Show();
             bAllowInput = false;
+            base.Show();
 
             if(CurrentSelection && highlightOnOpen)
             {
@@ -450,6 +450,78 @@ namespace ToUI
             }
             return AttemptedSelection == null || !AttemptedSelection.enabled ||
                 !AttemptedSelection.gameObject.activeInHierarchy;
+        }
+
+
+        protected void RegenerateSelectionMatrix(List<UIMenuItem> menuItems, float xRange = 50, float yRange = 50)
+        {
+            if (CurrentSelection) CurrentSelection.SetSelected(false);
+            CurrentSelection = null;
+            row = 0; column = 0;
+
+            if(menuItems.Count == 0)
+            {
+                SelectionMatrix = new UIMenuItem[0, 0];
+                return;
+            }
+
+            List<float> rowY = new List<float>();
+            List<float> colX = new List<float>();
+            Dictionary<Vector2, UIMenuItem> tempMatrix = new Dictionary<Vector2, UIMenuItem>();
+
+            for(int i=0; i < menuItems.Count; i++)
+            {
+                float x = (menuItems[i].transform as RectTransform).anchoredPosition.x;
+                float y = (menuItems[i].transform as RectTransform).anchoredPosition.y;
+
+                for(int n = 0; n < rowY.Count; n++)
+                {
+                    if (Mathf.Abs(rowY[n] - y) <= yRange)
+                    {
+                        y = rowY[n];
+                    }
+                }
+
+                for (int n = 0; n < colX.Count; n++)
+                {
+                    if (Mathf.Abs(colX[n] - x) <= xRange)
+                    {
+                        x = colX[n];
+                    }
+                }
+
+                if (!rowY.Contains(y)) rowY.Add(y);
+                if (!colX.Contains(x)) colX.Add(x);
+
+                if (tempMatrix.ContainsKey(new Vector2(x, y))) continue;
+                tempMatrix.Add(new Vector2(x, y), menuItems[i]);
+            }
+
+            rowY.Sort();
+            rowY.Reverse();
+            colX.Sort();
+
+            SelectionMatrix = new UIMenuItem[colX.Count, rowY.Count];
+
+            for (int y = 0; y < rowY.Count; y++)
+            {
+                for (int x = 0; x < colX.Count; x++)
+                {
+                    if(tempMatrix.TryGetValue(new Vector2(colX[x], rowY[y]), out UIMenuItem item))
+                    {
+                        SelectionMatrix[x, y] = item;
+
+                        if(CurrentSelection == null)
+                        {
+                            Debug.Log(item.gameObject.name);
+                            CurrentSelection = item;
+                            item.SetSelected(true);
+                            row = y;
+                            column = x;
+                        }
+                    }
+                }
+            }
         }
 
 

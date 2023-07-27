@@ -35,7 +35,7 @@ namespace ToUI
         /// Sets the selected state of this menu item
         /// </summary>
         /// <param name="selected"></param>
-        public void SetSelected(bool selected)
+        public virtual void SetSelected(bool selected)
         {
             if (!this.enabled)
             {

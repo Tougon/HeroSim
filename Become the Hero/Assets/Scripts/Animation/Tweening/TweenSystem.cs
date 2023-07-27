@@ -75,6 +75,7 @@ public class TweenSystem : SerializedMonoBehaviour
         }
         else
         {
+            callback?.Invoke();
 #if UNITY_EDITOR
             Debug.LogWarning($"Cannot play animation. {animName} does not exist in the cache.");
 #endif

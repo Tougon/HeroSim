@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using static UnityEngine.Rendering.DebugUI.Table;
 using UnityEngine.UIElements;
 using System;
+using Sirenix.OdinInspector;
 
 namespace ToUI
 {
@@ -16,13 +17,13 @@ namespace ToUI
         [Header("Dynamic Menu Properties")]
         [SerializeField] protected RectTransform Grid;
         [SerializeField] protected UIMenuItem DynamicItem;
-        [SerializeField] private Vector2 ItemSize = new Vector2(100, 100);
+        [ShowIf("useGridLayout")][SerializeField] private Vector2 ItemSize = new Vector2(100, 100);
         [SerializeField] private Vector2Int GridSize = new Vector2Int(5, 5);
-        [SerializeField] private Vector2 GridSpacing = new Vector2(0, 0);
-        [SerializeField] private RectOffset Padding;
-        [SerializeField] private TextAnchor ChildAlignment;
-        [SerializeField] private GridLayoutGroup.Corner StartCorner;
-        [SerializeField] private GridLayoutGroup.Axis StartAxis;
+        [ShowIf("useGridLayout")][SerializeField] private Vector2 GridSpacing = new Vector2(0, 0);
+        [ShowIf("useGridLayout")][SerializeField] private RectOffset Padding;
+        [ShowIf("useGridLayout")][SerializeField] private TextAnchor ChildAlignment;
+        [ShowIf("useGridLayout")][SerializeField] private GridLayoutGroup.Corner StartCorner;
+        [ShowIf("useGridLayout")][SerializeField] private GridLayoutGroup.Axis StartAxis;
 
         protected int ItemsToDisplay;
         protected int[,] VirtualSelectionMatrix;
@@ -144,7 +145,7 @@ namespace ToUI
         protected virtual void SpawnMenuItems()
         {
             // Add a grid layout. This make sure the padding, etc. is respected without rewriting the whole system.
-            var grid = Grid.gameObject.AddComponent<GridLayoutGroup>();
+            GridLayoutGroup grid = Grid.gameObject.AddComponent<GridLayoutGroup>();
 
             grid.padding = Padding;
             grid.cellSize = ItemSize;

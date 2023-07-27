@@ -77,9 +77,6 @@ public class PlayerController : EntityController
     {
         index = Mathf.Clamp(index, 0, availableSpells.Length);
         action = availableSpells[index];
-
-        // TODO: Remove
-        SetTarget();
     }
 
     public override void SelectAction(string name)
@@ -95,23 +92,9 @@ public class PlayerController : EntityController
         else if (name == "attack")
         {
             action = attack;
-            // TODO: Remove
-            SetTarget();
         }
         else
             base.SelectAction(name);
-    }
-
-    public override void SetTarget()
-    {
-        if (turnManager.GetNumEnemies() > 2)
-        {
-            // This is where we add targeting options
-        }
-        else
-            target.Add(turnManager.GetEnemy(this));
-
-        //ready = true;
     }
 
     #endregion

@@ -312,6 +312,12 @@ public class Spell : ScriptableObject
     {
         return spellType;
     }
+
+
+    public SpellTarget GetSpellTarget()
+    {
+        return spellTarget;
+    }
 }
 
 

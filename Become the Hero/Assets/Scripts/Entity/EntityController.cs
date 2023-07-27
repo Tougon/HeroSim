@@ -13,6 +13,8 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     [SerializeField]
     protected Entity current;
+    public List<EntityController> allies { get; set; }
+    public List<EntityController> enemies { get; set; }
     public List<EntityController> target { get; set; }
     public EntityParams param { get; private set; }
 
@@ -379,7 +381,64 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     public virtual void SetTarget()
     {
+        var available = GetPossibleTargets();
 
+        switch (action.GetSpellTarget())
+        {
+            case Spell.SpellTarget.SingleEnemy:
+
+                int index = UnityEngine.Random.Range(0, available.Count);
+                target = new List<EntityController>() { available[index] };
+
+                break;
+
+            default:
+                target = available;
+                break;
+        }
+
+
+    }
+
+    public virtual List<EntityController> GetPossibleTargets()
+    {
+        List<EntityController> result = new List<EntityController>();
+
+        switch (action.GetSpellTarget())
+        {
+            case Spell.SpellTarget.All:
+
+                foreach (var item in enemies) result.Add(item);
+                foreach (var item in allies) result.Add(item);
+
+                break;
+
+            case Spell.SpellTarget.AllParty:
+                result = allies;
+                break;
+
+            case Spell.SpellTarget.AllEnemy:
+                result = enemies;
+                break;
+
+            case Spell.SpellTarget.SingleParty:
+                result = allies;
+                break;
+
+            case Spell.SpellTarget.SingleEnemy:
+                result = enemies;
+                break;
+
+            case Spell.SpellTarget.RandomEnemy:
+                result = enemies;
+                break;
+
+            case Spell.SpellTarget.Self:
+                result.Add(this);
+                break;
+        }
+
+        return result;
     }
 
     #endregion

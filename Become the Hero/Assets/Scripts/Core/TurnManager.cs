@@ -191,6 +191,9 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator TurnStartSequence()
     {
+        List<EntityController> allies = new List<EntityController>();
+        List<EntityController> targets = new List<EntityController>();
+
         // Reset all entity actions for the turn.
         foreach (EntityController ec in entities)
         {
@@ -199,10 +202,21 @@ public class TurnManager : MonoBehaviour
             ec.ResetAction();
             ec.acceptTouch = true;
             ec.ready = false;
+
+            if (!ec.dead)
+            {
+                if (players.Contains(ec)) allies.Add(ec);
+                if (enemies.Contains(ec)) targets.Add(ec);
+            }
         }
 
         playerIndex = 0;
-        if(players.Count > 0) RefreshUIForPlayer(players[playerIndex]);
+        if (players.Count > 0)
+        {
+            players[playerIndex].allies = allies;
+            players[playerIndex].enemies = targets;
+            RefreshUIForPlayer(players[playerIndex]);
+        }
 
         // Loop while a player has not chosen their action for the turn
         while (playerIndex < players.Count)
@@ -213,6 +227,8 @@ public class TurnManager : MonoBehaviour
 
                 if (playerIndex < players.Count)
                 {
+                    players[playerIndex].allies = allies;
+                    players[playerIndex].enemies = targets;
                     RefreshUIForPlayer(players[playerIndex]);
                 }
             }
@@ -224,6 +240,8 @@ public class TurnManager : MonoBehaviour
         foreach (EntityController ec in enemies)
         {
             // TODO: modify targetting behavior
+            ec.allies = targets;
+            ec.enemies = allies;
 
             // See above. This is not a substitute for proper targetting behavior and will be removed
             List<EntityController> targetTemp = new List<EntityController>();
@@ -233,6 +251,7 @@ public class TurnManager : MonoBehaviour
 
             ec.target = targetTemp;
             ec.SelectAction();
+            ec.SetTarget();
             ec.ready = true;
         }
 
@@ -258,8 +277,21 @@ public class TurnManager : MonoBehaviour
             return;
 
         players[playerIndex].SelectAction(index);
-        // TODO: Remove when targetting is a thing
-        players[playerIndex].ready = true;
+        
+        EventManager.Instance.RaiseUIGameEvent(EventConstants.HIDE_ALL_SCREENS,
+            new UIOpenCloseCall
+        {
+            Callback = () =>
+            {
+                EventManager.Instance.RaiseEntityControllerEvent
+                    (EventConstants.INITIALIZE_TARGET_MENU, players[playerIndex]);
+                EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
+                    new UIOpenCloseCall
+                {
+                    MenuName = ScreenConstants.TargetMenu.ToString()
+                });
+            }
+        });
     }
 
 
@@ -269,8 +301,24 @@ public class TurnManager : MonoBehaviour
             return;
 
         players[playerIndex].SelectAction("attack");
+        
+        EventManager.Instance.RaiseUIGameEvent(EventConstants.HIDE_ALL_SCREENS,
+            new UIOpenCloseCall
+        {
+            Callback = () =>
+            {
+                EventManager.Instance.RaiseEntityControllerEvent
+                    (EventConstants.INITIALIZE_TARGET_MENU, players[playerIndex]);
+                EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
+                    new UIOpenCloseCall
+                {
+                    MenuName = ScreenConstants.TargetMenu.ToString()
+                });
+            }
+        });
+
         // TODO: Remove when targetting is a thing
-        players[playerIndex].ready = true;
+        //players[playerIndex].ready = true;
 
     }
 

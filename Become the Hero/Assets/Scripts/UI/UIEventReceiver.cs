@@ -10,6 +10,7 @@ public enum ScreenConstants
     TextDisplay,
     ActionMenu,
     SpellMenu,
+    TargetMenu,
 }
 
 

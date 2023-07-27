@@ -28,6 +28,8 @@ namespace ToUI
 
         [Header("Animation")]
         [SerializeField]
+        protected bool bDisableOnClose;
+        [SerializeField]
         [InfoBox("@AnimInfo")]
         protected TweenSystem AnimationSource;
 
@@ -57,6 +59,10 @@ namespace ToUI
             {
                 Show();
             }
+            else if (bDisableOnClose)
+            {
+                gameObject.SetActive(false);
+            }
         }
 
 
@@ -67,6 +73,9 @@ namespace ToUI
         {
             if(bEnqueue)
                 UIScreenQueue.Instance.AddToQueue(this);
+
+            if (bDisableOnClose)
+                gameObject.SetActive(true);
 
             bShowing = true;
             AnimationSource?.PlayAnimation("Open", OnScreenShown);
@@ -92,6 +101,9 @@ namespace ToUI
 
             OnScreenHideDelegate?.Invoke();
             OnScreenHideDelegate = null;
+
+            if (bDisableOnClose)
+                gameObject.SetActive(false);
         }
 
 

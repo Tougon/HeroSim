@@ -32,7 +32,7 @@ public class OffensiveSpell : Spell
     [ValidateInput("ValidateMinHitCount")][OnValueChanged("OnMinHitCountChanged")]
     public int minNumberOfHits = 1;
 
-    private bool ValidateMinHitCount(int property) { return property <= maxNumberOfHits; }
+    private bool ValidateMinHitCount(int value) { return value <= maxNumberOfHits; }
     private void OnMinHitCountChanged() { if (!ValidateMinHitCount(minNumberOfHits)) minNumberOfHits = maxNumberOfHits; }
 
 
@@ -40,7 +40,7 @@ public class OffensiveSpell : Spell
     [ValidateInput("ValidateMaxHitCount")][OnValueChanged("OnMaxHitCountChanged")]
     public int maxNumberOfHits = 1;
 
-    private bool ValidateMaxHitCount(int property) { return property >= minNumberOfHits; }
+    private bool ValidateMaxHitCount(int value) { return value >= minNumberOfHits; }
     private void OnMaxHitCountChanged() { if (!ValidateMaxHitCount(maxNumberOfHits)) maxNumberOfHits = minNumberOfHits; }
 
 
