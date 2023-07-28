@@ -15,5 +15,8 @@ MonoBehaviour:
   bools:
   - {fileID: 11400000, guid: c35c213d4399cf7499f336f9ad2472f2, type: 2}
   - {fileID: 11400000, guid: 39cb3784c81814f458e7c5c5a4964e84, type: 2}
+  - {fileID: 11400000, guid: 2478d4bcfe120964ea7c58f2bd961fef, type: 2}
+  floats:
+  - {fileID: 11400000, guid: f7a3d2acc7bdf84469586fdcc4fe0d8d, type: 2}
   vector2s:
   - {fileID: 11400000, guid: d347b9b7244a3fa488b4c2701d39fa8e, type: 2}

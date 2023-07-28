@@ -473,7 +473,7 @@ public class TurnManager : MonoBehaviour
                     else
                     {
                         // Check if all hits of the spell missed
-                        if(!cast.SpellMissed())
+                        if(cast.SpellHit())
                         {
                             string critSeq = $"{cast.target.param.GetEntityName()} blocks the attack!";
                             postAnimDialogue.Add(critSeq);

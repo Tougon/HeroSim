@@ -22,7 +22,12 @@ public class VariableManager : ScriptableObject
     private List<BoolVariable> bools;
 
     [SerializeField]
-    [Header("Booleans")]
+    [Header("Floats")]
+    [Tooltip("Add all floats to this list.")]
+    private List<FloatVariable> floats;
+
+    [SerializeField]
+    [Header("Vector2s")]
     [Tooltip("Add all Vector2 to this list.")]
     private List<Vector2Variable> vector2s;
 
@@ -31,6 +36,7 @@ public class VariableManager : ScriptableObject
 
     #region Variable Maps - For String & Var Lookup
     private Dictionary<string, BoolVariable> boolMap;
+    private Dictionary<string, FloatVariable> floatMap;
     private Dictionary<string, Vector2Variable> vector2Map;
     #endregion
 
@@ -53,6 +59,26 @@ public class VariableManager : ScriptableObject
 
         //Debug.LogError("ERROR: No variable of name " + varName + " exists. Returning false.");
         return false;
+    }
+
+    /// <summary>
+    /// Gets a <see cref="FloatVariable"/> from our <see cref="floatMap"/>.
+    /// If no variable by string name exists, returns null.
+    /// </summary>
+    /// <param name="varName">The string name of the variable.</param>
+    /// <returns>The value of the variable associated with the passed in string, if any.</returns>
+    public float GetFloatVariableValue(string varName)
+    {
+        FloatVariable value;
+
+        //searches our dictionary for the variable, outputs it, and returns it
+        if (floatMap.TryGetValue(varName.ToLower(), out value))
+        {
+            return value.Value;
+        }
+
+        //Debug.LogError("ERROR: No variable of name " + varName + " exists. Returning false.");
+        return 0;
     }
 
 
@@ -99,6 +125,26 @@ public class VariableManager : ScriptableObject
 
 
     /// <summary>
+    /// Sets the value of a <see cref="FloatVariable"/> in our <see cref="floatMap"/>.
+    /// </summary>
+    /// <param name="varName">The string name of the variable.</param>
+    /// <param name="val">The value to set.</param>
+    public void SetFloatVariableValue(string varName, float val)
+    {
+        FloatVariable value;
+
+        //searches our dictionary for the variable, outputs it, and returns it
+        if (floatMap.TryGetValue(varName.ToLower(), out value))
+        {
+            value.Value = val;
+            return;
+        }
+
+        //Debug.LogError("ERROR: No variable of name " + varName + " exists.");
+    }
+
+
+    /// <summary>
     /// Sets the value of a <see cref="Vector2Variable"/> in our <see cref="vector2Map"/>.
     /// </summary>
     /// <param name="varName">The string name of the variable.</param>
@@ -133,6 +179,19 @@ public class VariableManager : ScriptableObject
     }
 
     /// <summary>
+    /// Maps each float variables's name to the float itself, after 
+    /// filling <see cref="floatMap"/> via inspector.
+    /// </summary>
+    private void PopulateFloatMap()
+    {
+        floatMap = new Dictionary<string, FloatVariable>();
+        foreach (FloatVariable floatVar in this.floats)
+        {
+            floatMap.Add(floatVar.name.ToLower(), floatVar);
+        }
+    }
+
+    /// <summary>
     /// Maps each Vector2 variables's name to the Vector2 itself, after 
     /// filling <see cref="vector2Map"/> via inspector.
     /// </summary>
@@ -153,6 +212,7 @@ public class VariableManager : ScriptableObject
     private void OnEnable()
     {
         this.PopulateBoolMap();
+        this.PopulateFloatMap();
         this.PopulateVector2Map();
 
         if (!Instance)

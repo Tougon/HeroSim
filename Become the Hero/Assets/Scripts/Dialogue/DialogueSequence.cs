@@ -41,7 +41,9 @@ public class DialogueSequence : Sequence
             yield return null;
         }
 
-        EventManager.Instance.GetGameEvent(EventConstants.ON_DIALOGUE_ADVANCE).AddListener(OnDialogueAdvance);
+        bool bWaitForInput = VariableManager.Instance.GetBoolVariableValue(VariableConstants.WAIT_FOR_INPUT);
+        if (bWaitForInput)
+            EventManager.Instance.GetGameEvent(EventConstants.ON_DIALOGUE_ADVANCE).AddListener(OnDialogueAdvance);
 
         // Begin text print animation
         running = true;
@@ -50,6 +52,14 @@ public class DialogueSequence : Sequence
 
         while (running)
         {
+            if(!bWaitForInput && !manager.isPrinting)
+            {
+                float delay = VariableManager.Instance.GetFloatVariableValue(VariableConstants.TEXT_PRINT_DELAY);
+
+                yield return new WaitForSeconds(delay);
+                running = false;
+            }
+
             yield return null;
         }
 

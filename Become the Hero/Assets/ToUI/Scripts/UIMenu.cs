@@ -513,7 +513,6 @@ namespace ToUI
 
                         if(CurrentSelection == null)
                         {
-                            Debug.Log(item.gameObject.name);
                             CurrentSelection = item;
                             item.SetSelected(true);
                             row = y;

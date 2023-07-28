@@ -419,7 +419,7 @@ public class SpellCast
     }
 
 
-    public virtual bool SpellMissed()
+    public virtual bool SpellHit()
     {
         bool result = false;
 
