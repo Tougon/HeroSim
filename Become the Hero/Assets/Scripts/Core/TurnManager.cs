@@ -191,6 +191,9 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator TurnStartSequence()
     {
+        // Await any other actions
+        yield return null;
+
         List<EntityController> allies = new List<EntityController>();
         List<EntityController> targets = new List<EntityController>();
 

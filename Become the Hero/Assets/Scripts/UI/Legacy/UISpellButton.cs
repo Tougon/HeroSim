@@ -37,6 +37,11 @@ public class UISpellButton : UIMenuButton
 
     public void InitializeButton(Spell s, int i, int mp)
     {
+        if(s == null)
+        {
+            Debug.LogError($"ERROR: INITIALIZING WITH NULL SPELL {this.name}");
+        }
+
         current = s;
         text.text = s.spellName;
         cost.text = s.spellCost.ToString();
