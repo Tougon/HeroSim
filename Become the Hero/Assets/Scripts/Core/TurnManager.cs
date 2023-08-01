@@ -146,6 +146,7 @@ public class TurnManager : MonoBehaviour
         StartCoroutine(current);
     }
 
+
     private IEnumerator BattleStartSequence()
     {
         while (entities.Count < 2)

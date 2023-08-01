@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using ToUI;
 using Sirenix.OdinInspector;
+using static UnityEngine.GraphicsBuffer;
 
 /// <summary>
 /// Handles display of and queueing of all <see cref="DialogueSequence"/>
@@ -12,29 +13,31 @@ public class DialogueManager : UIScreen
 {
     protected enum DialoguePrintType { ByCharacter, ByWord }
 
-    public bool isPrinting { get; private set; }
+    public bool isPrinting { get; protected set; }
+    public bool isPrintingLine { get; protected set; }
 
-    private float dialogueSpeed;
-    private float dialoguePause = 0.0f;
-    private float dialogueStart = 0.0f;
+    protected float dialogueSpeed;
+    protected float dialoguePause = 0.0f;
+    protected float dialogueStart = 0.0f;
 
     [Header("Dialogue Manager Properties")]
     [SerializeField]
-    private TextMeshProUGUI display;
+    protected TextMeshProUGUI display;
     [SerializeField]
-    private bool bUseUnderlay;
+    protected bool bUseUnderlay;
     [SerializeField][ShowIf("bUseUnderlay")]
-    private TextMeshProUGUI underlay;
+    protected TextMeshProUGUI underlay;
     [SerializeField][ShowIf("bUseUnderlay")]
-    private string underlayFormat;
+    protected string underlayFormat;
     [SerializeField]
-    private DialoguePrintType printType;
+    protected DialoguePrintType printType;
     [SerializeField]
-    private float defaultDialogueSpeed = 0.015f;
+    protected float defaultDialogueSpeed = 0.015f;
     [SerializeField]
-    private float defaultDialogueStartDelay = 0.015f;
+    protected float defaultDialogueStartDelay = 0.015f;
     [SerializeField]
-    private float defaultDialogueEndDelay = 0.015f;
+    protected float defaultDialogueEndDelay = 0.015f;
+    [SerializeField] protected TextMeshProUGUI textScaler;
 
 
     IEnumerator result;
@@ -51,6 +54,9 @@ public class DialogueManager : UIScreen
         dialogueSpeed = defaultDialogueSpeed;
         dialogueStart = defaultDialogueStartDelay;
         dialoguePause = defaultDialogueEndDelay;
+
+        if (textScaler == null) textScaler = display;
+        textScaler.text = "";
 
         ClearText();
     }
@@ -69,7 +75,7 @@ public class DialogueManager : UIScreen
     /// <summary>
     /// Removes the currently displayed text.
     /// </summary>
-    public void ClearText()
+    public virtual void ClearText()
     {
         display.text = "";
 
@@ -77,28 +83,52 @@ public class DialogueManager : UIScreen
     }
 
 
+    protected string GetTextOutputForLine(TMP_LineInfo line, string target)
+    {
+        return $"<size=5%><color=#00000000>.</color></size>" +
+                $"{target.Substring(line.firstCharacterIndex, line.characterCount)}";
+    }
+
+
     /// <summary>
     /// Prints each character in the text string after a delay
     /// </summary>
-    public IEnumerator PrintText(string target)
+    public virtual IEnumerator PrintText(string target)
     {
         string fixedTarget = "";
 
-        foreach (var line in display.GetTextInfo(target).lineInfo)
+        foreach (var line in textScaler.GetTextInfo(target).lineInfo)
         {
-            if(line.characterCount ==  0) continue;
+            if (line.characterCount == 0) continue;
 
-            fixedTarget += $"<size=5%><color=#00000000>.</color></size>" +
-                $"{target.Substring(line.firstCharacterIndex, line.characterCount)}";
+            fixedTarget += GetTextOutputForLine(line, target);
         }
 
+        textScaler.text = "";
+
+        StartCoroutine(PrintLine(fixedTarget));
+
+        // Waits for a short delay before ending.
+        yield return new WaitForSeconds(dialoguePause);
+
+        isPrinting = false;
+
+        dialogueSpeed = defaultDialogueSpeed;
+        dialogueStart = defaultDialogueStartDelay;
+        dialoguePause = defaultDialogueEndDelay;
+    }
+
+
+    protected virtual IEnumerator PrintLine(string target)
+    {
         isPrinting = true;
-        display.text = $"{fixedTarget}";
+        isPrintingLine = true;
+        display.text = $"{target}";
         display.maxVisibleCharacters = 0;
 
         if (bUseUnderlay)
         {
-            underlay.text = underlayFormat.Replace("text", fixedTarget);
+            underlay.text = underlayFormat.Replace("text", target);
             underlay.maxVisibleCharacters = 0;
         }
 
@@ -141,14 +171,7 @@ public class DialogueManager : UIScreen
                 break;
         }
 
-        // Waits for a short delay before ending.
-        yield return new WaitForSeconds(dialoguePause);
-
-        isPrinting = false;
-
-        dialogueSpeed = defaultDialogueSpeed;
-        dialogueStart = defaultDialogueStartDelay;
-        dialoguePause = defaultDialogueEndDelay;
+        isPrintingLine = false;
     }
 
 
