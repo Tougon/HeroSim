@@ -159,6 +159,11 @@ public class TurnManager : MonoBehaviour
         battleStart = e.GetEntityName();
         battleStart += " approaches!";
 
+        for(int i=0; i<50; i++)
+        {
+            battleStart += " blah";
+        }
+
         EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
             new UIOpenCloseCall
             {
