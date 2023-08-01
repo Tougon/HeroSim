@@ -1,5 +1,6 @@
 using ScriptableObjectArchitecture;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class UIInputProcessor : MonoBehaviour
@@ -9,6 +10,7 @@ public class UIInputProcessor : MonoBehaviour
     private InputAction ConfirmAction;
     private InputAction CancelAction;
 
+    public UnityEvent<Vector2> TempEvent;
 
     void Awake()
     {
@@ -44,5 +46,7 @@ public class UIInputProcessor : MonoBehaviour
         {
             ToUI.UIScreenQueue.Instance?.CurrentScreen?.OnCancelPressed();
         }
+
+        TempEvent.Invoke(MovementAction.ReadValue<Vector2>());
     }
 }
