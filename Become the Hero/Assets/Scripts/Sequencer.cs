@@ -26,6 +26,17 @@ public class Sequencer : MonoBehaviour
 
 
     /// <summary>
+    /// Plays a <see cref="Sequence"/>.
+    /// </summary>
+    public void PlaySequence(Sequence s)
+    {
+        s.SequenceStart();
+        currentStep = s.SequenceLoop();
+        StartCoroutine(currentStep);
+    }
+
+
+    /// <summary>
     /// Starts the <see cref="Sequence"/> queue
     /// </summary>
     public void StartSequence()

@@ -41,6 +41,7 @@ public static class EventConstants
 
     #region String Event Constants
     public const string ON_DIALOGUE_QUEUE = "OnDialogueQueue";
+    public const string ON_MESSAGE_QUEUE = "OnMessageQueue";
     #endregion
 
     #region Vector2 Event Constants
@@ -62,6 +63,7 @@ public static class EventConstants
     public const string ON_ENEMY_DEFEAT = "OnEnemyDefeat";
     public const string OPEN_STATUS_SCREEN = "OpenStatusScreen";
     public const string INITIALIZE_TARGET_MENU = "InitializeTargetMenu";
+    public const string INITIALIZE_PLAYER_INFO = "InitializePlayerInfo";
     #endregion
 
     #region Sequence Event Constants

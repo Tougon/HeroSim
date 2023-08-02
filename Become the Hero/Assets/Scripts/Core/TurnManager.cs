@@ -131,7 +131,8 @@ public class TurnManager : MonoBehaviour
 
     public void QueueSequence(Sequence s)
     {
-        sequencer.AddSequence(s);
+        if(s.bPlayAuto) sequencer.PlaySequence(s);
+        else sequencer.AddSequence(s);
     }
 
 
@@ -158,11 +159,6 @@ public class TurnManager : MonoBehaviour
         // May eventually change this to a loop/account for duplicates/variety
         battleStart = e.GetEntityName();
         battleStart += " approaches!";
-
-        for(int i=0; i<50; i++)
-        {
-            battleStart += " blah";
-        }
 
         EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
             new UIOpenCloseCall
@@ -356,11 +352,19 @@ public class TurnManager : MonoBehaviour
                 // Refresh the spell menu
                 EventManager.Instance.RaiseEntityControllerEvent(EventConstants.ON_SPELL_LIST_INITIALIZE, controller);
 
+                // Refresh health display
+                EventManager.Instance.RaiseEntityControllerEvent(EventConstants.INITIALIZE_PLAYER_INFO, controller);
+
                 // Open the root menu
                 EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
                     new UIOpenCloseCall
                 {
-                    MenuName = ScreenConstants.ActionMenu.ToString()
+                    MenuName = ScreenConstants.ActionMenu.ToString(),
+                    Callback = () => {
+                        // TODO: Localize
+                        EventManager.Instance.RaiseStringEvent(EventConstants.ON_MESSAGE_QUEUE,
+                            $"{controller.GetEntity().vals.GetEntityName()} is thinking...");
+                    }
                 });
             }
         });

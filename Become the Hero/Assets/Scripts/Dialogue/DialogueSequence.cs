@@ -9,12 +9,13 @@ using Hero.Core;
 public class DialogueSequence : Sequence
 {
     // The dialogue manager this text will be displayed in.
-    private DialogueManager manager;
+    protected DialogueManager manager;
     private IEnumerator printAnimation;
 
-    private bool running;
+    protected bool running;
+    public bool runInactive = false;
 
-    private string text;
+    protected string text;
 
     public DialogueSequence(string s, DialogueManager dm)
     {
@@ -36,9 +37,12 @@ public class DialogueSequence : Sequence
     public override IEnumerator SequenceLoop()
     {
         // Waits until the text box is fully displayed
-        while (!VariableManager.Instance.GetBoolVariableValue(VariableConstants.TEXT_BOX_IS_ACTIVE))
+        if (!runInactive)
         {
-            yield return null;
+            while (!VariableManager.Instance.GetBoolVariableValue(VariableConstants.TEXT_BOX_IS_ACTIVE))
+            {
+                yield return null;
+            }
         }
 
         bool bWaitForInput = VariableManager.Instance.GetBoolVariableValue(VariableConstants.WAIT_FOR_INPUT);

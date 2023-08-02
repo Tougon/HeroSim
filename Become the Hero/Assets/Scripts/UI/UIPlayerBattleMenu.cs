@@ -19,11 +19,12 @@ public class UIPlayerBattleMenu : UIMenu
     {
         // Hide the back button if the player we're currently choosing actions for is the first
         bool hideBack = VariableManager.Instance.GetBoolVariableValue(VariableConstants.IS_FIRST_PLAYER);
-        BackButton.gameObject.SetActive(!hideBack);
+
+        if(BackButton) BackButton.gameObject.SetActive(!hideBack);
 
         if(hideBack && CurrentSelection == BackButton)
         {
-            BackButton.SetSelected(false);
+            if (BackButton) BackButton.SetSelected(false);
             SetSelection(InitialSelection);
             CurrentSelection.SetSelected(true);
         }
@@ -34,6 +35,18 @@ public class UIPlayerBattleMenu : UIMenu
 
     public void CancelSelection()
     {
+        EventManager.Instance.RaiseGameEvent(EventConstants.CANCEL_PLAYER_SELECTION);
+    }
+
+
+    public override void OnCancelPressed()
+    {
+        if (VariableManager.Instance.GetBoolVariableValue(VariableConstants.IS_FIRST_PLAYER))
+        {
+            return;
+        }
+
+        base.OnCancelPressed();
         EventManager.Instance.RaiseGameEvent(EventConstants.CANCEL_PLAYER_SELECTION);
     }
 }

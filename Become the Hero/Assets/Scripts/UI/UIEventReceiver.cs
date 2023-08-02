@@ -94,7 +94,7 @@ public class UIEventReceiver : MonoBehaviour
 
         foreach(var screen in ScreenMap.Values)
         {
-            if (screen.Showing)
+            if (screen.Showing && !bRanDelegate)
             {
                 screen.OnScreenHideDelegate += screenCall.Callback;
                 bRanDelegate = true;

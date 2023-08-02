@@ -9,6 +9,7 @@ namespace Hero.Core
     /// </summary>
     public class Sequence
     {
+        public bool bPlayAuto = false;
         public bool active { get; protected set; }
 
         public virtual void SequenceStart()

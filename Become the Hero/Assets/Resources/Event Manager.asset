@@ -37,6 +37,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d798f78b05bc05547b4eb1116a43a4cd, type: 2}
   stringEvents:
   - {fileID: 11400000, guid: cdd0cbf797edc8447ade98e44d354157, type: 2}
+  - {fileID: 11400000, guid: 52686083d3b447148820254640828d17, type: 2}
   vector2Events:
   - {fileID: 11400000, guid: 39c16dde0102cc943af3154755cd20e9, type: 2}
   vector3Events:
@@ -50,6 +51,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2af3e840594ab264db25864fe722585b, type: 2}
   - {fileID: 11400000, guid: e423a754113f21c4b8bdddfd9deccc8e, type: 2}
   - {fileID: 11400000, guid: 9c4a6640d5ce2e4489d874c6dc7cdea7, type: 2}
+  - {fileID: 11400000, guid: 87fdae60566c71c4da115f45c58e652c, type: 2}
   sequenceEvents:
   - {fileID: 11400000, guid: 8e2d69ee356bf8d4097eb6644d8085a2, type: 2}
   spellEvents:

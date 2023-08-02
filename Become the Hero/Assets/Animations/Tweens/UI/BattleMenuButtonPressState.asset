@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd36ac55380ac74c9e3209b1f478308, type: 3}
+  m_Name: BattleMenuButtonPressState
+  m_EditorClassIdentifier: 
+  Loop: 0
+  Frames:
+  - FrameActions:
+    - tweenType: 5
+      position2dTweenConfig: {fileID: 0}
+      position3dTweenConfig: {fileID: 0}
+      scale3dTweenConfig: {fileID: 11400000, guid: 816d47be53ebae1479d422c83b1da482,
+        type: 2}
+      colorTweenConfig: {fileID: 11400000, guid: 351892bdb950fbf4c9b7fbfb38d32f61,
+        type: 2}
+      alphaTweenConfig: {fileID: 0}
+      shake3dTweenConfig: {fileID: 0}
+    - tweenType: 6
+      position2dTweenConfig: {fileID: 0}
+      position3dTweenConfig: {fileID: 0}
+      scale3dTweenConfig: {fileID: 0}
+      colorTweenConfig: {fileID: 11400000, guid: 9fd01aaa3c1b8db48829d5bfc793dd6c,
+        type: 2}
+      alphaTweenConfig: {fileID: 0}
+      shake3dTweenConfig: {fileID: 0}
+  - FrameActions:
+    - tweenType: 5
+      position2dTweenConfig: {fileID: 0}
+      position3dTweenConfig: {fileID: 0}
+      scale3dTweenConfig: {fileID: 11400000, guid: 73aa8fb426cfb95429fe4fa9ef53a97e,
+        type: 2}
+      colorTweenConfig: {fileID: 11400000, guid: 37d1755eb50376a468ca61184c8f18b1,
+        type: 2}
+      alphaTweenConfig: {fileID: 0}
+      shake3dTweenConfig: {fileID: 0}
+    - tweenType: 6
+      position2dTweenConfig: {fileID: 0}
+      position3dTweenConfig: {fileID: 0}
+      scale3dTweenConfig: {fileID: 0}
+      colorTweenConfig: {fileID: 11400000, guid: de58a76c07ae7f34bb8d28e99878b7b4,
+        type: 2}
+      alphaTweenConfig: {fileID: 0}
+      shake3dTweenConfig: {fileID: 0}
