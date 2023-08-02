@@ -15,6 +15,10 @@ public class UITargetBattleMenu : UIMenu
     protected int PoolSize = 10;
     protected List<UITargetInfoMenuItem> TargetInfoPool = new List<UITargetInfoMenuItem>();
     protected List<UITargetArrow> TargetArrowPool = new List<UITargetArrow>();
+    [SerializeField]
+    protected float xRange = 50; 
+    [SerializeField]
+    protected float yRange = 50;
 
     private Camera _camera;
     private RectTransform rootTransform;
@@ -77,7 +81,7 @@ public class UITargetBattleMenu : UIMenu
                 new List<UITargetArrow> { TargetArrowPool[i] }, player);
         }
 
-        RegenerateSelectionMatrix(icons);
+        RegenerateSelectionMatrix(icons, xRange, yRange);
 
         // Disable any objects that do not need to be active anymore.
         for(int i=targets.Count; i<TargetInfoPool.Count; i++)
@@ -85,6 +89,25 @@ public class UITargetBattleMenu : UIMenu
             TargetArrowPool[i].image.enabled = false;
             TargetInfoPool[i].gameObject.SetActive(false);
         }
+    }
+
+
+    public override void OnCancelPressed()
+    {
+        base.OnCancelPressed();
+
+        EventManager.Instance.RaiseUIGameEvent(EventConstants.HIDE_ALL_SCREENS,
+            new UIOpenCloseCall
+            {
+                Callback = () =>
+                {
+                    EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
+                        new UIOpenCloseCall
+                        {
+                            MenuName = ScreenConstants.ActionMenu.ToString()
+                        });
+                }
+            });
     }
 
 

@@ -69,6 +69,25 @@ public class UISpellListController : UIMenu
     }
 
 
+    public override void OnCancelPressed()
+    {
+        base.OnCancelPressed();
+
+        EventManager.Instance.RaiseUIGameEvent(EventConstants.HIDE_ALL_SCREENS,
+            new UIOpenCloseCall
+            {
+                Callback = () =>
+                {
+                    EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
+                        new UIOpenCloseCall
+                        {
+                            MenuName = ScreenConstants.ActionMenu.ToString()
+                        });
+                }
+            });
+    }
+
+
     void OnDestroy()
     {
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_SPELL_LIST_INITIALIZE).RemoveListener(UpdateSpellButtons);

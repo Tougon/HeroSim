@@ -610,7 +610,6 @@ namespace ToUI
         public override void OnCancelPressed()
         {
             if (!bAllowInput) return;
-            Debug.Log("Pressed");
 
             if (CurrentSelection != null)
                 CurrentSelection.OnCancelPressed();
