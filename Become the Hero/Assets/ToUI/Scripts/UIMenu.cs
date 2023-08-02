@@ -42,6 +42,7 @@ namespace ToUI
         protected int column;
         protected int row;
         protected bool bAllowInput;
+        private bool bShowing;
 
         protected enum SelectionFallbackType { Next, SameRow, SameColumn }
         protected SelectionFallbackType Fallback = SelectionFallbackType.Next;
@@ -191,6 +192,7 @@ namespace ToUI
         public override void Show()
         {
             bAllowInput = false;
+            bShowing = true;
             base.Show();
 
             if(CurrentSelection && highlightOnOpen)
@@ -203,6 +205,7 @@ namespace ToUI
         {
             base.OnScreenShown();
 
+            bShowing = false;
             bAllowInput = true;
             bWaitInitial = true;
             repeatTimer = 0;
@@ -220,7 +223,10 @@ namespace ToUI
         {
             base.FocusChanged(bFocus);
 
-            bAllowInput = bFocus;
+            if (!bShowing)
+            {
+                bAllowInput = bFocus;
+            }
         }
 
 

@@ -4,6 +4,7 @@ using UnityEngine;
 using ToUI;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.InputSystem.XR;
 
 /// <summary>
 /// Class representing a menu item for a target
@@ -49,6 +50,16 @@ public class UITargetInfoMenuItem : UIMenuItem
         for (int i = 0; i < Arrows.Count; i++)
         {
             Arrows[i].image.enabled = selected;
+        }
+
+        if (selected)
+        {
+            // Give exact information about the entity if we're targetting one.
+            if(Targets.Count == 1)
+            {
+                EventManager.Instance.RaiseEntityControllerEvent(
+                    EventConstants.INITIALIZE_SELECTED_ENEMY_INFO, Targets[0]);
+            }
         }
     }
 

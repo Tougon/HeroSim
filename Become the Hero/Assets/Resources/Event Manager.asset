@@ -52,6 +52,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e423a754113f21c4b8bdddfd9deccc8e, type: 2}
   - {fileID: 11400000, guid: 9c4a6640d5ce2e4489d874c6dc7cdea7, type: 2}
   - {fileID: 11400000, guid: 87fdae60566c71c4da115f45c58e652c, type: 2}
+  - {fileID: 11400000, guid: 9a75ec2c1ec8bb548941c34dc872bfb6, type: 2}
   sequenceEvents:
   - {fileID: 11400000, guid: 8e2d69ee356bf8d4097eb6644d8085a2, type: 2}
   spellEvents:

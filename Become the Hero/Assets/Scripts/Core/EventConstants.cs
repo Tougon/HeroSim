@@ -64,6 +64,7 @@ public static class EventConstants
     public const string OPEN_STATUS_SCREEN = "OpenStatusScreen";
     public const string INITIALIZE_TARGET_MENU = "InitializeTargetMenu";
     public const string INITIALIZE_PLAYER_INFO = "InitializePlayerInfo";
+    public const string INITIALIZE_SELECTED_ENEMY_INFO = "InitializeSelectedEnemyInfo";
     #endregion
 
     #region Sequence Event Constants
