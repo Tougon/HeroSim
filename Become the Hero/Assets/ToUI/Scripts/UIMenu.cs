@@ -375,8 +375,16 @@ namespace ToUI
                         dif.y == 0 ? 0 : dif.y / Mathf.Abs(dif.y));
 
                     ScrollArea.DOKill();
-                    ScrollArea.DOAnchorPos(ScrollArea.anchoredPosition + dif + (offset * ScrollBuffer), 
-                        1 / ScrollSpeed).OnComplete(()=> OnViewChanged());
+                    if(ScrollSpeed <= 0)
+                    {
+                        ScrollArea.anchoredPosition = ScrollArea.anchoredPosition + dif + (offset * ScrollBuffer);
+                        OnViewChanged();
+                    }
+                    else
+                    {
+                        ScrollArea.DOAnchorPos(ScrollArea.anchoredPosition + dif + (offset * ScrollBuffer),
+                            1 / ScrollSpeed).OnComplete(() => OnViewChanged());
+                    }
 
                     return dif + (offset * ScrollBuffer);
                 }
@@ -420,6 +428,15 @@ namespace ToUI
 
             if (!result)
             {
+                // Ignore infinitesimally small values.
+                // There exists an edge case due to floating point precision.
+                if (difference.sqrMagnitude < 0.0001)
+                {
+                    difference = Vector2.zero;
+                    return true;
+                }
+
+
                 float ratio = target.rect.width / otherRect.width;
                 difference *= ratio;
             }
