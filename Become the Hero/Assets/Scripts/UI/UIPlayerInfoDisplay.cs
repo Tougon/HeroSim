@@ -20,6 +20,9 @@ public class UIPlayerInfoDisplay : MonoBehaviour
     private Image playerMPBar;
     [SerializeField]
     private EventType eventType;
+    [Header("Highlight Properties")]
+    [SerializeField]
+    private Color highlightColor = new Color(1, 1, 1, 1);
 
 
     void Awake()
@@ -41,17 +44,7 @@ public class UIPlayerInfoDisplay : MonoBehaviour
     {
         playerName.text = controller.GetEntity().vals.GetEntityName();
         playerHPBar.fillAmount = (float)controller.GetCurrentHP() / (float)controller.maxHP;
-
-        if(controller is PlayerController)
-        {
-            playerHP.text = $"<color=#FFFF00>{controller.GetCurrentHP()}</color>/{controller.maxHP}";
-        }
-        else
-        {
-            playerHP.text = "";
-        }
-
-
+        playerHP.text = $"<color=#FFFF00>{controller.GetCurrentHP()}</color>/{controller.maxHP}";
         playerMPBar.fillAmount = (float)controller.GetCurrentMP() / (float)controller.maxMP;
         playerMP.text = $"<color=#FFFF00>{controller.GetCurrentMP()}</color>/{controller.maxMP}";
     }

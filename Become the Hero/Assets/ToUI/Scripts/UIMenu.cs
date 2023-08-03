@@ -42,7 +42,7 @@ namespace ToUI
         protected int column;
         protected int row;
         protected bool bAllowInput;
-        private bool bShowing;
+        private bool bPlayingShowAnim;
 
         protected enum SelectionFallbackType { Next, SameRow, SameColumn }
         protected SelectionFallbackType Fallback = SelectionFallbackType.Next;
@@ -50,6 +50,15 @@ namespace ToUI
         private Vector2 lastDirection;
         private float repeatTimer;
         private bool bWaitInitial = true;
+        private bool[] scrollDirections = new bool[4];
+
+        [Header("Scroll Visibility Properties")]
+        [SerializeField] protected TweenSystem TopScrollIndicator;
+        [SerializeField] protected TweenSystem BottomScrollIndicator;
+        [SerializeField] protected TweenSystem LeftScrollIndicator;
+        [SerializeField] protected TweenSystem RightScrollIndicator;
+
+        private TweenSystem[] scrollIndicators = new TweenSystem[4];
 
 
         #region Editor Only
@@ -158,6 +167,11 @@ namespace ToUI
 
             if(CurrentSelection != null)
                 CurrentSelection.SetSelected(true);
+
+            scrollIndicators[0] = TopScrollIndicator;
+            scrollIndicators[1] = BottomScrollIndicator;
+            scrollIndicators[2] = LeftScrollIndicator;
+            scrollIndicators[3] = RightScrollIndicator;
         }
 
 
@@ -192,10 +206,12 @@ namespace ToUI
         public override void Show()
         {
             bAllowInput = false;
-            bShowing = true;
+            bPlayingShowAnim = true;
             base.Show();
 
-            if(CurrentSelection && highlightOnOpen)
+            OnViewChanged();
+
+            if (CurrentSelection && highlightOnOpen)
             {
                 CurrentSelection.SetSelected(true);
             }
@@ -205,7 +221,7 @@ namespace ToUI
         {
             base.OnScreenShown();
 
-            bShowing = false;
+            bPlayingShowAnim = false;
             bAllowInput = true;
             bWaitInitial = true;
             repeatTimer = 0;
@@ -223,7 +239,7 @@ namespace ToUI
         {
             base.FocusChanged(bFocus);
 
-            if (!bShowing)
+            if (!bPlayingShowAnim)
             {
                 bAllowInput = bFocus;
             }
@@ -360,7 +376,7 @@ namespace ToUI
 
                     ScrollArea.DOKill();
                     ScrollArea.DOAnchorPos(ScrollArea.anchoredPosition + dif + (offset * ScrollBuffer), 
-                        1 / ScrollSpeed);
+                        1 / ScrollSpeed).OnComplete(()=> OnViewChanged());
 
                     return dif + (offset * ScrollBuffer);
                 }
@@ -428,6 +444,87 @@ namespace ToUI
 
             return new Rect(min, size);
         }
+
+
+        #region Row/Column Visibility Checks
+        protected virtual bool IsFirstRowVisible()
+        {
+            for (int i = 0; i < SelectionMatrix.GetLength(0); i++)
+            {
+                if (RectFullyContainsElement(Viewport, SelectionMatrix[i, 0].transform as RectTransform,
+                    out Vector2 dif))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        protected virtual bool IsLastRowVisible()
+        {
+            for (int i = 0; i < SelectionMatrix.GetLength(0); i++)
+            {
+                if (RectFullyContainsElement(Viewport, 
+                    SelectionMatrix[i, SelectionMatrix.GetLength(1) - 1].transform as RectTransform,
+                    out Vector2 dif))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        protected virtual bool IsFirstColumnVisible()
+        {
+            for (int i = 0; i < SelectionMatrix.GetLength(1); i++)
+            {
+                if (RectFullyContainsElement(Viewport, SelectionMatrix[0, i].transform as RectTransform,
+                    out Vector2 dif))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        protected virtual bool IsLastColumnVisible()
+        {
+            for (int i = 0; i < SelectionMatrix.GetLength(1); i++)
+            {
+                if (RectFullyContainsElement(Viewport,
+                    SelectionMatrix[SelectionMatrix.GetLength(0) - 1, i].transform as RectTransform,
+                    out Vector2 dif))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        protected virtual void OnViewChanged()
+        {
+            bool[] newScrollDirs = new bool[4];
+
+            newScrollDirs[0] = IsFirstRowVisible();
+            newScrollDirs[1] = IsLastRowVisible();
+            newScrollDirs[2] = IsFirstColumnVisible();
+            newScrollDirs[3] = IsLastColumnVisible();
+
+            for(int i=0; i<4; i++)
+            {
+                if (scrollDirections[i] != newScrollDirs[i] && scrollIndicators[i] != null)
+                {
+                    scrollIndicators[i].PlayAnimation(newScrollDirs[i] ? "Hide" : "Show");
+                }
+            }
+
+            scrollDirections = newScrollDirs;
+        }
+        #endregion
 
 
         protected bool SelectionIsInvalid(UIMenuItem AttemptedSelection, int AttemptedRow = -1, int AttemptedColumn = -1)
