@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: ArrowBobUpAsset
   m_EditorClassIdentifier: 
   tweenConfig:
-    m_duration: 1
+    m_duration: 0.001
     m_to: {x: 0, y: 5}
-    m_from: {x: 0, y: 0}
-    m_useFrom: 0
-    m_delay: 0
+    m_from: {x: 0, y: 5}
+    m_useFrom: 1
+    m_delay: 0.6
     m_curve: 1
     m_snapping: 0

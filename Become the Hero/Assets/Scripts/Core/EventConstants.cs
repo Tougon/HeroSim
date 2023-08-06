@@ -29,6 +29,7 @@ public static class EventConstants
     public const string ON_DIALOGUE_ADVANCE = "OnDialogueAdvance";
     public const string ON_ACTION_PHASE_BEGIN = "OnActionPhaseBegin";
     public const string CANCEL_PLAYER_SELECTION = "CancelPlayerSelection";
+    public const string INITIALIZE_ALL_ENEMY_INFO = "InitializeAllEnemyInfo";
     #endregion
 
     #region Bool Event Constants

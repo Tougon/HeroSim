@@ -32,6 +32,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 10a0af305451629488f0829a32309bb1, type: 2}
   - {fileID: 11400000, guid: adbc73f8e49a7774bb8e04604b151115, type: 2}
   - {fileID: 11400000, guid: a2a74fea957d61f4189cdb9f401dccb4, type: 2}
+  - {fileID: 11400000, guid: 1fa31ed771921ed49ba21649c8357693, type: 2}
   boolEvents: []
   intEvents:
   - {fileID: 11400000, guid: d798f78b05bc05547b4eb1116a43a4cd, type: 2}

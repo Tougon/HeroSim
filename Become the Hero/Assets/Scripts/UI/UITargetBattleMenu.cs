@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ToUI;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class UITargetBattleMenu : UIMenu
 {
@@ -53,7 +54,9 @@ public class UITargetBattleMenu : UIMenu
 
     private void InitializeMenu(EntityController player)
     {
-        if(player.action.GetSpellTarget() == Spell.SpellTarget.RandomEnemy)
+        var spellTarget = player.action.GetSpellTarget();
+
+        if(spellTarget == Spell.SpellTarget.RandomEnemy)
         {
             // TODO: Improve this. Random should allow random per hit, but also random all.
             // This logic is unsupported.
@@ -65,30 +68,83 @@ public class UITargetBattleMenu : UIMenu
         var targets = player.GetPossibleTargets();
         var icons = new List<UIMenuItem>();
 
-        for(int i=0; i<targets.Count; i++)
+        if (spellTarget == Spell.SpellTarget.All || spellTarget == Spell.SpellTarget.AllEnemy ||
+            spellTarget == Spell.SpellTarget.AllParty)
         {
-            var target = targets[i];
-            var icon = TargetInfoPool[i];
+            var icon = TargetInfoPool[0];
             icons.Add(icon);
             icon.gameObject.SetActive(true);
 
-            Vector2 pos = _camera.WorldToViewportPoint(target.transform.position);
-            (icon.transform as RectTransform).anchoredPosition = new Vector2(
-                (pos.x * rootTransform.sizeDelta.x) - (rootTransform.sizeDelta.x * 0.5f),
-                (pos.y * rootTransform.sizeDelta.y) - (rootTransform.sizeDelta.y * 0.5f));
+            List<Vector2> positions = new List<Vector2>();
 
-            icon.Initialize(new List<EntityController> { targets[i] }, 
-                new List<UITargetArrow> { TargetArrowPool[i] }, player);
+            List<UITargetArrow> arrows = new List<UITargetArrow>();
+
+            for(int i=0; i < targets.Count; i++)
+            {
+                arrows.Add(TargetArrowPool[i]);
+
+                Vector2 pos = _camera.WorldToViewportPoint(targets[i].transform.position +
+                    (targets[i].GetSpriteRenderer().bounds.extents.y * Vector3.up));
+                Vector2 finalPos = new Vector2(
+                    (pos.x * rootTransform.sizeDelta.x) - (rootTransform.sizeDelta.x * 0.5f),
+                    (pos.y * rootTransform.sizeDelta.y) - (rootTransform.sizeDelta.y * 0.5f));
+
+                if(i == 0)
+                    (icon.transform as RectTransform).anchoredPosition = finalPos;
+
+                positions.Add(finalPos);
+            }
+
+            icon.Initialize(targets, arrows, positions, player);
+
+            RegenerateSelectionMatrix(icons, xRange, yRange);
+
+            // Disable any objects that do not need to be active anymore.
+            for (int i = 1; i < TargetInfoPool.Count; i++)
+            {
+                if(i >= targets.Count) TargetArrowPool[i].image.enabled = false;
+                TargetInfoPool[i].gameObject.SetActive(false);
+            }
         }
-
-        RegenerateSelectionMatrix(icons, xRange, yRange);
-
-        // Disable any objects that do not need to be active anymore.
-        for(int i=targets.Count; i<TargetInfoPool.Count; i++)
+        else
         {
-            TargetArrowPool[i].image.enabled = false;
-            TargetInfoPool[i].gameObject.SetActive(false);
+            for (int i = 0; i < targets.Count; i++)
+            {
+                var target = targets[i];
+                var icon = TargetInfoPool[i];
+                icons.Add(icon);
+                icon.gameObject.SetActive(true);
+
+                Vector2 pos = _camera.WorldToViewportPoint(target.transform.position +
+                    (target.GetSpriteRenderer().bounds.extents.y * Vector3.up));
+                Vector2 finalPos = new Vector2(
+                    (pos.x * rootTransform.sizeDelta.x) - (rootTransform.sizeDelta.x * 0.5f),
+                    (pos.y * rootTransform.sizeDelta.y) - (rootTransform.sizeDelta.y * 0.5f));
+
+                (icon.transform as RectTransform).anchoredPosition = finalPos;
+
+                icon.Initialize(new List<EntityController> { targets[i] },
+                    new List<UITargetArrow> { TargetArrowPool[i] }, 
+                    new List<Vector2> { finalPos }, player);
+            }
+
+            RegenerateSelectionMatrix(icons, xRange, yRange);
+
+            // Disable any objects that do not need to be active anymore.
+            for (int i = targets.Count; i < TargetInfoPool.Count; i++)
+            {
+                TargetArrowPool[i].image.enabled = false;
+                TargetInfoPool[i].gameObject.SetActive(false);
+            }
         }
+    }
+
+
+    protected override void OnScreenHide()
+    {
+        base.OnScreenHide();
+
+        CurrentSelection?.SetSelected(false);
     }
 
 
