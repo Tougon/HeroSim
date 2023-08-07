@@ -199,6 +199,6 @@ public class ScrollingDialogueManager : DialogueManager
             }
         }
 
-        targetLine--;
+        targetLine = Mathf.Clamp(targetLine - 1, 0, numTextRows);
     }
 }

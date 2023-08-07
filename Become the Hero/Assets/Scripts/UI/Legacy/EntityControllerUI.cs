@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using ToUI;
 using DG.Tweening;
 
 
@@ -14,13 +15,9 @@ public class EntityControllerUI : MonoBehaviour
     [SerializeField]
     private Image background;
     [SerializeField]
-    private Image barHP;
+    private UIBar barHP;
     [SerializeField]
-    private TextMeshProUGUI textHP;
-    [SerializeField]
-    private Image barMP;
-    [SerializeField]
-    private TextMeshProUGUI textMP;
+    private UIBar barMP;
 
     // Used to offset position and height
     private float heightBase = 0.55f;
@@ -30,12 +27,8 @@ public class EntityControllerUI : MonoBehaviour
     private float textMPPos = -0.15f;
     private float noTextMPPos = -0.08f;
 
-    protected float maxHP;
     protected float entityHP;
-    protected float maxMP;
     protected float entityMP;
-
-    private CanvasGroup group;
     public bool visible { get; private set; }
     private bool hpAnimating;
     private bool mpAnimating;
@@ -50,57 +43,32 @@ public class EntityControllerUI : MonoBehaviour
 
     void Awake()
     {
-        group = GetComponent<CanvasGroup>();
-        group.alpha = 0;
         visible = false;
 
-        EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).AddListener(ShowUI);
         EventManager.Instance.GetGameEvent(EventConstants.HIDE_UI).AddListener(HideUI);
     }
 
 
     public void ResetUI(EntityController ec, int hp, int mp)
     {
+        if (barHP == null) return;
         current = ec;
 
-        maxHP = hp;
-        maxMP = mp;
+        barHP.maxValue = hp;
+        barMP.maxValue = mp;
         entityHP = hp;
         entityMP = mp;
 
-        barHP.fillAmount = 1;
-        barMP.fillAmount = 1;
-
-        textHP.text = "" + maxHP + "/" + maxHP;
-        textMP.text = "" + maxMP + "/" + maxMP;
+        barHP.SetValueImmediate(hp);
+        barMP.SetValueImmediate(mp);
 
         showText = false;
         RectTransform rt = background.GetComponent<RectTransform>();
         rt.DOAnchorPosY(heightDifference, 0);
         rt.DOSizeDelta(new Vector2(rt.sizeDelta.x, heightBase - (heightDifference * 2.0f)), 0);
 
-        //barHP.rectTransform.DOAnchorPosY(noTextHPPos, 0);
         barHP.transform.parent.GetComponent<RectTransform>().DOAnchorPosY(noTextHPPos, 0);
-        textHP.color = Color.clear;
-        //barMP.rectTransform.DOAnchorPosY(noTextMPPos, 0);
         barMP.transform.parent.GetComponent<RectTransform>().DOAnchorPosY(noTextMPPos, 0);
-        textMP.color = Color.clear;
-    }
-
-
-    public void ShowText()
-    {
-        showText = true;
-        RectTransform rt = background.GetComponent<RectTransform>();
-        rt.DOAnchorPosY(0, 0.3f);
-        rt.DOSizeDelta(new Vector2(rt.sizeDelta.x, heightBase), 0.3f);
-
-        //barHP.rectTransform.DOAnchorPosY(textHPPos, 0.3f);
-        barHP.transform.parent.GetComponent<RectTransform>().DOAnchorPosY(textHPPos, 0.3f);
-        textHP.DOColor(Color.white, 0.3f);
-        //barMP.rectTransform.DOAnchorPosY(textMPPos, 0.3f);
-        barMP.transform.parent.GetComponent<RectTransform>().DOAnchorPosY(textMPPos, 0.3f);
-        textMP.DOColor(Color.white, 0.3f);
     }
 
 
@@ -109,7 +77,9 @@ public class EntityControllerUI : MonoBehaviour
         if (visible)
             return;
 
-        group.DOFade(1, FADE_IN_SPEED).OnComplete(SetUIVisible);
+        visible = true;
+        barHP?.ShowUI();
+        barMP?.ShowUI();
     }
 
 
@@ -128,87 +98,60 @@ public class EntityControllerUI : MonoBehaviour
 
     private IEnumerator HideUIAfterAnim()
     {
+        barHP?.HideUI();
+        barMP?.HideUI();
+
         while (hpAnimating || mpAnimating)
             yield return null;
 
-
-        group.DOFade(0, FADE_IN_SPEED).OnComplete(SetUIInvisible);
+        visible = false;
     }
 
 
     public void ChangeHP(int dif)
     {
         entityHP -= dif;
-        entityHP = Mathf.Clamp(entityHP, 0, maxHP);
-        float val = ((float)entityHP) / ((float)maxHP);
+        entityHP = Mathf.Clamp(entityHP, 0, barHP.maxValue);
 
-        currentAnimHP = SetHPBarFillAmount(val);
+        currentAnimHP = SetHPBarFillAmount(entityHP);
         StartCoroutine(currentAnimHP);
     }
 
 
     private IEnumerator SetHPBarFillAmount(float val)
     {
-        ShowUI();
+        barHP?.ShowUI();
 
-        while (!visible)
+        while (!barHP.visible)
             yield return null;
 
-        hpAnimating = true;
-        barHP.DOFillAmount(val, BAR_SUBTRACT_SPEED).OnComplete(OnHPAnimateFinish);
-
-        while (hpAnimating)
-        {
-            int percent = Mathf.RoundToInt(barHP.fillAmount * (float)maxHP);
-            textHP.text = "" + percent + "/" + maxHP;
-            yield return null;
-        }
-        
-        textHP.text = "" + current.GetCurrentHP() + "/" + maxHP;
+        barHP.SetValue(val);
     }
 
 
     public void ChangeMP(int dif)
     {
         entityMP += dif;
-        entityMP = Mathf.Clamp(entityMP, 0, maxMP);
-        float val = ((float)entityMP) / ((float)maxMP);
+        entityMP = Mathf.Clamp(entityMP, 0, barMP.maxValue);
 
-        currentAnimMP = SetMPBarFillAmount(val);
+        currentAnimMP = SetMPBarFillAmount(entityMP);
         StartCoroutine(currentAnimMP);
     }
 
 
     private IEnumerator SetMPBarFillAmount(float val)
     {
-        ShowUI();
+        barMP?.ShowUI();
 
-        while (!visible)
+        while (!barMP.visible)
             yield return null;
 
-        mpAnimating = true;
-        barMP.DOFillAmount(val, BAR_SUBTRACT_SPEED).OnComplete(OnMPAnimateFinish);
-
-        while (mpAnimating)
-        {
-            int percent = Mathf.RoundToInt(barMP.fillAmount * (float)maxMP);
-            textMP.text = "" + percent + "/" + maxMP;
-            yield return null;
-        }
-
-        textMP.text = "" + current.GetCurrentMP() + "/" + maxMP;
+        barMP.SetValue(val);
     }
-
-
-    private void SetUIVisible() { visible = true; }
-    private void SetUIInvisible() { visible = false; fadeOut = null; }
-    private void OnHPAnimateFinish() { hpAnimating = false; }
-    private void OnMPAnimateFinish() { mpAnimating = false; }
 
 
     void OnDestroy()
     {
-        EventManager.Instance.GetGameEvent(EventConstants.ON_TURN_BEGIN).RemoveListener(ShowUI);
         EventManager.Instance.GetGameEvent(EventConstants.HIDE_UI).RemoveListener(HideUI);
     }
 }

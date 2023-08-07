@@ -31,7 +31,6 @@ public class PlayerController : EntityController
     // Start is called before the first frame update
     void Start()
     {
-        entityUI.ShowText();
         spellList.Initialize();
 
         // initialize the player 

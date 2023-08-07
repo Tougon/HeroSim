@@ -23,7 +23,7 @@ MonoBehaviour:
   spellAnimation: {fileID: 11400000, guid: 8d1419234680a434f97dfc3a56517e8e, type: 2}
   spellEffects: []
   spellProperties: []
-  spellPower: 0
+  spellPower: 5
   checkAccuracy: 1
   spellAccuracy: 100
   accuracyPerHit: 100

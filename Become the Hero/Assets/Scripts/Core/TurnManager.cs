@@ -406,6 +406,7 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator ActionSequence()
     {
+        yield return null;
         EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
         new UIOpenCloseCall
         {
