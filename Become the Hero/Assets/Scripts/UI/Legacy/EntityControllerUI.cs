@@ -19,20 +19,11 @@ public class EntityControllerUI : MonoBehaviour
     [SerializeField]
     private UIBar barMP;
 
-    // Used to offset position and height
-    private float heightBase = 0.55f;
-    private float heightDifference = 0.075f;
-    private float textHPPos = 0.06f;
-    private float noTextHPPos = 0.07f;
-    private float textMPPos = -0.15f;
-    private float noTextMPPos = -0.08f;
-
     protected float entityHP;
     protected float entityMP;
     public bool visible { get; private set; }
     private bool hpAnimating;
     private bool mpAnimating;
-    private bool showText;
 
     private IEnumerator fadeOut;
     private IEnumerator currentAnimHP;
@@ -61,14 +52,6 @@ public class EntityControllerUI : MonoBehaviour
 
         barHP.SetValueImmediate(hp);
         barMP.SetValueImmediate(mp);
-
-        showText = false;
-        RectTransform rt = background.GetComponent<RectTransform>();
-        rt.DOAnchorPosY(heightDifference, 0);
-        rt.DOSizeDelta(new Vector2(rt.sizeDelta.x, heightBase - (heightDifference * 2.0f)), 0);
-
-        barHP.transform.parent.GetComponent<RectTransform>().DOAnchorPosY(noTextHPPos, 0);
-        barMP.transform.parent.GetComponent<RectTransform>().DOAnchorPosY(noTextMPPos, 0);
     }
 
 
@@ -125,6 +108,7 @@ public class EntityControllerUI : MonoBehaviour
         while (!barHP.visible)
             yield return null;
 
+        visible = true;
         barHP.SetValue(val);
     }
 
@@ -146,6 +130,7 @@ public class EntityControllerUI : MonoBehaviour
         while (!barMP.visible)
             yield return null;
 
+        visible = true;
         barMP.SetValue(val);
     }
 

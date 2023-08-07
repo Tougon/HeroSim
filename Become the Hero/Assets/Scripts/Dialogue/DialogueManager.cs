@@ -4,7 +4,6 @@ using UnityEngine;
 using TMPro;
 using ToUI;
 using Sirenix.OdinInspector;
-using static UnityEngine.GraphicsBuffer;
 
 /// <summary>
 /// Handles display of and queueing of all <see cref="DialogueSequence"/>
@@ -184,9 +183,7 @@ public class DialogueManager : UIScreen
                         display.maxVisibleCharacters = display.textInfo.wordInfo[i].lastCharacterIndex + 2;
 
                         if (bUseUnderlay)
-                        {
                             underlay.maxVisibleCharacters = display.maxVisibleCharacters;
-                        }
 
                         yield return new WaitForSeconds(dialogueSpeed);
                     }
@@ -194,6 +191,11 @@ public class DialogueManager : UIScreen
 
                 break;
         }
+
+        display.maxVisibleCharacters = display.textInfo.characterCount;
+
+        if (bUseUnderlay)
+            underlay.maxVisibleCharacters = display.maxVisibleCharacters;
 
         isPrintingLine = false;
     }
@@ -242,6 +244,12 @@ public class DialogueManager : UIScreen
     {
         VariableManager.Instance.SetBoolVariableValue(VariableConstants.TEXT_BOX_IS_ACTIVE, false);
         base.Hide();
+    }
+
+
+    private void OnDisable()
+    {
+        Debug.Log("nooooooo");
     }
 
 

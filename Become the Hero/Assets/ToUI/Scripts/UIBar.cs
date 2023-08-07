@@ -66,20 +66,6 @@ namespace ToUI
             if (!visible)
                 return;
 
-            if (currentFadeOutAnim != null)
-                StopCoroutine(currentFadeOutAnim);
-
-            currentFadeOutAnim = HideUIAfterAnim();
-            StartCoroutine(currentFadeOutAnim);
-        }
-
-
-        private IEnumerator HideUIAfterAnim()
-        {
-            while (animating)
-                yield return null;
-
-
             tweenSystem.PlayAnimation("Hide", () => visible = false);
         }
 

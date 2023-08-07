@@ -104,6 +104,7 @@ public class ScrollingDialogueManager : DialogueManager
                             StopCoroutine(lineWipeRoutines[0]);
                             lineWipeRoutines.RemoveAt(0);
                             targetLine--;
+                            Debug.Log(targetLine);
                         }
                     }
 
@@ -132,12 +133,13 @@ public class ScrollingDialogueManager : DialogueManager
             yield return new WaitUntil(() => !isPrintingLine);
 
             targetLine = Mathf.Clamp(targetLine + 1, 0, numTextRows);
+            Debug.Log(targetLine);
 
             if (lineDuration >= 0)
             {
-                IEnumerator lineWipe = LineWipeRoutine(line);
-                lineWipeRoutines.Add(lineWipe);
-                StartCoroutine(lineWipe);
+                //IEnumerator lineWipe = LineWipeRoutine(line);
+                //lineWipeRoutines.Add(lineWipe);
+                //StartCoroutine(lineWipe);
             }
 
             yield return new WaitForSeconds(delayBetweenLines);
@@ -170,10 +172,10 @@ public class ScrollingDialogueManager : DialogueManager
 
                 if (bUseUnderlay)
                 {
-                    int index = displays.IndexOf(line);
-                    underlays[index].text = "";
-                    removed = true;
+                    underlays[i].text = "";
                 }
+
+                removed = true;
             }
 
             if (removed)
@@ -199,6 +201,7 @@ public class ScrollingDialogueManager : DialogueManager
             }
         }
 
-        targetLine = Mathf.Clamp(targetLine - 1, 0, numTextRows);
+        targetLine--; //= Mathf.Clamp(targetLine - 1, 0, numTextRows);
+        Debug.Log(targetLine);
     }
 }

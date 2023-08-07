@@ -10392,7 +10392,7 @@ MonoBehaviour:
     SerializationNodes: []
   bOpenOnAwake: 0
   bCloseOnLoseFocus: 0
-  bEnqueue: 1
+  bEnqueue: 0
   bDisableOnClose: 0
   AnimationSource: {fileID: 852068688}
   display: {fileID: 940702641}
