@@ -18,7 +18,7 @@ MonoBehaviour:
     useArticle: 0
     entityHP: 100
     entityMP: 100
-    entityAtk: 5
+    entityAtk: 50
     entityDef: 75
     entityMgAtk: 0
     entityMgDef: 0

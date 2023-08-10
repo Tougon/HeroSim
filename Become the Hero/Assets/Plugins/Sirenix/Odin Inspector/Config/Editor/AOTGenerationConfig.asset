@@ -16,7 +16,7 @@ MonoBehaviour:
   deleteDllAfterBuilds: 1
   AutomateForAllAOTPlatforms: 1
   automateForPlatforms: 0900000014000000
-  lastScan: 638270404930388132
+  lastScan: 638272727378700564
   supportSerializedTypes:
   - TypeName: BetterEventEntry, Assembly-CSharp
     IsCustom: 1

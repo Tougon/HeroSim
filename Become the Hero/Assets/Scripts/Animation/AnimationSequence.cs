@@ -30,6 +30,7 @@ public class AnimationSequence : Hero.Core.Sequence
     private bool looping;
     private bool onSuccess;
     private int currentFrame = 0;
+    private float currentTime = 0;
     private int loop = 1;
     private float directionX = 1;
     private float directionY = 1;
@@ -193,15 +194,27 @@ public class AnimationSequence : Hero.Core.Sequence
         while (running)
         {
             // Increment frame
-            currentFrame++;
+            currentTime += Time.deltaTime;
 
-            // If the current frame has an action associated, call it.
-            for(int i=0; i<sequenceActions.Count; i++)
+            if(currentTime >= (1.0f / 60.0f))
             {
-                if (sequenceActions[i].frame != currentFrame)
-                    continue;
-                else
-                    CallSequenceFunction(sequenceActions[i].action, sequenceActions[i].param);
+                int numFrames = (int)(currentTime / (1.0f / 60.0f));
+
+                for(int f=0; f < numFrames; f++)
+                {
+                    currentFrame++;
+
+                    // If the current frame has an action associated, call it.
+                    for (int i = 0; i < sequenceActions.Count; i++)
+                    {
+                        if (sequenceActions[i].frame != currentFrame)
+                            continue;
+                        else
+                            CallSequenceFunction(sequenceActions[i].action, sequenceActions[i].param);
+                    }
+                }
+
+                currentTime -= (numFrames * (1.0f / 60.0f));
             }
 
             yield return null;
