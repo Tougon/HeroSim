@@ -247,12 +247,6 @@ public class DialogueManager : UIScreen
     }
 
 
-    private void OnDisable()
-    {
-        Debug.Log("nooooooo");
-    }
-
-
     #region Input Handling
 
     public override void OnConfirmPressed()

@@ -497,7 +497,7 @@ public class TurnManager : MonoBehaviour
             }
 
             foreach(var msg in preAnimDialogue)
-                EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, msg);
+                EventManager.Instance.RaiseStringEvent(EventConstants.ON_MESSAGE_QUEUE, msg);
 
             if(bWillPlayAnimation)
             {
@@ -537,6 +537,8 @@ public class TurnManager : MonoBehaviour
         }
 
         yield return null;
+
+        EventManager.Instance.RaiseGameEvent(EventConstants.HIDE_UI);
 
         if (current != null)
             StopCoroutine(current);

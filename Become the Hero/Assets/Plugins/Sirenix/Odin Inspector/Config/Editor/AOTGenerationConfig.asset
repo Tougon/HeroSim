@@ -16,7 +16,7 @@ MonoBehaviour:
   deleteDllAfterBuilds: 1
   AutomateForAllAOTPlatforms: 1
   automateForPlatforms: 0900000014000000
-  lastScan: 637424424472834237
+  lastScan: 638270404930388132
   supportSerializedTypes:
   - TypeName: BetterEventEntry, Assembly-CSharp
     IsCustom: 1
@@ -81,6 +81,9 @@ MonoBehaviour:
   - TypeName: System.Byte[], mscorlib
     IsCustom: 0
     Emit: 1
+  - TypeName: UnityEngine.CanvasGroup, UnityEngine.UIModule
+    IsCustom: 0
+    Emit: 1
   - TypeName: System.Delegate, mscorlib
     IsCustom: 0
     Emit: 1
@@ -105,6 +108,9 @@ MonoBehaviour:
       mscorlib
     IsCustom: 0
     Emit: 1
+  - TypeName: UnityEngine.UI.Image, UnityEngine.UI
+    IsCustom: 0
+    Emit: 1
   - TypeName: System.Int32, mscorlib
     IsCustom: 0
     Emit: 1
@@ -116,24 +122,45 @@ MonoBehaviour:
       mscorlib
     IsCustom: 0
     Emit: 1
-  - TypeName: System.Object, mscorlib
+  - TypeName: UnityEngine.Object, UnityEngine.CoreModule
     IsCustom: 0
     Emit: 1
-  - TypeName: UnityEngine.Object, UnityEngine.CoreModule
+  - TypeName: System.Object, mscorlib
     IsCustom: 0
     Emit: 1
   - TypeName: System.Object[], mscorlib
     IsCustom: 0
     Emit: 1
+  - TypeName: UnityEngine.RectTransform, UnityEngine.CoreModule
+    IsCustom: 0
+    Emit: 1
   - TypeName: Spell, Assembly-CSharp
     IsCustom: 0
     Emit: 1
+  - TypeName: UnityEngine.SpriteRenderer, UnityEngine.CoreModule
+    IsCustom: 0
+    Emit: 1
   - TypeName: System.String, mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: TMPro.TextMeshProUGUI, Unity.TextMeshPro
+    IsCustom: 0
+    Emit: 1
+  - TypeName: UnityEngine.Transform, UnityEngine.CoreModule
+    IsCustom: 0
+    Emit: 1
+  - TypeName: DOTweenConfigs.TweenActionCache, Assembly-CSharp
     IsCustom: 0
     Emit: 1
   - TypeName: System.Type, mscorlib
     IsCustom: 0
     Emit: 1
   - TypeName: System.Type[], mscorlib
+    IsCustom: 0
+    Emit: 1
+  - TypeName: ToUI.UIMenuItem, Assembly-CSharp
+    IsCustom: 0
+    Emit: 1
+  - TypeName: ToUI.UIMenuItem[,], Assembly-CSharp
     IsCustom: 0
     Emit: 1

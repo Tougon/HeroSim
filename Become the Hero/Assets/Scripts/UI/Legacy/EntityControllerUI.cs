@@ -21,9 +21,7 @@ public class EntityControllerUI : MonoBehaviour
 
     protected float entityHP;
     protected float entityMP;
-    public bool visible { get; private set; }
-    private bool hpAnimating;
-    private bool mpAnimating;
+    public bool visible { get => barMP.visible || barHP.visible; }
 
     private IEnumerator fadeOut;
     private IEnumerator currentAnimHP;
@@ -34,8 +32,6 @@ public class EntityControllerUI : MonoBehaviour
 
     void Awake()
     {
-        visible = false;
-
         EventManager.Instance.GetGameEvent(EventConstants.HIDE_UI).AddListener(HideUI);
     }
 
@@ -57,10 +53,6 @@ public class EntityControllerUI : MonoBehaviour
 
     public void ShowUI()
     {
-        if (visible)
-            return;
-
-        visible = true;
         barHP?.ShowUI();
         barMP?.ShowUI();
     }
@@ -68,26 +60,8 @@ public class EntityControllerUI : MonoBehaviour
 
     public void HideUI()
     {
-        if (!visible || fadeOut != null)
-            return;
-
-        if (fadeOut != null)
-            StopCoroutine(fadeOut);
-
-        fadeOut = HideUIAfterAnim();
-        StartCoroutine(fadeOut);
-    }
-
-
-    private IEnumerator HideUIAfterAnim()
-    {
-        barHP?.HideUI();
-        barMP?.HideUI();
-
-        while (hpAnimating || mpAnimating)
-            yield return null;
-
-        visible = false;
+        barHP.HideUI();
+        barMP.HideUI();
     }
 
 
@@ -107,8 +81,7 @@ public class EntityControllerUI : MonoBehaviour
 
         while (!barHP.visible)
             yield return null;
-
-        visible = true;
+        
         barHP.SetValue(val);
     }
 
@@ -130,7 +103,6 @@ public class EntityControllerUI : MonoBehaviour
         while (!barMP.visible)
             yield return null;
 
-        visible = true;
         barMP.SetValue(val);
     }
 

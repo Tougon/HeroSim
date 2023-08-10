@@ -2,11 +2,7 @@ using DG.Tweening;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem.Android.LowLevel;
-using UnityEngine.Rendering;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.DebugUI.Table;
-using UnityEngine.UIElements;
 using System;
 using Sirenix.OdinInspector;
 

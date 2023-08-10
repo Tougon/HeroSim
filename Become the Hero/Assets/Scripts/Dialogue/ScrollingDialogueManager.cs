@@ -104,7 +104,6 @@ public class ScrollingDialogueManager : DialogueManager
                             StopCoroutine(lineWipeRoutines[0]);
                             lineWipeRoutines.RemoveAt(0);
                             targetLine--;
-                            Debug.Log(targetLine);
                         }
                     }
 
@@ -133,13 +132,12 @@ public class ScrollingDialogueManager : DialogueManager
             yield return new WaitUntil(() => !isPrintingLine);
 
             targetLine = Mathf.Clamp(targetLine + 1, 0, numTextRows);
-            Debug.Log(targetLine);
 
             if (lineDuration >= 0)
             {
-                //IEnumerator lineWipe = LineWipeRoutine(line);
-                //lineWipeRoutines.Add(lineWipe);
-                //StartCoroutine(lineWipe);
+                IEnumerator lineWipe = LineWipeRoutine(line, lineWipeRoutines.Count);
+                lineWipeRoutines.Add(lineWipe);
+                StartCoroutine(lineWipe);
             }
 
             yield return new WaitForSeconds(delayBetweenLines);
@@ -157,28 +155,21 @@ public class ScrollingDialogueManager : DialogueManager
 
 
 
-    private IEnumerator LineWipeRoutine(string text)
+    private IEnumerator LineWipeRoutine(string text, int index)
     {
         yield return new WaitForSeconds(lineDuration);
 
-        bool removed = false;
+        bool remove = false;
 
         for(int i=0; i<numTextRows; i++)
         {
             var line = displays[i];
             if(line.text == text)
             {
-                line.text = "";
-
-                if (bUseUnderlay)
-                {
-                    underlays[i].text = "";
-                }
-
-                removed = true;
+                remove = true;
             }
 
-            if (removed)
+            if (remove)
             {
                 if (i < numTextRows - 1)
                 {
@@ -201,7 +192,14 @@ public class ScrollingDialogueManager : DialogueManager
             }
         }
 
-        targetLine--; //= Mathf.Clamp(targetLine - 1, 0, numTextRows);
-        Debug.Log(targetLine);
+        if (remove)
+        {
+            targetLine--; //= Mathf.Clamp(targetLine - 1, 0, numTextRows);
+            // NOTE: If we changed the line, we're now printing on the wrong line.
+            display = displays[targetLine];
+            if (bUseUnderlay) underlay = underlays[targetLine];
+        }
+
+        lineWipeRoutines.RemoveAt(0);
     }
 }
