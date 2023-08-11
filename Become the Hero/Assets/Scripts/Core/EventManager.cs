@@ -38,12 +38,12 @@ public class EventManager : ScriptableObject
     private List<StringGameEvent> stringEvents;
 
     [SerializeField]
-    [Header("String Events")]
+    [Header("Vector2 Events")]
     [Tooltip("Add all Vector2 Events to this list.")]
     private List<Vector2GameEvent> vector2Events;
 
     [SerializeField]
-    [Header("String Events")]
+    [Header("Vector3 Events")]
     [Tooltip("Add all Vector3 Events to this list.")]
     private List<Vector3GameEvent> vector3Events;
 

@@ -41,7 +41,7 @@ public class PlayerController : EntityController
     public void OnTurnBegin()
     {
         // TODO: Remove RNG Spell List and MP gain. This is only relevant for Hero Sim.
-        ModifyMP(amountMPGainPerTurn);
+        //ModifyMP(amountMPGainPerTurn);
         PopulateSpellList();
     }
 

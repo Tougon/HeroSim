@@ -22,11 +22,12 @@ MonoBehaviour:
   spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: bae0192f89103744880dd0970191f17a, type: 2}
-  spellEffects:
+  spellEffectsOnHit:
   - chance: 1
     effects:
     - chance: 1
       effect: {fileID: 11400000, guid: b1a76c56a64f8d647a76450857f0a289, type: 2}
+  spellEffectsOnSuccess: []
   spellProperties: []
   checkAccuracy: 1
   spellAccuracy: 100

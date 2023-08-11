@@ -574,6 +574,13 @@ public class AnimationSequence : Hero.Core.Sequence
             case AnimationSequenceAction.Action.ChangeBGColor:
                 // Split the param
                 string[] bgColVals = param.Split(',');
+
+                if(bgColVals.Length > 3)
+                {
+                    VariableManager.Instance.SetFloatVariableValue(
+                        VariableConstants.BACKGROUND_FADE_TIME, float.Parse(bgColVals[3]));
+                }
+
                 EventManager.Instance.RaiseVector3Event(EventConstants.SET_BACKGROUND_COLOR,
                     new Vector3(float.Parse(bgColVals[0]), float.Parse(bgColVals[1]), float.Parse(bgColVals[2])));
                 break;
@@ -586,6 +593,15 @@ public class AnimationSequence : Hero.Core.Sequence
                 break;
 
             case AnimationSequenceAction.Action.ResetBGColor:
+                // Split the param
+                string[] bgResetVals = param == null ? new string[0] : param.Split(',');
+
+                if (bgResetVals.Length > 0)
+                {
+                    VariableManager.Instance.SetFloatVariableValue(
+                        VariableConstants.BACKGROUND_FADE_TIME, float.Parse(bgResetVals[0]));
+                }
+
                 EventManager.Instance.RaiseGameEvent(EventConstants.RESET_BACKGROUND_COLOR);
                 break;
 

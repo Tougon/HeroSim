@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellName: Difebb
   spellType: 4
+  spellTarget: 0
   spellCost: 8
   spellPriority: 0
   spellDescription: The user casts an incantation that decreases the target's defense
@@ -21,11 +22,12 @@ MonoBehaviour:
   spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: 454943ed7ff7695499310b15c01b678b, type: 2}
-  spellEffects:
+  spellEffectsOnHit:
   - chance: 1
     effects:
     - chance: 1
       effect: {fileID: 11400000, guid: f84f84dddd36bf5499f3adf87c2a4390, type: 2}
+  spellEffectsOnSuccess: []
   spellProperties: []
   checkAccuracy: 1
   spellAccuracy: 90

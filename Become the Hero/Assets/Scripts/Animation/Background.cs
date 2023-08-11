@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 
 public class Background : MonoBehaviour
 {
@@ -14,7 +15,8 @@ public class Background : MonoBehaviour
     void Awake()
     {
         bgLayers.AddRange(GetComponentsInChildren<SpriteRenderer>());
-        bgDefault = bgLayers[0].color;
+
+        bgDefault = bgLayers.Count > 0 ? bgLayers[0].color : Color.white;
 
         EventManager.Instance.GetVector2Event(EventConstants.START_BACKGROUND_FADE).AddListener(SetBGFade);
         EventManager.Instance.GetVector3Event(EventConstants.SET_BACKGROUND_COLOR).AddListener(SetTargetColor);

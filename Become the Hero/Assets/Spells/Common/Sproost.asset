@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellName: Sproost
   spellType: 3
-  spellTarget: 2
+  spellTarget: 3
   spellCost: 10
   spellPriority: 0
   spellDescription: The user casts an incantation that increases their agility for
@@ -22,11 +22,12 @@ MonoBehaviour:
   spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: b19d91356552d5144b131fed941c75af, type: 2}
-  spellEffects:
+  spellEffectsOnHit:
   - chance: 1
     effects:
     - chance: 1
       effect: {fileID: 11400000, guid: eb5ba301ce18b1640bd06c7d0b7ae990, type: 2}
+  spellEffectsOnSuccess: []
   spellProperties: []
   checkAccuracy: 0
   spellAccuracy: 100

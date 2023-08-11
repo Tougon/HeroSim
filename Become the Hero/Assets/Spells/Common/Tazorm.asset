@@ -14,24 +14,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellName: Tazorm
   spellType: 1
+  spellTarget: 2
   spellCost: 24
   spellPriority: 0
-  spellDescription: The user calls forth a lightning storm to strike the target. It
-    may also leave the foe paralyzed.
+  spellDescription: The user calls forth a lightning storm to strike the target.
+    It may also leave the foe paralyzed.
   spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 11400000, guid: ffd02528707febe4292305ce9a514eef, type: 2}
   spellAnimation: {fileID: 11400000, guid: 8e449f3e5a935a14c86820bb0642c731, type: 2}
-  spellEffects:
-  - chance: 0.1
+  spellEffectsOnHit:
+  - chance: 1
     effects:
     - chance: 1
       effect: {fileID: 11400000, guid: b1a76c56a64f8d647a76450857f0a289, type: 2}
+  spellEffectsOnSuccess: []
   spellProperties: []
   spellPower: 120
   checkAccuracy: 1
   spellAccuracy: 80
+  accuracyPerHit: 100
+  checkAccuracyPerHit: 1
   minNumberOfHits: 1
   maxNumberOfHits: 1
   varyHitCount: 0
+  hitCountCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   canCritical: 1
   criticalHitChance: 16

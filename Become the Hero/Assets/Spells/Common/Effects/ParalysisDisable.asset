@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellName: Paralyzed
   spellType: 0
-  spellTarget: 2
+  spellTarget: 3
   spellCost: 0
   spellPriority: 0
   spellDescription: 
   spellCastMessage: '[user] is paralyzed and can''t move!'
   spellFamily: {fileID: 0}
   spellAnimation: {fileID: 11400000, guid: 1af8f4385ca054547b2f0d36eb917db5, type: 2}
-  spellEffects: []
+  spellEffectsOnHit: []
+  spellEffectsOnSuccess: []
   spellProperties: []

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellName: Greatmend
   spellType: 5
-  spellTarget: 2
+  spellTarget: 3
   spellCost: 12
   spellPriority: 0
   spellDescription: The user casts an incantation that heals them for 25% of their
@@ -22,11 +22,12 @@ MonoBehaviour:
   spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 11400000, guid: 22516a1e2c056024fa853a6c66fe20a2, type: 2}
   spellAnimation: {fileID: 11400000, guid: 0b0806ef7ae3dc14b83e2ffda77c7520, type: 2}
-  spellEffects:
+  spellEffectsOnHit:
   - chance: 1
     effects:
     - chance: 1
       effect: {fileID: 11400000, guid: 501c142a91ce2c34e932d271ef82ce2e, type: 2}
+  spellEffectsOnSuccess: []
   spellProperties: []
   checkAccuracy: 0
   spellAccuracy: 100

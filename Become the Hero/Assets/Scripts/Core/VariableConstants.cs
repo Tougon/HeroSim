@@ -12,6 +12,7 @@ public static class VariableConstants
 
     #region Float Constants
     public const string TEXT_PRINT_DELAY = "TextPrintDelay";
+    public const string BACKGROUND_FADE_TIME = "BackgroundFadeTime";
     #endregion
 
     #region Vector2 Constants
