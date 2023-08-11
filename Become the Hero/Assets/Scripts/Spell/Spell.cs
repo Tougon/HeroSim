@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+using UnityEngine.Serialization;
 
 #if UNITY_EDITOR
 using Hero.SpellEditor;
@@ -146,7 +147,10 @@ public class Spell : ScriptableObject
 
     [Header("Effect Params")]
     [GUIColor(0.65f, 0.80f, 0.98f)]
-    [PropertyOrder(9)] public List<SpellEffectChance> spellEffects; // Effects that can be invoked by the spell itself
+    [FormerlySerializedAs("spellEffects")]
+    [PropertyOrder(9)] public List<SpellEffectChance> spellEffectsOnHit; // Effects that can be invoked by the spell on hit
+    [GUIColor(0.65f, 0.80f, 0.98f)]
+    [PropertyOrder(9)] public List<SpellEffectChance> spellEffectsOnSuccess; // Effects that can be invoked by the spell itself
 
     //[ListDrawerSettings(HideAddButton = , HideRemoveButton = )]
     [InlineEditor]
@@ -494,13 +498,13 @@ public class SpellCast
         {
             totalDamage += damage[i];
 
-            for(int n = 0; n < spell.spellEffects.Count; n++)
+            for(int n = 0; n < spell.spellEffectsOnHit.Count; n++)
             {
-                Effect e = spell.spellEffects[n].GetEffect();
+                Effect e = spell.spellEffectsOnHit[n].GetEffect();
 
                 float proc = Random.value;
 
-                if (proc < spell.spellEffects[n].chance &&
+                if (proc < spell.spellEffectsOnHit[n].chance &&
                     (e != null && !effects.Exists(f => f.effect == e) || (effects.Exists(f => f.effect == e) && e.IsStackable())))
                 {
                     EffectInstance eff = e.CreateEffectInstance(user, target, this);

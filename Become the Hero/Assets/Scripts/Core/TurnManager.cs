@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Hero.Core;
+using UnityEditor.Experimental.GraphView;
+using static UnityEngine.GraphicsBuffer;
 
 public class TurnManager : MonoBehaviour
 {
@@ -456,9 +458,12 @@ public class TurnManager : MonoBehaviour
             List<string> postAnimDialogue = new List<string>();
             // Originally checked for a spell success state before animating. May restore this, but should be separate
             bool bWillPlayAnimation = true;
+            bool bAnySpellSucceed = false;
 
             foreach(var cast in spellCast)
             {
+                if (cast.success) bAnySpellSucceed = true;
+
                 cast.target.IncreaseDamageTaken(cast.GetDamageApplied());
 
                 string dialogueSeq = cast.GetCastMessage();
@@ -533,6 +538,23 @@ public class TurnManager : MonoBehaviour
 
                 while (sequencer.active)
                     yield return null;
+            }
+
+            foreach(var effect in ec.action.spellEffectsOnSuccess)
+            {
+                Effect e = effect.GetEffect();
+                float proc = Random.value;
+
+                if(e != null && proc < effect.chance)
+                {
+                    EffectInstance eff = e.CreateEffectInstance(ec, ec, null);
+                    eff.CheckSuccess();
+
+                    if (eff.castSuccess && bAnySpellSucceed)
+                        eff.OnActivate();
+                    else
+                        eff.OnFailedToActivate();
+                }
             }
         }
 

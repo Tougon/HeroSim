@@ -102,10 +102,10 @@ public class SpellEditor : OdinMenuEditorWindow
                     SpellEditorUtilities.currentPath + "/")))
                 DestroyImmediate(createNewSpell.spell.spellAnimation);
             
-            if(createNewSpell.spell.spellEffects != null)
+            if(createNewSpell.spell.spellEffectsOnHit != null)
             {
 
-                foreach (var chance in createNewSpell.spell.spellEffects)
+                foreach (var chance in createNewSpell.spell.spellEffectsOnHit)
                 {
                     foreach (var effect in chance.effects)
                     {

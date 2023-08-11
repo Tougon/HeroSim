@@ -36,7 +36,7 @@ public class EnemyController : EntityController
 
         foreach(var t in target)
         {
-            foreach (var ec in action.spellEffects)
+            foreach (var ec in action.spellEffectsOnHit)
             {
                 foreach (var e in ec.effects)
                 {
