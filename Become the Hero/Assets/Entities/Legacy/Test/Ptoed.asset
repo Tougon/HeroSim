@@ -18,9 +18,9 @@ MonoBehaviour:
     useArticle: 0
     entityHP: 100
     entityMP: 100
-    entityAtk: 50
+    entityAtk: 40
     entityDef: 75
-    entityMgAtk: 0
+    entityMgAtk: 40
     entityMgDef: 0
     entitySpeed: 90
     entityCritModifier: 1

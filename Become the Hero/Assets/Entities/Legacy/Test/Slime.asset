@@ -21,7 +21,7 @@ MonoBehaviour:
     entityAtk: 50
     entityDef: 50
     entityMgAtk: 0
-    entityMgDef: 0
+    entityMgDef: 25
     entitySpeed: 50
     entityCritModifier: 1
     entityDodgeModifier: 1

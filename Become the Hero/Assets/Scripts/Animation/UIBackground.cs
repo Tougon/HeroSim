@@ -8,7 +8,6 @@ using DG.Tweening;
 public class UIBackground : MonoBehaviour
 {
     [SerializeField] RawImage backgroundImage;
-    Material backgroundMat;
 
     void Awake()
     {
@@ -22,8 +21,6 @@ public class UIBackground : MonoBehaviour
     void OnBattleBegin()
     {
         VariableManager.Instance.SetFloatVariableValue(VariableConstants.BACKGROUND_FADE_TIME, 0.5f);
-        backgroundMat = backgroundImage.material;
-        backgroundImage.material = Instantiate(backgroundMat);
     }
 
 

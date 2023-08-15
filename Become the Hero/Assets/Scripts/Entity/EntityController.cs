@@ -33,14 +33,18 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     private int atkStage = 0;
     private int defStage = 0;
     private int spdStage = 0;
+    private int matkStage = 0;
+    private int mdefStage = 0;
     private int evasionStage = 0;
     private int accuracyStage = 0;
 
     public const int STAT_STAGE_LIMIT = 6;
 
-    private Dictionary<string, float> offenseModifiers = new Dictionary<string, float>();
+    private Dictionary<string, float> attackModifiers = new Dictionary<string, float>();
     private Dictionary<string, float> defenseModifiers = new Dictionary<string, float>();
     private Dictionary<string, float> speedModifiers = new Dictionary<string, float>();
+    private Dictionary<string, float> magicAttackModifiers = new Dictionary<string, float>();
+    private Dictionary<string, float> magicDefenseModifiers = new Dictionary<string, float>();
     private Dictionary<string, float> accuracyModifiers = new Dictionary<string, float>();
     private List<EffectInstance> effects = new List<EffectInstance>();
     private List<EffectInstance> properties = new List<EffectInstance>();
@@ -108,6 +112,8 @@ public class EntityController : EntitySprite, IComparable<EntityController>
             atkStage = 0;
             defStage = 0;
             spdStage = 0;
+            matkStage = 0;
+            mdefStage = 0;
             evasionStage = 0;
             accuracyStage = 0;
 
@@ -120,8 +126,11 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
             effects = new List<EffectInstance>();
             properties = new List<EffectInstance>();
-            offenseModifiers = new Dictionary<string, float>();
+            attackModifiers = new Dictionary<string, float>();
             defenseModifiers = new Dictionary<string, float>();
+            speedModifiers = new Dictionary<string, float>();
+            magicAttackModifiers = new Dictionary<string, float>();
+            magicDefenseModifiers = new Dictionary<string, float>();
             accuracyModifiers = new Dictionary<string, float>();
 
             if (entityUI != null)
@@ -229,7 +238,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
         Hero.Core.Sequence defSeq = new AnimationSequence(defeat, this, this);
         EventManager.Instance.RaiseSequenceGameEvent(EventConstants.ON_SEQUENCE_QUEUE, defSeq);
 
-        offenseModifiers.Clear();
+        attackModifiers.Clear();
         defenseModifiers.Clear();
         accuracyModifiers.Clear();
 
@@ -315,6 +324,18 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     public float GetSpeedModifier() { return GetStatModifier(spdStage); }
     public void ChangeSpeedModifier(int amt) { spdStage = Mathf.Clamp(spdStage + amt, -STAT_STAGE_LIMIT, STAT_STAGE_LIMIT); }
     public int GetSpeedStage() { return spdStage; }
+
+
+    public int GetMagicAttack() { return param.entityMgAtk; }
+    public float GetMagicAttackModifier() { return GetStatModifier(matkStage); }
+    public void ChangeMagicAttackModifier(int amt) { matkStage = Mathf.Clamp(matkStage + amt, -STAT_STAGE_LIMIT, STAT_STAGE_LIMIT); }
+    public int GetMagicAttackStage() { return matkStage; }
+
+
+    public int GetMagicDefense() { return param.entityMgDef; }
+    public float GetMagicDefenseModifier() { return GetStatModifier(mdefStage); }
+    public void ChangeMagicDefenseModifier(int amt) { mdefStage = Mathf.Clamp(mdefStage + amt, -STAT_STAGE_LIMIT, STAT_STAGE_LIMIT); }
+    public int GetMagicDefenseStage() { return mdefStage; }
 
 
     public TurnManager GetTurnManager()
@@ -616,10 +637,10 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     /// </summary>
     public void AddOffenseModifier(float amt, string key)
     {
-        if (offenseModifiers.ContainsKey(key))
+        if (attackModifiers.ContainsKey(key))
             return;
 
-        offenseModifiers.Add(key, amt);
+        attackModifiers.Add(key, amt);
     }
 
     /// <summary>
@@ -627,7 +648,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     /// </summary>
     public void RemoveOffenseModifier(string key)
     {
-        offenseModifiers.Remove(key);
+        attackModifiers.Remove(key);
     }
 
     /// <summary>
@@ -688,9 +709,9 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     }
 
 
-    public Dictionary<string, float>.ValueCollection GetOffenseModifiers()
+    public Dictionary<string, float>.ValueCollection GetAttackModifiers()
     {
-        return offenseModifiers.Values;
+        return attackModifiers.Values;
     }
 
     public Dictionary<string, float>.ValueCollection GetDefenseModifiers()
@@ -701,6 +722,16 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     public Dictionary<string, float>.ValueCollection GetSpeedModifiers()
     {
         return speedModifiers.Values;
+    }
+
+    public Dictionary<string, float>.ValueCollection GetMagicAttackModifiers()
+    {
+        return magicAttackModifiers.Values;
+    }
+
+    public Dictionary<string, float>.ValueCollection GetMagicDefenseModifiers()
+    {
+        return magicDefenseModifiers.Values;
     }
 
     public Dictionary<string, float>.ValueCollection GetAccuracyModifiers()

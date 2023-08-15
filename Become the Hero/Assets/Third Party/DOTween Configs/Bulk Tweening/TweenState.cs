@@ -108,8 +108,8 @@ namespace DOTweenConfigs
                     return;
                 }
             }
-            // Otherwise, advance to the next action and play it back
 
+            // Otherwise, advance to the next action and play it back
             currentNumActions = 0;
 
             if (!state.Frames[currentFrame].Execute(target, this))

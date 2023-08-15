@@ -9,10 +9,19 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName = "NewSpell", menuName = "Spell/Offensive Spell", order = 2)]
 public class OffensiveSpell : Spell
 {
-    [Header("Base Damage Params")]
+    public enum SpellHitType { Physical, Special }
+
+    [Header("Base Params")]
 
     [Range(0, 250)][GUIColor(0.90f, 0.45f, 0.45f)]
     public float spellPower = 50.0f;
+    [GUIColor(0.90f, 0.45f, 0.45f)]
+    public SpellHitType spellAttackType;
+    [GUIColor(0.90f, 0.45f, 0.45f)]
+    public bool varyDefenseType = false;
+    [GUIColor(0.90f, 0.45f, 0.45f)]
+    [ShowIf("varyDefenseType")]
+    public SpellHitType spellDefenseType;
 
     [Header("Accuracy Params")]
     [GUIColor(0.90f, 0.90f, 0.05f)]
@@ -30,6 +39,7 @@ public class OffensiveSpell : Spell
     [Header("Multi-Hit Params")]
     [Range(0, 10)]
     [ValidateInput("ValidateMinHitCount")][OnValueChanged("OnMinHitCountChanged")]
+    [GUIColor(0.65f, 0.90f, 0.70f)]
     public int minNumberOfHits = 1;
 
     private bool ValidateMinHitCount(int value) { return value <= maxNumberOfHits; }
@@ -38,6 +48,7 @@ public class OffensiveSpell : Spell
 
     [Range(0, 10)]
     [ValidateInput("ValidateMaxHitCount")][OnValueChanged("OnMaxHitCountChanged")]
+    [GUIColor(0.65f, 0.90f, 0.70f)]
     public int maxNumberOfHits = 1;
 
     private bool ValidateMaxHitCount(int value) { return value >= minNumberOfHits; }
@@ -46,11 +57,14 @@ public class OffensiveSpell : Spell
 
     // If checked, hit count will vary between the min and max number of hits.
     [ShowIf("@maxNumberOfHits != minNumberOfHits")]
+    [GUIColor(0.65f, 0.90f, 0.70f)]
     public bool varyHitCount = false;
     [ShowIf("@maxNumberOfHits != minNumberOfHits")]
+    [GUIColor(0.65f, 0.90f, 0.70f)]
     public AnimationCurve hitCountCurve = new AnimationCurve(new Keyframe(0, 0), new Keyframe(1, 1));
 
     [Header("Critical Hit Params")]
+    [GUIColor(0.90f, 0.45f, 0.05f)]
     public bool canCritical = true;
 
     [Range(1, 24)]
@@ -120,6 +134,9 @@ public class OffensiveSpell : Spell
             numHits = Mathf.RoundToInt(Mathf.Lerp(minNumberOfHits, maxNumberOfHits, time));
         }
 
+        SpellHitType attackType = this.spellAttackType;
+        SpellHitType defenseType = this.varyDefenseType ? this.spellDefenseType : this.spellAttackType;
+
         int[] result = new int[numHits];
         bool[] crits = new bool[numHits];
         bool[] hit = new bool[numHits];
@@ -145,8 +162,15 @@ public class OffensiveSpell : Spell
             crits[i] = critical;
 
             // Get attack and defense modifications
-            float atkMod = user.GetAttackModifier();
-            float defMod = target.GetDefenseModifier();
+            float atkMod = attackType == SpellHitType.Physical ? 
+                user.GetAttackModifier() : user.GetMagicAttackModifier();
+            float defMod = defenseType == SpellHitType.Physical ? 
+                target.GetDefenseModifier() : target.GetMagicDefenseModifier();
+
+            float attack = attackType == SpellHitType.Physical ?
+                user.GetAttack() : user.GetMagicAttack();
+            float defense = defenseType == SpellHitType.Physical ?
+                target.GetDefense() : target.GetMagicDefense();
 
             // Negate negative attack and positive defense mods if the hit is critical
             atkMod = critical && atkMod < 1.0f ? 1.0f : atkMod;
@@ -154,11 +178,13 @@ public class OffensiveSpell : Spell
 
             // Calculate damage
             float damage = ((((2 * DAMAGE_CONSTANT) / 5 + 2) * spellPower *
-                (((float)user.GetAttack() * atkMod) / ((float)target.GetDefense() * defMod))) / 50.0f);
+                ((attack * atkMod) / (defense * defMod))) / 50.0f);
 
             // Other modifier applied at the end. Includes critical hit and move specific modifiers
-            var offenseModifiers = user.GetOffenseModifiers();
-            var defenseModifiers = target.GetDefenseModifiers();
+            var offenseModifiers = attackType == SpellHitType.Physical ? 
+                user.GetAttackModifiers() : user.GetMagicAttackModifiers();
+            var defenseModifiers = defenseType == SpellHitType.Physical ?
+                target.GetDefenseModifiers() : target.GetMagicDefenseModifiers();
 
             // Modify the damage based on the active offensive and defensive modifiers
             foreach (float f in offenseModifiers)
