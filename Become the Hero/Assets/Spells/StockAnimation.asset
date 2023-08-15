@@ -13,5 +13,129 @@ MonoBehaviour:
   m_Name: StockAnimation
   m_EditorClassIdentifier: 
   animationName: Stock
-  animationSequence: {fileID: 4900000, guid: 66ace54c5a492794b9e81401808977bf, type: 3}
+  animationSequenceText: {fileID: 4900000, guid: 66ace54c5a492794b9e81401808977bf,
+    type: 3}
+  animationSequence:
+  - bFrameDirty: 0
+    action: 5
+    frame: 20
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 3
+    frame: 80
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 3
+        name: path
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: Placeholder/E
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+      - paramType: 3
+        name: relative
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: User
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+      - paramType: 5
+        name: position
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: -1, y: 0.1, z: -0.5}
+      - paramType: 5
+        name: scale
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 1, y: 1, z: 1}
+      - paramType: 0
+        name: match
+        boolValue: 1
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+      - paramType: 0
+        name: child
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+      - paramType: 5
+        name: variance
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 10, y: 0, z: 0}
+  - bFrameDirty: 0
+    action: 9
+    frame: 81
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 4
+    frame: 150
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 14
+    frame: 159
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 6
+    frame: 160
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 6
+    frame: 165
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 15
+    frame: 170
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 7
+    frame: 180
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 9
+    frame: 200
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 2
+    frame: 300
+    frameOrder: 0
+    param:
+      parameters: []
   disableUI: 1

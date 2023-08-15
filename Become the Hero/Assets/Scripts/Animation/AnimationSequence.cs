@@ -5,26 +5,30 @@ using UnityEngine;
 using DG.Tweening;
 using Hero.Core;
 
+
+/// <summary>
+/// Represents an action that should be taken on a frame of animation
+/// </summary>
+public class AnimationSequenceAction
+{
+    public enum Action
+    {
+        ChangeUserAnimation, ChangeTargetAnimation, TerminateAnimation, GenerateEffect, TerminateEffect,
+        Move, Rotate, Scale, Sprite, Color, Vibrate, ChangeAnimationSpeed, ChangeAnimationState, PlaySound, BeginLoop, EndLoop,
+        ApplyDamage, UpdateHPUI, UpdateMPUI, SetOverlayTexture, SetOverlayAnimation, ChangeBGColor, StartBGFade, ResetBGColor,
+        SetTargetIndex, BeginOnSuccess, EndOnSuccess
+    }
+
+    public int frame;
+    public Action action;
+    public string param;
+}
+
 /// <summary>
 /// Represents a <see cref="Sequence"/> made up of an Entity's motion.
 /// </summary>
 public class AnimationSequence : Hero.Core.Sequence
 {
-    /// <summary>
-    /// Represents an action that should be taken on a frame of animation
-    /// </summary>
-    public class AnimationSequenceAction
-    {
-        public enum Action { ChangeUserAnimation, ChangeTargetAnimation, TerminateAnimation, GenerateEffect, TerminateEffect,
-            Move, Rotate, Scale, Sprite, Color, Vibrate, ChangeAnimationSpeed, ChangeAnimationState, PlaySound, BeginLoop, EndLoop, 
-            ApplyDamage, UpdateHPUI, UpdateMPUI, SetOverlayTexture, SetOverlayAnimation, ChangeBGColor, StartBGFade, ResetBGColor,
-            SetTargetIndex, BeginOnSuccess, EndOnSuccess }
-
-        public int frame;
-        public Action action;
-        public string param;
-    }
-
     private bool initialized = false;
     private bool running;
     private bool looping;
@@ -142,7 +146,7 @@ public class AnimationSequence : Hero.Core.Sequence
         }
 
         // Split the animation script.
-        string[] sequence = obj.animationSequence.text.Split('\n');
+        string[] sequence = obj.animationSequenceText.text.Split('\n');
 
         for(int i=0; i<sequence.Length; i++)
         {
