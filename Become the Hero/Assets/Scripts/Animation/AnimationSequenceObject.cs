@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 using System;
 using System.Security.Cryptography;
 using UnityEngine.Serialization;
@@ -37,6 +36,8 @@ public class AnimationSequenceObject : ScriptableObject
         string[] sequence = animationSequenceText.text.Split('\n');
 
         animationSequence = new List<AnimationSequenceFrame>();
+        int currentFrame = 0;
+        int subFrame = 0;
 
         for (int i = 0; i < sequence.Length; i++)
         {
@@ -54,6 +55,18 @@ public class AnimationSequenceObject : ScriptableObject
             AnimationSequenceFrame seq = new AnimationSequenceFrame();
 
             seq.frame = int.Parse(line[0]);
+
+            if(seq.frame != currentFrame)
+            {
+                currentFrame = seq.frame;
+                subFrame = 0;
+            }
+            else
+            {
+                subFrame++;
+            }
+
+            seq.frameOrder = subFrame;
             seq.action = (AnimationSequenceAction.Action)Enum.Parse(typeof(AnimationSequenceAction.Action), line[1]);
             seq.OnActionChanged();
             seq.FromString(line.Length > 2 ? line[2] : "");
@@ -113,7 +126,6 @@ public class AnimationSequenceFrame
     [PropertyTooltip("Use to determine order within a frame")]
     public int frameOrder;
 
-    [HorizontalGroup("Secondary", Gap = 3)]
     [HideLabel]
     public AnimationSequenceParams param;
 
@@ -130,6 +142,78 @@ public class AnimationSequenceFrame
                 break;
             case AnimationSequenceAction.Action.GenerateEffect:
                 param = new GenerateEffectAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.TerminateEffect:
+                param = new TerminateEffectAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.Move:
+                param = new TransformAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.Rotate:
+                param = new TransformAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.Scale:
+                param = new TransformAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.Color:
+                param = new ColorAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.Vibrate:
+                param = new VibrateAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.ChangeAnimationSpeed:
+                param = new FrameSpeedAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.ChangeAnimationState:
+                param = new TriggerAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.BeginLoop:
+                param = new BeginLoopAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.EndLoop:
+                param = new AnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.ApplyDamage:
+                param = new DamageAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.PlaySound:
+                param = new AudioAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.UpdateHPUI:
+                param = new EntityAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.UpdateMPUI:
+                param = new EntityAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.SetOverlayTexture:
+                param = new SetOverlayAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.SetOverlayAnimation:
+                param = new OverlayAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.ChangeBGColor:
+                param = new BGColorAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.StartBGFade:
+                param = new BGFadeAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.ResetBGColor:
+                param = new ResetBGAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.TerminateAnimation:
+                param = new AnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.Sprite:
+                param = new SpriteAnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.BeginOnSuccess:
+                param = new AnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.EndOnSuccess:
+                param = new AnimationSequenceParams();
+                break;
+            case AnimationSequenceAction.Action.SetTargetIndex:
+                param = new TargetIndexAnimationSequenceParams();
                 break;
         }
     }
@@ -157,7 +241,7 @@ public class AnimationSequenceFrame
 public class AnimationSequenceParams
 {
     [ListDrawerSettings(IsReadOnly = true, ShowIndexLabels = false, ShowPaging = false, 
-        DefaultExpandedState = true, ShowFoldout = false)]
+        DefaultExpandedState = true, ShowFoldout = true)]
     public List<AnimationSequenceParam> parameters;
 
     public AnimationSequenceParams()
@@ -187,6 +271,8 @@ public class AnimationSequenceParams
                 parameters[paramIndex].FromString(str, i);
 
                 if (parameters[paramIndex].paramType == AnimationSequenceParam.ParamType.Vector3) i += 2;
+                else if (parameters[paramIndex].paramType == AnimationSequenceParam.ParamType.Color) i += 3;
+                else if (parameters[paramIndex].paramType == AnimationSequenceParam.ParamType.ColorNoAlpha) i += 2;
                 else if (parameters[paramIndex].paramType == AnimationSequenceParam.ParamType.Vector2) i += 1;
 
                 paramIndex++;
@@ -199,7 +285,7 @@ public class AnimationSequenceParams
 [System.Serializable]
 public class AnimationSequenceParam
 {
-    public enum ParamType { Bool, Int, Float, String, Vector2, Vector3 }
+    public enum ParamType { Bool, Int, Float, String, Vector2, Vector3, Color, ColorNoAlpha }
 
     [HideInInspector]
     public ParamType paramType;
@@ -226,6 +312,9 @@ public class AnimationSequenceParam
     [HideLabel][HorizontalGroup("Primary")]
     [ShowIf("@paramType == ParamType.Vector3")]
     public Vector3 vector3Value;
+    [HideLabel][HorizontalGroup("Primary")]
+    [ShowIf("@paramType == ParamType.Color || paramType == ParamType.ColorNoAlpha")]
+    public Color colorValue;
 
 
     public AnimationSequenceParam(string name, ParamType paramType)
@@ -240,12 +329,23 @@ public class AnimationSequenceParam
         // Split the param
         string[] param = str.Split(',');
 
-        if (paramType == ParamType.Vector2 || paramType == ParamType.Vector3)
+        if (paramType == ParamType.Vector2 || paramType == ParamType.Vector3 || 
+            paramType == ParamType.Color || paramType == ParamType.ColorNoAlpha)
         {
             if(paramType == ParamType.Vector3)
             {
                 vector3Value = new Vector3(Single.Parse(param[index]), 
                     Single.Parse(param[index + 1]), Single.Parse(param[index + 2]));
+            }
+            else if(paramType == ParamType.Color)
+            {
+                colorValue = new Color(Single.Parse(param[index]), Single.Parse(param[index + 1]),
+                    Single.Parse(param[index] + 2), Single.Parse(param[index + 3]));
+            }
+            else if (paramType == ParamType.ColorNoAlpha)
+            {
+                colorValue = new Color(Single.Parse(param[index]), Single.Parse(param[index + 1]),
+                    Single.Parse(param[index] + 2));
             }
             else
             {
@@ -301,6 +401,253 @@ public class GenerateEffectAnimationSequenceParams : AnimationSequenceParams
             new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_MATCH, AnimationSequenceParam.ParamType.Bool),
             new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_CHILD, AnimationSequenceParam.ParamType.Bool),
             new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_VARIANCE, AnimationSequenceParam.ParamType.Vector3)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class TerminateEffectAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_ID, AnimationSequenceParam.ParamType.Int)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class TransformAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_RELATIVE, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_DURATION, AnimationSequenceParam.ParamType.Float),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_VALUE, AnimationSequenceParam.ParamType.Vector3),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_EFFECT_INDEX, AnimationSequenceParam.ParamType.Int),
+        };
+    }
+}
+
+
+[System.Serializable]
+public class ColorAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_RELATIVE, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_DURATION, AnimationSequenceParam.ParamType.Float),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_COLOR, AnimationSequenceParam.ParamType.Color),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_COLOR_AMOUNT, AnimationSequenceParam.ParamType.Float),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_EFFECT_INDEX, AnimationSequenceParam.ParamType.Int)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class VibrateAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_RELATIVE, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_DURATION, AnimationSequenceParam.ParamType.Float),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_STRENGTH, AnimationSequenceParam.ParamType.Vector2),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_VIBRATO, AnimationSequenceParam.ParamType.Float),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_EFFECT_INDEX, AnimationSequenceParam.ParamType.Int)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class FrameSpeedAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_RELATIVE, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_FRAME_SPEED, AnimationSequenceParam.ParamType.Float),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_EFFECT_INDEX, AnimationSequenceParam.ParamType.Int)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class TriggerAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_RELATIVE, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_TRIGGER, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_VALUE, AnimationSequenceParam.ParamType.Bool),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_EFFECT_INDEX, AnimationSequenceParam.ParamType.Int)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class BeginLoopAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_LOOP, AnimationSequenceParam.ParamType.String)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class DamageAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_PLAY_HIT, AnimationSequenceParam.ParamType.Bool)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class AudioAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_AUDIO_NAME, AnimationSequenceParam.ParamType.String)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class EntityAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_RELATIVE, AnimationSequenceParam.ParamType.String)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class SetOverlayAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_RELATIVE, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_PATH, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_OFFSET, AnimationSequenceParam.ParamType.Vector2),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_EFFECT_INDEX, AnimationSequenceParam.ParamType.Int)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class OverlayAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_RELATIVE, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_AMOUNT, AnimationSequenceParam.ParamType.Float),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_SPEED, AnimationSequenceParam.ParamType.Vector2),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_DURATION, AnimationSequenceParam.ParamType.Float),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_EFFECT_INDEX, AnimationSequenceParam.ParamType.Int)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class BGColorAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_COLOR, AnimationSequenceParam.ParamType.ColorNoAlpha),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_DURATION, AnimationSequenceParam.ParamType.Float)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class BGFadeAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_AMOUNT, AnimationSequenceParam.ParamType.Float),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_DURATION, AnimationSequenceParam.ParamType.Float)
+        };
+    }
+}
+
+[System.Serializable]
+public class ResetBGAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_DURATION, AnimationSequenceParam.ParamType.Float)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class SpriteAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_RELATIVE, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_PATH, AnimationSequenceParam.ParamType.String),
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_EFFECT_INDEX, AnimationSequenceParam.ParamType.Int)
+        };
+    }
+}
+
+
+[System.Serializable]
+public class TargetIndexAnimationSequenceParams : AnimationSequenceParams
+{
+    protected override void Initialize()
+    {
+        base.Initialize();
+        parameters = new List<AnimationSequenceParam> {
+            new AnimationSequenceParam(AnimationConstants.ANIM_PARAM_LOOP, AnimationSequenceParam.ParamType.String)
         };
     }
 }

@@ -13,5 +13,268 @@ MonoBehaviour:
   m_Name: PartyWipeAnim
   m_EditorClassIdentifier: 
   animationName: Party Wipe
-  animationSequence: {fileID: 4900000, guid: 39b7bc2b0e3da0440bf5bfc40f376bef, type: 3}
+  animationSequenceText: {fileID: 4900000, guid: 39b7bc2b0e3da0440bf5bfc40f376bef,
+    type: 3}
+  animationSequence:
+  - bFrameDirty: 0
+    action: 14
+    frame: 18
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 3
+        name: loop
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: "-1\r"
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 14
+    frame: 19
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 3
+        name: loop
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: "#\r"
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 5
+    frame: 20
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 3
+        name: relative
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: User
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 2
+        name: duration
+        boolValue: 0
+        intValue: 0
+        floatValue: 7
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 5
+        name: value
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 2.3, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 1
+        name: effect
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 24
+    frame: 20
+    frameOrder: 1
+    param:
+      parameters:
+      - paramType: 3
+        name: loop
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: "#\r"
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 3
+    frame: 21
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 3
+        name: path
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: Effect/Common/Slash
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 3
+        name: relative
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: Target
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 5
+        name: position
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0.5, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 5
+        name: scale
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 1, y: 1, z: 1}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 0
+        name: match
+        boolValue: 1
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 0
+        name: child
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 5
+        name: variance
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 16
+    frame: 27
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 0
+        name: playHitAnim
+        boolValue: 1
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 17
+    frame: 27
+    frameOrder: 1
+    param:
+      parameters:
+      - paramType: 3
+        name: relative
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: "Target\r"
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 5
+    frame: 28
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 3
+        name: relative
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: User
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 2
+        name: duration
+        boolValue: 0
+        intValue: 0
+        floatValue: 8
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 5
+        name: value
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: -2.3, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 1
+        name: effect
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 4
+    frame: 39
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 1
+        name: id
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 15
+    frame: 42
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 15
+    frame: 43
+    frameOrder: 0
+    param:
+      parameters: []
+  - bFrameDirty: 0
+    action: 2
+    frame: 75
+    frameOrder: 0
+    param:
+      parameters: []
   disableUI: 1

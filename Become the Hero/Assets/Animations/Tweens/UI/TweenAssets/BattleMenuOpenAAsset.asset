@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tweenConfig:
     m_duration: 0.001
-    m_to: {x: 0, y: -45}
-    m_from: {x: 0, y: -45}
+    m_to: {x: 0, y: -40}
+    m_from: {x: 0, y: -40}
     m_useFrom: 1
     m_delay: 0
     m_curve: 1
