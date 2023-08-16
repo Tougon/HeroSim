@@ -37,9 +37,8 @@ public class Spell : ScriptableObject
 
     private string spellFamilyButtonName = "Create New Spell Family";
 
-    [PropertyOrder(7)] [Button(ButtonSizes.Small)]
+    [PropertyOrder(7)] [Button(ButtonSizes.Small, Name="$spellFamilyButtonName")]
     [GUIColor("CheckFamilyColor")]
-    [LabelText("$spellFamilyButtonName")]
     [EnableIf("CheckFamilyName")]
     private void CreateNewSpellFamily()
     {
@@ -78,9 +77,8 @@ public class Spell : ScriptableObject
 
     private string spellAnimButtonName = "Create New Animation Sequence";
 
-    [PropertyOrder(8)] [Button(ButtonSizes.Small)]
+    [PropertyOrder(8)] [Button(ButtonSizes.Small, Name="$spellAnimButtonName")]
     [GUIColor("CheckAnimColor")]
-    [LabelText("$spellAnimButtonName")]
     [EnableIf("CheckButtonStatus")]
     private void CreateNewAnimationSequence()
     {
@@ -94,7 +92,10 @@ public class Spell : ScriptableObject
         }
         else
         {
-            string animPath = SpellEditorUtilities.GetAssetPath(this);
+            string animPath = "Assets/Animations/Sequences/";
+            SpellEditorUtilities.CreateAsset(spellAnimation, animPath, spellAnimation.animationName.Replace(" ", "") + "Anim");
+
+            /*string animPath = SpellEditorUtilities.GetAssetPath(this);
 
             if(animPath != "")
             {
@@ -111,7 +112,7 @@ public class Spell : ScriptableObject
                 SpellEditorUtilities.CreateAsset(spellAnimation, output,
                     spellAnimation.animationName.Replace(" ", "") + "Anim");
                 SpellEditorUtilities.CreateTextFile(output + "/" + spellAnimation.animationName.Replace(" ", "") + "AnimScript");
-            }
+            }*/
 
             spellAnimation = null;
             spellAnimButtonName = "Create New Animation Sequence";

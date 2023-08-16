@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6708dae2154ded4488d6390d0d8585a6, type: 3}
-  m_Name: Appear
+  m_Name: AttackAnim
   m_EditorClassIdentifier: 
-  animationName: appear_common
-  animationSequenceText: {fileID: 4900000, guid: ebe4d3895c6798747b27cf2ac3f4839d,
+  animationName: Player Attack
+  animationSequenceText: {fileID: 4900000, guid: f3c86a3737b03994e8b0b9e4757e5ef3,
     type: 3}
   animationSequence:
   - bFrameDirty: 0
-    action: 9
-    frame: 1
+    action: 5
+    frame: 20
     frameOrder: 0
     param:
       parameters:
@@ -35,28 +35,19 @@ MonoBehaviour:
         name: duration
         boolValue: 0
         intValue: 0
-        floatValue: 1
+        floatValue: 8
         stringValue: 
         vector2Value: {x: 0, y: 0}
         vector3Value: {x: 0, y: 0, z: 0}
         colorValue: {r: 0, g: 0, b: 0, a: 0}
-      - paramType: 6
-        name: color
+      - paramType: 5
+        name: value
         boolValue: 0
         intValue: 0
         floatValue: 0
         stringValue: 
         vector2Value: {x: 0, y: 0}
-        vector3Value: {x: 0, y: 0, z: 0}
-        colorValue: {r: 1, g: 1, b: 1.02, a: 0}
-      - paramType: 2
-        name: colorAmount
-        boolValue: 0
-        intValue: 0
-        floatValue: 0
-        stringValue: 
-        vector2Value: {x: 0, y: 0}
-        vector3Value: {x: 0, y: 0, z: 0}
+        vector3Value: {x: 2.3, y: 0, z: 0}
         colorValue: {r: 0, g: 0, b: 0, a: 0}
       - paramType: 1
         name: effect
@@ -68,31 +59,49 @@ MonoBehaviour:
         vector3Value: {x: 0, y: 0, z: 0}
         colorValue: {r: 0, g: 0, b: 0, a: 0}
   - bFrameDirty: 0
-    action: 12
-    frame: 3
+    action: 3
+    frame: 21
     frameOrder: 0
     param:
       parameters:
+      - paramType: 3
+        name: path
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: Effect/Common/Slash
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
       - paramType: 3
         name: relative
         boolValue: 0
         intValue: 0
         floatValue: 0
-        stringValue: User
+        stringValue: Target
         vector2Value: {x: 0, y: 0}
         vector3Value: {x: 0, y: 0, z: 0}
         colorValue: {r: 0, g: 0, b: 0, a: 0}
-      - paramType: 3
-        name: trigger
+      - paramType: 5
+        name: position
         boolValue: 0
         intValue: 0
         floatValue: 0
-        stringValue: Visible
+        stringValue: 
         vector2Value: {x: 0, y: 0}
-        vector3Value: {x: 0, y: 0, z: 0}
+        vector3Value: {x: 0, y: 0.5, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 5
+        name: scale
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 1, y: 1, z: 1}
         colorValue: {r: 0, g: 0, b: 0, a: 0}
       - paramType: 0
-        name: value
+        name: match
         boolValue: 1
         intValue: 0
         floatValue: 0
@@ -100,8 +109,17 @@ MonoBehaviour:
         vector2Value: {x: 0, y: 0}
         vector3Value: {x: 0, y: 0, z: 0}
         colorValue: {r: 0, g: 0, b: 0, a: 0}
-      - paramType: 1
-        name: effect
+      - paramType: 0
+        name: child
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 5
+        name: variance
         boolValue: 0
         intValue: 0
         floatValue: 0
@@ -110,8 +128,53 @@ MonoBehaviour:
         vector3Value: {x: 0, y: 0, z: 0}
         colorValue: {r: 0, g: 0, b: 0, a: 0}
   - bFrameDirty: 0
-    action: 9
-    frame: 60
+    action: 16
+    frame: 27
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 0
+        name: playHitAnim
+        boolValue: 1
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 17
+    frame: 27
+    frameOrder: 1
+    param:
+      parameters:
+      - paramType: 3
+        name: relative
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: "Target\r"
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 4
+    frame: 39
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 1
+        name: id
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 5
+    frame: 52
     frameOrder: 0
     param:
       parameters:
@@ -128,28 +191,19 @@ MonoBehaviour:
         name: duration
         boolValue: 0
         intValue: 0
-        floatValue: 25
+        floatValue: 16
         stringValue: 
         vector2Value: {x: 0, y: 0}
         vector3Value: {x: 0, y: 0, z: 0}
         colorValue: {r: 0, g: 0, b: 0, a: 0}
-      - paramType: 6
-        name: color
+      - paramType: 5
+        name: value
         boolValue: 0
         intValue: 0
         floatValue: 0
         stringValue: 
         vector2Value: {x: 0, y: 0}
-        vector3Value: {x: 0, y: 0, z: 0}
-        colorValue: {r: 1, g: 1, b: 1.02, a: 1}
-      - paramType: 2
-        name: colorAmount
-        boolValue: 0
-        intValue: 0
-        floatValue: 0
-        stringValue: 
-        vector2Value: {x: 0, y: 0}
-        vector3Value: {x: 0, y: 0, z: 0}
+        vector3Value: {x: -2.3, y: 0, z: 0}
         colorValue: {r: 0, g: 0, b: 0, a: 0}
       - paramType: 1
         name: effect
@@ -162,7 +216,7 @@ MonoBehaviour:
         colorValue: {r: 0, g: 0, b: 0, a: 0}
   - bFrameDirty: 0
     action: 2
-    frame: 120
+    frame: 75
     frameOrder: 0
     param:
       parameters: []

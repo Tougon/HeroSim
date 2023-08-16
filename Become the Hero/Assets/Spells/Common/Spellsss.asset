@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellName: Spellsss
   spellType: 0
+  spellTarget: 0
   spellCost: 0
   spellPriority: 0
   spellDescription: 
   spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 0}
-  spellAnimation: {fileID: 11400000, guid: 0b0806ef7ae3dc14b83e2ffda77c7520, type: 2}
-  spellEffects: []
+  spellAnimation: {fileID: 11400000, guid: 0932ccdd2edd5b14591b7281c52be0a3, type: 2}
+  spellEffectsOnHit: []
+  spellEffectsOnSuccess: []
   spellProperties: []

@@ -340,12 +340,12 @@ public class AnimationSequenceParam
             else if(paramType == ParamType.Color)
             {
                 colorValue = new Color(Single.Parse(param[index]), Single.Parse(param[index + 1]),
-                    Single.Parse(param[index] + 2), Single.Parse(param[index + 3]));
+                    Single.Parse(param[index + 2]), Single.Parse(param[index + 3]));
             }
             else if (paramType == ParamType.ColorNoAlpha)
             {
                 colorValue = new Color(Single.Parse(param[index]), Single.Parse(param[index + 1]),
-                    Single.Parse(param[index] + 2));
+                    Single.Parse(param[index + 2]), 1);
             }
             else
             {
@@ -611,6 +611,7 @@ public class BGFadeAnimationSequenceParams : AnimationSequenceParams
         };
     }
 }
+
 
 [System.Serializable]
 public class ResetBGAnimationSequenceParams : AnimationSequenceParams
