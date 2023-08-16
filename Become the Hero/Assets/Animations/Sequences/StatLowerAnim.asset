@@ -13,5 +13,208 @@ MonoBehaviour:
   m_Name: StatLowerAnim
   m_EditorClassIdentifier: 
   animationName: Stat Lower Animation
-  animationSequence: {fileID: 4900000, guid: b8df8e036a11d2441bf3564db1005848, type: 3}
+  animationSequenceText: {fileID: 4900000, guid: b8df8e036a11d2441bf3564db1005848,
+    type: 3}
+  animationSequence:
+  - bFrameDirty: 0
+    action: 19
+    frame: 1
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 3
+        name: relative
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: User
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 3
+        name: path
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: Effect/Common/overlay_lower
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 4
+        name: offset
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 1, y: 1}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 1
+        name: effect
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 20
+    frame: 17
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 3
+        name: relative
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: User
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 2
+        name: amount
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 4
+        name: speed
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: -1.5}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 2
+        name: duration
+        boolValue: 0
+        intValue: 0
+        floatValue: 1
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 1
+        name: effect
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 20
+    frame: 20
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 3
+        name: relative
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: User
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 2
+        name: amount
+        boolValue: 0
+        intValue: 0
+        floatValue: 0.9
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 4
+        name: speed
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: -1.5}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 2
+        name: duration
+        boolValue: 0
+        intValue: 0
+        floatValue: 30
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 1
+        name: effect
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 20
+    frame: 75
+    frameOrder: 0
+    param:
+      parameters:
+      - paramType: 3
+        name: relative
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: User
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 2
+        name: amount
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 4
+        name: speed
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: -1.5}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 2
+        name: duration
+        boolValue: 0
+        intValue: 0
+        floatValue: 30
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+      - paramType: 1
+        name: effect
+        boolValue: 0
+        intValue: 0
+        floatValue: 0
+        stringValue: 
+        vector2Value: {x: 0, y: 0}
+        vector3Value: {x: 0, y: 0, z: 0}
+        colorValue: {r: 0, g: 0, b: 0, a: 0}
+  - bFrameDirty: 0
+    action: 2
+    frame: 110
+    frameOrder: 0
+    param:
+      parameters: []
   disableUI: 0

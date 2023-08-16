@@ -13,5 +13,13 @@ MonoBehaviour:
   m_Name: MendAnim
   m_EditorClassIdentifier: 
   animationName: Mend
-  animationSequence: {fileID: 0}
+  animationSequenceText: {fileID: 4900000, guid: 65a719300dfe5af4dae115cd9b648874,
+    type: 3}
+  animationSequence:
+  - bFrameDirty: 0
+    action: 2
+    frame: 1
+    frameOrder: 0
+    param:
+      parameters: []
   disableUI: 1

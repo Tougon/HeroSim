@@ -159,7 +159,7 @@ MonoBehaviour:
         stringValue: 
         vector2Value: {x: 0, y: 0}
         vector3Value: {x: 0, y: 0, z: 0}
-        colorValue: {r: 1, g: 1, b: 1.02, a: 0}
+        colorValue: {r: 1, g: 1, b: 1, a: 0}
       - paramType: 2
         name: colorAmount
         boolValue: 0
@@ -204,7 +204,7 @@ MonoBehaviour:
         boolValue: 0
         intValue: 0
         floatValue: 0
-        stringValue: "5\r"
+        stringValue: "-1\r"
         vector2Value: {x: 0, y: 0}
         vector3Value: {x: 0, y: 0, z: 0}
         colorValue: {r: 0, g: 0, b: 0, a: 0}
@@ -372,7 +372,7 @@ MonoBehaviour:
         stringValue: 
         vector2Value: {x: 0, y: 0}
         vector3Value: {x: 0, y: 0, z: 0}
-        colorValue: {r: 0, g: 1, b: 0.02, a: 1}
+        colorValue: {r: 0, g: 1, b: 0, a: 1}
       - paramType: 2
         name: colorAmount
         boolValue: 0
