@@ -17,19 +17,21 @@ using UnityEditor;
 public class AnimationSequenceObject : ScriptableObject
 {
     public string animationName = "";
+
+    [Header("Legacy")][PropertyOrder(25)]
     [FormerlySerializedAs("animationSequence")]
     public TextAsset animationSequenceText;
 
     [ListDrawerSettings(DraggableItems = false, ShowPaging = false)]
     [OnValueChanged("SortByFrameOrder", true)]
-    [PropertyOrder(25)]
+    [PropertyOrder(20)][PropertySpace(10)]
     public List<AnimationSequenceFrame> animationSequence = new List<AnimationSequenceFrame>();
 
     public bool disableUI = true;
 
 
     [Button("Parse Text Asset")]
-    [PropertySpace(20)][PropertyOrder(25)]
+    [PropertyOrder(25)]
     public void ParseTextAsset()
     {
         // Split the animation script.
@@ -253,6 +255,71 @@ public class AnimationSequenceParams
     protected virtual void Initialize()
     {
 
+    }
+
+
+    public bool GetBool(string key)
+    {
+        var param = parameters.Find((a) => a.name == key && a.paramType == AnimationSequenceParam.ParamType.Bool);
+
+        if (param != null) return param.boolValue;
+        return false;
+    }
+
+
+    public int GetInt(string key)
+    {
+        var param = parameters.Find((a) => a.name == key && a.paramType == AnimationSequenceParam.ParamType.Int);
+
+        if (param != null) return param.intValue;
+        return 0;
+    }
+
+
+    public float GetFloat(string key)
+    {
+        var param = parameters.Find((a) => a.name == key && a.paramType == AnimationSequenceParam.ParamType.Float);
+
+        if (param != null) return param.floatValue;
+        return 0;
+    }
+
+
+    public string GetString(string key)
+    {
+        var param = parameters.Find((a) => a.name == key && a.paramType == AnimationSequenceParam.ParamType.String);
+
+        if (param != null) return param.stringValue;
+        return "";
+    }
+
+
+    public Vector2 GetVector2(string key)
+    {
+        var param = parameters.Find((a) => a.name == key && a.paramType == AnimationSequenceParam.ParamType.Vector2);
+
+        if (param != null) return param.vector2Value;
+        return Vector2.zero;
+    }
+
+
+    public Vector3 GetVector3(string key)
+    {
+        var param = parameters.Find((a) => a.name == key && a.paramType == AnimationSequenceParam.ParamType.Vector3);
+
+        if (param != null) return param.vector3Value;
+        return Vector3.zero;
+    }
+
+
+    public Color GetColor(string key)
+    {
+        var param = parameters.Find((a) => a.name == key && 
+            (a.paramType == AnimationSequenceParam.ParamType.Color || 
+             a.paramType == AnimationSequenceParam.ParamType.ColorNoAlpha));
+
+        if (param != null) return param.colorValue;
+        return Color.white;
     }
 
 

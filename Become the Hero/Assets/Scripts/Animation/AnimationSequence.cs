@@ -76,7 +76,6 @@ public class AnimationSequence : Hero.Core.Sequence
 
     private List<EntityBase> effects = new List<EntityBase>();
 
-    private List<AnimationSequenceAction> sequenceActions = new List<AnimationSequenceAction>();
     private List<AnimationSequenceLoop> loops = new List<AnimationSequenceLoop>();
 
 
@@ -146,7 +145,7 @@ public class AnimationSequence : Hero.Core.Sequence
         }
 
         // Split the animation script.
-        string[] sequence = obj.animationSequenceText.text.Split('\n');
+        /*string[] sequence = obj.animationSequenceText.text.Split('\n');
 
         for(int i=0; i<sequence.Length; i++)
         {
@@ -172,7 +171,7 @@ public class AnimationSequence : Hero.Core.Sequence
 
             // Add the action to our list
             sequenceActions.Add(seq);
-        }
+        }*/
 
         initialized = true;
     }
@@ -209,12 +208,12 @@ public class AnimationSequence : Hero.Core.Sequence
                     currentFrame++;
 
                     // If the current frame has an action associated, call it.
-                    for (int i = 0; i < sequenceActions.Count; i++)
+                    for (int i = 0; i < aso.animationSequence.Count; i++)
                     {
-                        if (sequenceActions[i].frame != currentFrame)
+                        if (aso.animationSequence[i].frame != currentFrame)
                             continue;
                         else
-                            CallSequenceFunction(sequenceActions[i].action, sequenceActions[i].param);
+                            CallSequenceFunction(aso.animationSequence[i].action, aso.animationSequence[i].param);
                     }
                 }
 
@@ -260,7 +259,7 @@ public class AnimationSequence : Hero.Core.Sequence
     /// <summary>
     /// Runs specific behaviors based on the given action and its param.
     /// </summary>
-    private void CallSequenceFunction(AnimationSequenceAction.Action a, string param)
+    private void CallSequenceFunction(AnimationSequenceAction.Action a, AnimationSequenceParams param)
     {
         if (onSuccess && !IgnoreSuccess.Contains(a) && !spell[targetIndex].HasDoneAnything())
             return;
@@ -276,172 +275,141 @@ public class AnimationSequence : Hero.Core.Sequence
                 break;
 
             case AnimationSequenceAction.Action.GenerateEffect:
-                // Split the param
-                string[] effectVals = param.Split(',');
 
-                /*if (effectVals.Length != 13)
-                    Debug.LogError("Invalid param count for Effect Generation!");*/
+                var effPos = param.GetVector3(AnimationConstants.ANIM_PARAM_POSITION);
+                var effScale = param.GetVector3(AnimationConstants.ANIM_PARAM_SCALE);
+                var effVar = param.GetVector3(AnimationConstants.ANIM_PARAM_VARIANCE);
 
                 // Generate an effect with the given values
-                GenerateEffect(effectVals[0], effectVals[1], 
-                    float.Parse(effectVals[2].Trim()), float.Parse(effectVals[3].Trim()), float.Parse(effectVals[4].Trim()),
-                    float.Parse(effectVals[5].Trim()), float.Parse(effectVals[6].Trim()), float.Parse(effectVals[7].Trim()),
-                    bool.Parse(effectVals[8].Trim()), bool.Parse(effectVals[9].Trim()), float.Parse(effectVals[10].Trim()),
-                    float.Parse(effectVals[11].Trim()), float.Parse(effectVals[12].Trim()));
+                GenerateEffect(param.GetString(AnimationConstants.ANIM_PARAM_PATH), 
+                    param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE), 
+                    effPos.x, effPos.y, effPos.z, effScale.x, effScale.y, effScale.z,
+                    param.GetBool(AnimationConstants.ANIM_PARAM_MATCH), param.GetBool(AnimationConstants.ANIM_PARAM_CHILD), 
+                    effVar.x, effVar.y, effVar.z);
                 break;
 
             case AnimationSequenceAction.Action.TerminateEffect:
-                int id = int.Parse(param);
-                TerminateEffect(id);
+                TerminateEffect(param.GetInt(AnimationConstants.ANIM_PARAM_ID));
                 break;
 
             case AnimationSequenceAction.Action.Move:
-                // Split the param
-                string[] moveVals = param.Split(',');
-
-                /*if(moveVals.Length > 6 && moveVals.Length < 5)
-                    Debug.LogError("Invalid param count for Movement!");*/
 
                 Transform tM;
-                string sM = moveVals[0].Trim();
+                string sM = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
 
                 if (sM.Equals("User"))
                     tM = user.transform;
                 else if (sM.Equals("Target"))
                     tM = allTargets[targetIndex].transform;
                 else
-                    tM = effects[int.Parse(moveVals[5].Trim())].transform;
+                    tM = effects[param.GetInt(AnimationConstants.ANIM_PARAM_EFFECT_INDEX)].transform;
 
-                float durationM = ((float.Parse(moveVals[1].Trim())) / 60.0f);
+                float durationM = (param.GetFloat(AnimationConstants.ANIM_PARAM_DURATION)) / 60.0f;
 
-                float xM = (float.Parse(moveVals[2].Trim()) * directionX) + tM.position.x;
-                float yM = (float.Parse(moveVals[3].Trim()) * directionY) + tM.position.y;
-                float zM = float.Parse(moveVals[4].Trim()) + tM.position.z;
+                Vector3 targetPos = param.GetVector3(AnimationConstants.ANIM_PARAM_VALUE);
+                float xM = (targetPos.x * directionX) + tM.position.x;
+                float yM = (targetPos.y * directionY) + tM.position.y;
+                float zM = targetPos.z + tM.position.z;
 
                 // Move the target
                 TweenPosition(tM, xM, yM, zM, durationM);
                 break;
 
             case AnimationSequenceAction.Action.Rotate:
-                // Split the param
-                string[] rotateVals = param.Split(',');
-
-                /*if (rotateVals.Length > 6 && rotateVals.Length < 5)
-                    Debug.LogError("Invalid param count for Movement!");*/
 
                 Transform tR;
-                string sR = rotateVals[0].Trim();
+                string sR = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
 
                 if (sR.Equals("User"))
                     tR = user.transform;
                 else if (sR.Equals("Target"))
                     tR = allTargets[targetIndex].transform;
                 else
-                    tR = effects[int.Parse(rotateVals[5].Trim())].transform;
+                    tR = effects[param.GetInt(AnimationConstants.ANIM_PARAM_EFFECT_INDEX)].transform;
 
-                float durationR = ((float.Parse(rotateVals[1].Trim())) / 60.0f);
+                float durationR = (param.GetFloat(AnimationConstants.ANIM_PARAM_DURATION)) / 60.0f;
 
-                float xR = float.Parse(rotateVals[2].Trim());
-                float yR = float.Parse(rotateVals[3].Trim());
-                float zR = (float.Parse(rotateVals[4].Trim()) * directionX);
+                Vector3 targetRot = param.GetVector3(AnimationConstants.ANIM_PARAM_VALUE);
+                float xR = targetRot.x;
+                float yR = targetRot.y;
+                float zR = targetRot.z * directionX;
 
                 // Rotate the target
                 TweenRotation(tR, xR, yR, zR, durationR);
                 break;
 
             case AnimationSequenceAction.Action.Scale:
-                // Split the param
-                string[] scaleVals = param.Split(',');
-
-                /*if (scaleVals.Length > 6 && scaleVals.Length < 5)
-                    Debug.LogError("Invalid param count for Movement!");*/
 
                 Transform tS;
-                string sS = scaleVals[0].Trim();
+                string sS = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
 
                 if (sS.Equals("User"))
                     tS = user.transform;
                 else if (sS.Equals("Target"))
                     tS = allTargets[targetIndex].transform;
                 else
-                    tS = effects[int.Parse(scaleVals[5].Trim())].transform;
+                    tS = effects[param.GetInt(AnimationConstants.ANIM_PARAM_EFFECT_INDEX)].transform;
 
-                float durationS = ((float.Parse(scaleVals[1].Trim())) / 60.0f); ;
+                float durationS = (param.GetFloat(AnimationConstants.ANIM_PARAM_DURATION)) / 60.0f;
 
                 // Increase the target scale
-                float xS = !(sS.Equals("User") || sS.Equals("Target")) ? (float.Parse(scaleVals[2].Trim())) :
-                    (float.Parse(scaleVals[2].Trim()) * directionX) * Mathf.Abs(tS.localScale.x);
-                float yS = !(sS.Equals("User") || sS.Equals("Target")) ? (float.Parse(scaleVals[3].Trim())) :
-                    (float.Parse(scaleVals[3].Trim()) * directionY) * Mathf.Abs(tS.localScale.y);
-                float zS = float.Parse(scaleVals[4].Trim()) + tS.position.z;
+                Vector3 targetScale = param.GetVector3(AnimationConstants.ANIM_PARAM_VALUE);
+
+                float xS = !(sS.Equals("User") || sS.Equals("Target")) ? (targetScale.x) :
+                    (targetScale.x * directionX) * Mathf.Abs(tS.localScale.x);
+                float yS = !(sS.Equals("User") || sS.Equals("Target")) ? (targetScale.y) :
+                    (targetScale.y * directionY) * Mathf.Abs(tS.localScale.y);
+                float zS = targetScale.z * Mathf.Abs(tS.localScale.z);
 
                 TweenScale(tS, xS, yS, zS, durationS);
                 break;
 
             case AnimationSequenceAction.Action.Color:
-                // Split the param
-                string[] colorVals = param.Split(',');
-
-                /*if (colorVals.Length > 8 && colorVals.Length < 7)
-                    Debug.LogError("Invalid param count for Color!");*/
 
                 EntityBase eC;
-                string sC = colorVals[0].Trim();
+                string sC = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
 
                 if (sC.Equals("User"))
                     eC = user;
                 else if (sC.Equals("Target"))
                     eC = allTargets[targetIndex];
                 else
-                    eC = effects[int.Parse(colorVals[7].Trim())];
+                    eC = effects[param.GetInt(AnimationConstants.ANIM_PARAM_EFFECT_INDEX)];
 
-                float durationC = ((float.Parse(colorVals[1].Trim())) / 60.0f);
+                float durationC = (param.GetFloat(AnimationConstants.ANIM_PARAM_DURATION)) / 60.0f;
 
-                float xC = float.Parse(colorVals[2].Trim());
-                float yC = float.Parse(colorVals[3].Trim());
-                float zC = float.Parse(colorVals[4].Trim());
-                float wC = float.Parse(colorVals[5].Trim());
-                float aC = float.Parse(colorVals[6].Trim());
+                float aC = param.GetFloat(AnimationConstants.ANIM_PARAM_COLOR_AMOUNT);
 
                 // Change the target's color
-                TweenColor(eC, new Color(xC, yC, zC, wC), aC, durationC);
+                TweenColor(eC, param.GetColor(AnimationConstants.ANIM_PARAM_COLOR), aC, durationC);
                 break;
 
             case AnimationSequenceAction.Action.Vibrate:
-                // Split the param
-                string[] vibrateVals = param.Split(',');
-
-                /*if (vibrateVals.Length > 6 && vibrateVals.Length < 5)
-                    Debug.LogError("Invalid param count for Vibration!");*/
 
                 Transform tV;
-                string sV = vibrateVals[0].Trim();
+                string sV = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
 
                 if (sV.Equals("User"))
                     tV = user.transform;
                 else if (sV.Equals("Target"))
                     tV = allTargets[targetIndex].transform;
                 else
-                    tV= effects[int.Parse(vibrateVals[5].Trim())].transform;
+                    tV = effects[param.GetInt(AnimationConstants.ANIM_PARAM_EFFECT_INDEX)].transform;
 
-                float durationV = ((float.Parse(vibrateVals[1].Trim())) / 60.0f);
+                float durationV = (param.GetFloat(AnimationConstants.ANIM_PARAM_DURATION) / 60.0f);
 
-                Vector3 strengthV = new Vector3(float.Parse(vibrateVals[2]), float.Parse(vibrateVals[3]), 0.0f);
-                int vibratoV = int.Parse(vibrateVals[4]);
+                Vector3 strengthV = new Vector3(param.GetVector2(AnimationConstants.ANIM_PARAM_STRENGTH).x,
+                    param.GetVector2(AnimationConstants.ANIM_PARAM_STRENGTH).y, 0.0f);
+                int vibratoV = (int)(param.GetFloat(AnimationConstants.ANIM_PARAM_VIBRATO));
 
                 // Vibrae the target
                 Vibrate(tV, durationV, strengthV, vibratoV);
                 break;
 
             case AnimationSequenceAction.Action.ChangeAnimationSpeed:
-                // Split the param
-                string[] speedVals = param.Split(',');
 
-                /*if (speedVals.Length > 3 && speedVals.Length < 2)
-                    Debug.LogError("Invalid param count for Speed!");*/
-                
-                string sSp = speedVals[0].Trim();
-                float sSpeed = float.Parse(speedVals[1].Trim());
+                string sSp = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
+                float sSpeed = param.GetFloat(AnimationConstants.ANIM_PARAM_FRAME_SPEED);
 
                 // Modifies the speed of the target animator
 
@@ -450,36 +418,33 @@ public class AnimationSequence : Hero.Core.Sequence
                 else if (sSp.Equals("Target"))
                     allTargets[targetIndex].FrameSpeedModify(sSpeed);
                 else
-                    effects[int.Parse(speedVals[2].Trim())].FrameSpeedModify(sSpeed);
+                    effects[param.GetInt(AnimationConstants.ANIM_PARAM_EFFECT_INDEX)].FrameSpeedModify(sSpeed);
                 break;
 
             case AnimationSequenceAction.Action.ChangeAnimationState:
-                // Split the param
-                string[] stateVals = param.Split(',');
-
-                /*if (stateVals.Length > 4 && stateVals.Length < 3)
-                    Debug.LogError("Invalid param count for State Change!");*/
 
                 EntityBase eAS;
-                string sAS = stateVals[0].Trim();
+                string sAS = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
 
                 if (sAS.Equals("User"))
                     eAS = user;
                 else if (sAS.Equals("Target"))
                     eAS = allTargets[targetIndex];
                 else
-                    eAS = effects[int.Parse(stateVals[3].Trim())];
+                    eAS = effects[param.GetInt(AnimationConstants.ANIM_PARAM_EFFECT_INDEX)];
 
-                eAS.SetAnimationState(stateVals[1].Trim(), bool.Parse(stateVals[2].Trim()));
+                eAS.SetAnimationState(param.GetString(AnimationConstants.ANIM_PARAM_TRIGGER),
+                    param.GetBool(AnimationConstants.ANIM_PARAM_VALUE));
                 break;
 
             case AnimationSequenceAction.Action.BeginLoop:
                 // Begins a loop
                 int numLoops = allTargets.Count;
+                string p = param.GetString(AnimationConstants.ANIM_PARAM_LOOP).Trim();
 
-                if (!param.Trim().Equals("#"))
+                if (!p.Equals("#"))
                 {
-                    numLoops = int.Parse(param.Trim());
+                    numLoops = int.Parse(p);
 
                     if (numLoops < 0)
                         numLoops = loop;
@@ -506,7 +471,7 @@ public class AnimationSequence : Hero.Core.Sequence
                 // Applies damage
                 allTargets[targetIndex].ApplyDamage
                     (spell[targetIndex].GetDamageOfCurrentHit(), 
-                    spell[targetIndex].GetIsCurrentHitCritical(), bool.Parse(param), 
+                    spell[targetIndex].GetIsCurrentHitCritical(), param.GetBool(AnimationConstants.ANIM_PARAM_PLAY_HIT), 
                     spell[targetIndex].success && spell[targetIndex].GetCurrentHitSuccess());
                 spell[targetIndex].IncrementHit();
                 break;
@@ -522,89 +487,71 @@ public class AnimationSequence : Hero.Core.Sequence
                     spell[targetIndex].GetDamageOfPreviousHit() == 0)
                     break;
 
-                param = param.Trim();
+                string hpt = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
 
-                if (param.Equals("User"))
+                if (hpt.Equals("User"))
                     user.UpdateHPUI();
-                else if (param.Equals("Target"))
+                else if (hpt.Equals("Target"))
                     allTargets[targetIndex].UpdateHPUI();
                 break;
 
             case AnimationSequenceAction.Action.SetOverlayTexture:
-                // Split the param
-                string[] texVals = param.Split(',');
-
-                /*if (texVals.Length > 5 && texVals.Length < 4)
-                    Debug.LogError("Invalid param count for Texture Change!");*/
 
                 EntityBase eOT;
-                string sOT = texVals[0].Trim();
+                string sOT = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
 
                 if (sOT.Equals("User"))
                     eOT = user;
                 else if (sOT.Equals("Target"))
                     eOT = allTargets[targetIndex];
                 else
-                    eOT = effects[int.Parse(texVals[4].Trim())];
+                    eOT = effects[param.GetInt(AnimationConstants.ANIM_PARAM_EFFECT_INDEX)];
 
-                string pOT = texVals[1].Trim();
+                string pOT = param.GetString(AnimationConstants.ANIM_PARAM_PATH).Trim();
                 var texture = Resources.Load<Texture2D>(pOT);
 
-                eOT.SetOverlayTexture(texture, new Vector2(float.Parse(texVals[2].Trim()), float.Parse(texVals[3].Trim())));
+                eOT.SetOverlayTexture(texture,
+                    param.GetVector2(AnimationConstants.ANIM_PARAM_OFFSET));
                 break;
 
             case AnimationSequenceAction.Action.SetOverlayAnimation:
-                // Split the param
-                string[] ovlAnimVals = param.Split(',');
-
-                /*if (ovlAnimVals.Length > 6 && ovlAnimVals.Length < 5)
-                    Debug.LogError("Invalid param count for Overlay Animation!");*/
 
                 EntityBase eOA;
-                string sOA = ovlAnimVals[0].Trim();
+                string sOA = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
 
                 if (sOA.Equals("User"))
                     eOA = user;
                 else if (sOA.Equals("Target"))
                     eOA = allTargets[targetIndex];
                 else
-                    eOA = effects[int.Parse(ovlAnimVals[5].Trim())];
+                    eOA = effects[param.GetInt(AnimationConstants.ANIM_PARAM_EFFECT_INDEX)];
 
-                eOA.SetOverlayTween(float.Parse(ovlAnimVals[1].Trim()), 
-                    new Vector2(float.Parse(ovlAnimVals[2].Trim()), float.Parse(ovlAnimVals[3].Trim())),
-                    float.Parse(ovlAnimVals[4].Trim()) / 60.0f);
+                eOA.SetOverlayTween(param.GetFloat(AnimationConstants.ANIM_PARAM_AMOUNT),
+                    param.GetVector2(AnimationConstants.ANIM_PARAM_SPEED),
+                    param.GetFloat(AnimationConstants.ANIM_PARAM_DURATION) / 60.0f);
                 break;
 
             case AnimationSequenceAction.Action.ChangeBGColor:
-                // Split the param
-                string[] bgColVals = param.Split(',');
 
-                if(bgColVals.Length > 3)
-                {
-                    VariableManager.Instance.SetFloatVariableValue(
-                        VariableConstants.BACKGROUND_FADE_TIME, float.Parse(bgColVals[3]));
-                }
+                VariableManager.Instance.SetFloatVariableValue(
+                    VariableConstants.BACKGROUND_FADE_TIME, param.GetFloat(AnimationConstants.ANIM_PARAM_DURATION));
 
+                Color c = param.GetColor(AnimationConstants.ANIM_PARAM_COLOR);
                 EventManager.Instance.RaiseVector3Event(EventConstants.SET_BACKGROUND_COLOR,
-                    new Vector3(float.Parse(bgColVals[0]), float.Parse(bgColVals[1]), float.Parse(bgColVals[2])));
+                    new Vector3(c.r, c.g, c.b));
                 break;
 
             case AnimationSequenceAction.Action.StartBGFade:
-                // Split the param
-                string[] bgFadeVals = param.Split(',');
+
                 EventManager.Instance.RaiseVector2Event(EventConstants.START_BACKGROUND_FADE,
-                    new Vector2(float.Parse(bgFadeVals[0]), float.Parse(bgFadeVals[1]) / 60.0f));
+                    new Vector2(param.GetFloat(AnimationConstants.ANIM_PARAM_AMOUNT),
+                    param.GetFloat(AnimationConstants.ANIM_PARAM_DURATION) / 60.0f));
                 break;
 
             case AnimationSequenceAction.Action.ResetBGColor:
-                // Split the param
-                string[] bgResetVals = param == null ? new string[0] : param.Split(',');
 
-                if (bgResetVals.Length > 0)
-                {
-                    VariableManager.Instance.SetFloatVariableValue(
-                        VariableConstants.BACKGROUND_FADE_TIME, float.Parse(bgResetVals[0]));
-                }
+                VariableManager.Instance.SetFloatVariableValue(VariableConstants.BACKGROUND_FADE_TIME, 
+                    param.GetFloat(AnimationConstants.ANIM_PARAM_DURATION));
 
                 EventManager.Instance.RaiseGameEvent(EventConstants.RESET_BACKGROUND_COLOR);
                 break;
@@ -615,12 +562,13 @@ public class AnimationSequence : Hero.Core.Sequence
                 break;
 
             case AnimationSequenceAction.Action.Sprite:
-                string[] spriteVals = param.Split(',');
-                bool spriteUser = spriteVals[0].ToLower().Equals("user");
 
-                if (spriteVals[1].ToLower().Equals("entity"))
+                string target = param.GetString(AnimationConstants.ANIM_PARAM_RELATIVE).Trim();
+                bool spriteUser = target.ToLower().Equals("user");
+
+                if (param.GetString(AnimationConstants.ANIM_PARAM_PATH).ToLower().Equals("entity"))
                 {
-                    int index = int.Parse(spriteVals[2]);
+                    int index = param.GetInt(AnimationConstants.ANIM_PARAM_EFFECT_INDEX);
 
                     if (spriteUser)
                         user.SetSprite(user.GetEntity().vals.additionalEntitySprites[index]);
@@ -634,10 +582,12 @@ public class AnimationSequence : Hero.Core.Sequence
                 break;
 
             case AnimationSequenceAction.Action.SetTargetIndex:
-                if (param.Trim().Equals("#"))
+
+                string tgi = param.GetString(AnimationConstants.ANIM_PARAM_LOOP).Trim();
+                if (tgi.Equals("#"))
                     targetIndex = loops[loops.Count - 1].numIterations;
                 else
-                    int.TryParse(param, out targetIndex);
+                    int.TryParse(tgi, out targetIndex);
                 break;
 
             case AnimationSequenceAction.Action.BeginOnSuccess:
@@ -653,8 +603,10 @@ public class AnimationSequence : Hero.Core.Sequence
     /// <summary>
     /// Change animator animation
     /// </summary>
-    private void ChangeUserAnimation(string t) { user.SetAnimation(t.Trim()); }
-    private void ChangeTargetAnimation(string t) { allTargets[targetIndex].SetAnimation(t.Trim()); }
+    private void ChangeUserAnimation(AnimationSequenceParams t) 
+    { user.SetAnimation(t.GetString(AnimationConstants.ANIM_PARAM_ANIM_NAME)); }
+    private void ChangeTargetAnimation(AnimationSequenceParams t) 
+    { allTargets[targetIndex].SetAnimation(t.GetString(AnimationConstants.ANIM_PARAM_ANIM_NAME)); }
     
 
     /// <summary>
@@ -778,7 +730,7 @@ public class AnimationSequence : Hero.Core.Sequence
         t.transform.DOShakePosition(duration, strength, vibrato);
     }
 
-    private void PlaySound(string s)
+    private void PlaySound(AnimationSequenceParams s)
     {
         //SoundManager.Instance.PlaySound(s.Trim());
     }
