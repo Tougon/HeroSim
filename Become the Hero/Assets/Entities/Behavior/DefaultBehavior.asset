@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3cf823b9939dd646af6ff3fcbc8c790, type: 3}
+  m_Name: DefaultBehavior
+  m_EditorClassIdentifier: 
+  bUseFirstTurn: 0
+  FirstTurnBehavior:
+    Behaviors: []
+  TurnBehavior:
+  - Behaviors:
+    - behaviorCheck:
+      - checkType: 1
+        target: 2
+        negate: 0
+        hpPercent: 0
+        effect: {fileID: 11400000, guid: 93d504fafe208cb49942b008101fceb5, type: 2}
+      actionIndex: 01000000
+    - behaviorCheck: []
+      actionIndex: 00000000

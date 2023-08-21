@@ -13,6 +13,7 @@ public class TurnManager : MonoBehaviour
     private Sequencer sequencer;
     private IEnumerator current;
     private int playerIndex;
+    public int TurnNumber { get; private set; }
 
     void Awake()
     {
@@ -198,6 +199,8 @@ public class TurnManager : MonoBehaviour
         // Await any other actions
         yield return null;
 
+        TurnNumber++;
+
         List<EntityController> allies = new List<EntityController>();
         List<EntityController> targets = new List<EntityController>();
 
@@ -258,7 +261,6 @@ public class TurnManager : MonoBehaviour
 
             ec.target = targetTemp;
             ec.SelectAction();
-            ec.SetTarget();
             ec.ready = true;
         }
 

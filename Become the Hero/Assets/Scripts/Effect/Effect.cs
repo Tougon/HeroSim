@@ -187,7 +187,7 @@ public class Effect : SerializedScriptableObject
 
     public string GetName()
     {
-        if (generic)
+        if (generic && current != null && current.spell != null && current.spell.spell != null)
             return current.spell.spell.spellName + " " + effectName;
         else
             return effectName;

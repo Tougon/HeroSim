@@ -9,10 +9,11 @@ using Sirenix.OdinInspector;
 [CreateAssetMenu(fileName = "NewEntity", menuName = "Entity/Entity", order = 0)]
 public class Entity : ScriptableObject
 {
+    // Weakness, Resistance, and Immunity go in Entity Params
     public EntityParams vals;
-    // Weakness, Resistance, and Immunity go here.
 
     public List<Spell> moveList;
+    public EntityBehaviorObject behavior;
 }
 
 [System.Serializable]

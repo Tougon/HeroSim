@@ -18,10 +18,4 @@ public class EnemyController : EntityController
 
         EventManager.Instance.RaiseEntityControllerEvent(EventConstants.ON_ENEMY_DEFEAT, this);
     }
-
-    public override void SelectAction()
-    {
-        // Until we have "real" AI, an enemy's choice of action should be random, but it should check if the effect will proc.
-        action = current.moveList[UnityEngine.Random.Range(0, current.moveList.Count)];
-    }
 }

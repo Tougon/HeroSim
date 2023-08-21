@@ -359,7 +359,57 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     public virtual void SelectAction()
     {
+        // Check if there is a behavior assigned to this entity and the behavior is valid
+        if (current.behavior && current.behavior.TurnBehavior.Count > 0)
+        {
+            EntityBehavior behavior = null;
+
+            // If it is the first turn, use the special first turn behavior instead of the loop
+            if(turnManager.TurnNumber == 1 && current.behavior.bUseFirstTurn)
+            {
+                behavior = current.behavior.FirstTurnBehavior;
+            }
+            else
+            {
+                int turnIndex = (turnManager.TurnNumber - 1) % current.behavior.TurnBehavior.Count;
+                behavior = current.behavior.TurnBehavior[turnIndex];
+            }
+
+            var result = behavior.GetResult(this, enemies, allies);
+
+            if (result.ActionSuccess)
+            {
+                // NOTE: If no check occurs, result.Target can mismatch with the action
+                // This value defaults to "Self" and in my example, 0 is an attack
+                // Evan: This value should ONLY be used if it matches the action
+                action = current.moveList[Mathf.Clamp(result.ActionID, 0, current.moveList.Count)];
+
+                if (EntityBehavior.CheckTargetMatch(action, result)) 
+                    SetTarget(result.TriggerEntity);
+                else SetTarget();
+            }
+            else
+            {
+                // If the check fails, randomize the action from all available actions.
+                // This should never occur, but if it does, it's no big deal
+#if UNITY_EDITOR
+                Debug.LogWarning($"WARNING: Action for {current.name} on turn {turnManager.TurnNumber} " +
+                    $"has failed and will be randomized.");
+#endif
+                SelectRandomAction();
+            }
+        }
+        else
+        {
+            SelectRandomAction();
+        }
+
+    }
+
+    protected void SelectRandomAction()
+    {
         action = current.moveList[UnityEngine.Random.Range(0, current.moveList.Count)];
+        SetTarget();
     }
 
 
@@ -400,25 +450,36 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     #region Targetting
 
-    public virtual void SetTarget()
+    public virtual void SetTarget(EntityController trigger = null)
     {
+        // TODO: implement
         var available = GetPossibleTargets();
+        int index = UnityEngine.Random.Range(0, available.Count);
 
         switch (action.GetSpellTarget())
         {
             case Spell.SpellTarget.SingleEnemy:
 
-                int index = UnityEngine.Random.Range(0, available.Count);
-                target = new List<EntityController>() { available[index] };
+                if(trigger != null) target = new List<EntityController>() { trigger };
+                else target = new List<EntityController>() { available[index] };
 
+                break;
+
+            case Spell.SpellTarget.SingleParty:
+
+                if (trigger != null) target = new List<EntityController>() { trigger };
+                else target = new List<EntityController>() { available[index] };
+
+                break;
+
+            case Spell.SpellTarget.RandomEnemy:
+                target = new List<EntityController>() { available[index] };
                 break;
 
             default:
                 target = available;
                 break;
         }
-
-
     }
 
     public virtual List<EntityController> GetPossibleTargets()
@@ -569,6 +630,15 @@ public class EntityController : EntitySprite, IComparable<EntityController>
         }
 
         effects.Sort();
+    }
+
+
+    /// <summary>
+    /// Returns true if an instance of the given Effect exists on this EntityController.
+    /// </summary>
+    public bool HasEffect(Effect eff)
+    {
+        return effects.Exists(f => f.effect.GetName() == eff.GetName());
     }
 
 
