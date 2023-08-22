@@ -13,6 +13,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     [SerializeField]
     protected Entity current;
+    protected List<Spell> moveList;
     public List<EntityController> allies { get; set; }
     public List<EntityController> enemies { get; set; }
     public List<EntityController> target { get; set; }
@@ -116,6 +117,10 @@ public class EntityController : EntitySprite, IComparable<EntityController>
             mdefStage = 0;
             evasionStage = 0;
             accuracyStage = 0;
+
+            // Update the move list
+            // TODO: calculate level instead of defaulting to 50
+            moveList = current.GetMoveList(50);
 
             // Reset ID. If we add save data, we'll need a check here
             isIdentified = false;
@@ -382,7 +387,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
                 // NOTE: If no check occurs, result.Target can mismatch with the action
                 // This value defaults to "Self" and in my example, 0 is an attack
                 // Evan: This value should ONLY be used if it matches the action
-                action = current.moveList[Mathf.Clamp(result.ActionID, 0, current.moveList.Count)];
+                action = moveList[Mathf.Clamp(result.ActionID, 0, moveList.Count)];
 
                 if (EntityBehavior.CheckTargetMatch(action, result)) 
                     SetTarget(result.TriggerEntity);
@@ -408,21 +413,21 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     protected void SelectRandomAction()
     {
-        action = current.moveList[UnityEngine.Random.Range(0, current.moveList.Count)];
+        action = moveList[UnityEngine.Random.Range(0, moveList.Count)];
         SetTarget();
     }
 
 
     public virtual void SelectAction(int index)
     {
-        index = Mathf.Clamp(index, 0, current.moveList.Count);
-        action = current.moveList[index];
+        index = Mathf.Clamp(index, 0, moveList.Count);
+        action = moveList[index];
     }
 
 
     public virtual void SelectAction(string name)
     {
-        foreach(var move in current.moveList)
+        foreach(var move in moveList)
         {
             if (move.name == name)
             {

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
 /// Represents any kind of creature in the game.
@@ -12,9 +15,36 @@ public class Entity : ScriptableObject
     // Weakness, Resistance, and Immunity go in Entity Params
     public EntityParams vals;
 
-    public List<Spell> moveList;
+    [Title("Moveset and AI Behavior")]
+    [ListDrawerSettings(DraggableItems = true, ShowPaging = false, AlwaysAddDefaultValue = true)]
+    [OnValueChanged("AssignIDs", true)]
+    public List<SpellLevel> moveListLevel;
     public EntityBehaviorObject behavior;
+
+    public List<Spell> GetMoveList(int level)
+    {
+        List<Spell> list = new List<Spell>();
+
+        foreach(var spell in moveListLevel)
+        {
+            if (spell.level <= level) list.Add(spell.spell);
+        }
+
+        return list;
+    }
+
+
+    private void AssignIDs()
+    {
+        for(int i=0; i<moveListLevel.Count; i++)
+        {
+            var data = moveListLevel[i];
+            data.id = i;
+            moveListLevel[i] = data;
+        }
+    }
 }
+
 
 [System.Serializable]
 public class EntityParams
@@ -45,4 +75,17 @@ public class EntityParams
     {
         return useArticle ? article + " " + entityName.ToLower() : entityName;
     }
+}
+
+
+[System.Serializable]
+public struct SpellLevel
+{
+    [ReadOnly]
+    [HorizontalGroup("Primary")]
+    public int id;
+    [HorizontalGroup("Primary")]
+    public Spell spell;
+    [HorizontalGroup("Primary")]
+    public int level;
 }

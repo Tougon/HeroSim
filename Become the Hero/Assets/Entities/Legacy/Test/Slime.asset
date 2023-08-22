@@ -29,7 +29,11 @@ MonoBehaviour:
     additionalEntitySprites: []
     entityDescription: It's a bad redraw of the famous Smushie from the hit PC game,
       Smush. Available Now!
-  moveList:
-  - {fileID: 11400000, guid: 45625ddb296270044bf9f1f32e06e645, type: 2}
-  - {fileID: 11400000, guid: 8bd727b76a4ef6c4fae3e5ce1a837c19, type: 2}
+  moveListLevel:
+  - id: 0
+    spell: {fileID: 11400000, guid: 8bd727b76a4ef6c4fae3e5ce1a837c19, type: 2}
+    level: 0
+  - id: 1
+    spell: {fileID: 11400000, guid: 45625ddb296270044bf9f1f32e06e645, type: 2}
+    level: 0
   behavior: {fileID: 11400000, guid: 77f738708389665409045d9a7aa21dda, type: 2}

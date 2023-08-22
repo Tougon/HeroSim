@@ -670,7 +670,7 @@ public class AnimationSequence : Hero.Core.Sequence
 
 
     /// <summary>
-    /// Disabled the given effect
+    /// Disables the given effect
     /// </summary>
     private void TerminateEffect(int id)
     {

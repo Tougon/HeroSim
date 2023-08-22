@@ -91,7 +91,7 @@ public class AnimationSequenceObject : ScriptableObject
 
         bool refresh = false;
 
-        foreach(var  frame in animationSequence)
+        foreach(var frame in animationSequence)
         {
             if (frame.bFrameDirty) refresh = true;
             frame.bFrameDirty = false;
