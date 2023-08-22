@@ -47,12 +47,12 @@ public class UISpellButton : UIMenuButton
         cost.text = s.spellCost.ToString();
         index = i;
 
-        var data = controller.GetButtonData(s.GetSpellType());
+        //var data = controller.GetButtonData(s.GetSpellType());
 
         
         this.enabled = s.spellCost <= mp ? true : false;
 
-        if (this.enabled)
+        /*if (this.enabled)
             image.color = data.color;
         else
         {
@@ -64,7 +64,7 @@ public class UISpellButton : UIMenuButton
             c = Color.HSVToRGB(hue, sat, val);
 
             image.color = c;
-        }
+        }*/
     }
 
 

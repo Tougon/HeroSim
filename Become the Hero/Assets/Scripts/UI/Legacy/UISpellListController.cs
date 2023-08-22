@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using ToUI;
 
-public class UISpellListController : UIMenu
+public class UISpellListController : UIDynamicMenu
 {
     public class ColorSpritePair
     {
@@ -11,7 +11,8 @@ public class UISpellListController : UIMenu
         public Sprite sprite;
     }
 
-    private List<UISpellButton> spellButtons = new List<UISpellButton>(4);
+    //private List<UISpellButton> spellButtons = new List<UISpellButton>(4);
+    private EntityController currentEntity;
 
     // Note: may be deprecated later on
     [Header("Spell List Properties")]
@@ -27,16 +28,8 @@ public class UISpellListController : UIMenu
 
         EventManager.Instance.GetEntityControllerEvent(EventConstants.ON_SPELL_LIST_INITIALIZE).AddListener(UpdateSpellButtons);
 
-        foreach(var button in SelectionMatrix)
-        {
-            if(button is UISpellButton)
-                spellButtons.Add(button as UISpellButton);
-        }
-
-        foreach (UISpellButton sb in spellButtons)
-            sb.controller = this;
-
         // Create a Dictionary for easier lookup of button data for Spells
+        // NOTE: Will likely be scrapped.
         foreach(SpellButtonData sbd in buttonData)
         {
             ColorSpritePair csp = new ColorSpritePair();
@@ -48,15 +41,41 @@ public class UISpellListController : UIMenu
     }
 
 
+    protected override void SpawnMenuItems()
+    {
+        base.SpawnMenuItems();
+
+        foreach (var button in SelectionMatrix)
+        {
+            if (button is UISpellButton)
+                (button as UISpellButton).controller = this;
+        }
+    }
+
+
     public void UpdateSpellButtons(EntityController ec)
     {
-        PlayerController pc = (PlayerController)ec;
-        Spell[] spells = pc.GetAvailableSpells();
+        //May need to refresh all
+        currentEntity = ec;
+        SetMaxItems(currentEntity.moveList.Count);
+        RefreshAllData();
+    }
 
-        for(int i=0; i<spells.Length; i++)
+
+    protected override bool RefreshData(UIMenuItem Item, int index)
+    {
+        Item.gameObject.SetActive(index >= 0);
+
+        if(index >= 0)
         {
-            spellButtons[i].InitializeButton(spells[i], i, pc.GetCurrentMP());
+            if(Item is UISpellButton && currentEntity != null)
+            {
+                (Item as UISpellButton).InitializeButton(currentEntity.moveList[index],
+                    index, currentEntity.GetCurrentMP());
+            }
         }
+
+        return index >= 0;
     }
 
 

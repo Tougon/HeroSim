@@ -75,7 +75,7 @@ public class PlayerController : EntityController
     public override void SelectAction(int index)
     {
         index = Mathf.Clamp(index, 0, availableSpells.Length);
-        action = availableSpells[index];
+        action = moveList[index];
     }
 
     public override void SelectAction(string name)

@@ -362,7 +362,15 @@ namespace ToUI
             if (!bWarped)
             {
                 Grid.DOKill();
-                Grid.DOAnchorPos(Grid.anchoredPosition + dif, 1 / ScrollSpeed);
+
+                if(ScrollSpeed == 0)
+                {
+                    Grid.anchoredPosition += dif;
+                }
+                else
+                {
+                    Grid.DOAnchorPos(Grid.anchoredPosition + dif, 1 / ScrollSpeed);
+                }
             }
 
             //RefreshData();
@@ -401,8 +409,15 @@ namespace ToUI
             }
 
             var dif = base.ScrollToTarget();
-            Grid.DOKill();
-            Grid.DOAnchorPos(Grid.anchoredPosition + dif, 1 / ScrollSpeed);
+
+            if (ScrollSpeed == 0)
+            {
+                Grid.anchoredPosition += dif;
+            }
+            else
+            {
+                Grid.DOAnchorPos(Grid.anchoredPosition + dif, 1 / ScrollSpeed);
+            }
         }
 
 
@@ -459,8 +474,15 @@ namespace ToUI
             }
 
             var dif = base.ScrollToTarget();
-            Grid.DOKill();
-            Grid.DOAnchorPos(Grid.anchoredPosition + dif, 1 / ScrollSpeed);
+
+            if (ScrollSpeed == 0)
+            {
+                Grid.anchoredPosition += dif;
+            }
+            else
+            {
+                Grid.DOAnchorPos(Grid.anchoredPosition + dif, 1 / ScrollSpeed);
+            }
         }
 
         /// <summary>
@@ -505,5 +527,32 @@ namespace ToUI
 
             return index >= 0;
         }
+
+
+        #region Icon Visibility
+        // TODO: Rework this a little. It works if you can see one at a time.
+        protected override bool IsFirstRowVisible()
+        {
+            return vRow == 0;
+        }
+
+
+        protected override bool IsLastRowVisible()
+        {
+            return vRow == VirtualSelectionMatrix.GetLength(1) - 1;
+        }
+
+
+        protected override bool IsFirstColumnVisible()
+        {
+            return vColumn == 0;
+        }
+
+
+        protected override bool IsLastColumnVisible()
+        {
+            return vColumn == VirtualSelectionMatrix.GetLength(0) - 1;
+        }
+        #endregion
     }
 }

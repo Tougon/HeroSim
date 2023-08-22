@@ -28,5 +28,23 @@ MonoBehaviour:
     entitySprite: {fileID: 21300000, guid: 240195ad0da64e646b8db0d95e652372, type: 3}
     additionalEntitySprites: []
     entityDescription: THE Hero. Be careful, he may try to top-deck his way to victory!
-  moveList:
-  - {fileID: 11400000, guid: 8bd727b76a4ef6c4fae3e5ce1a837c19, type: 2}
+  moveListLevel:
+  - id: 0
+    spell: {fileID: 11400000, guid: b035ed09a4313be4da3189ef24c7b183, type: 2}
+    level: 0
+  - id: 1
+    spell: {fileID: 11400000, guid: 5601703086e24f84295f4bf2794459d6, type: 2}
+    level: 0
+  - id: 2
+    spell: {fileID: 11400000, guid: e509586b7ec6cdb41acc4bf9789167c7, type: 2}
+    level: 0
+  - id: 3
+    spell: {fileID: 11400000, guid: 45625ddb296270044bf9f1f32e06e645, type: 2}
+    level: 0
+  - id: 4
+    spell: {fileID: 11400000, guid: 0bb75c687725f3149854b6bb8d14d33f, type: 2}
+    level: 0
+  - id: 5
+    spell: {fileID: 11400000, guid: 9c15ac8e0093e7d4f8bd444d686b9c7d, type: 2}
+    level: 0
+  behavior: {fileID: 0}

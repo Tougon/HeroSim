@@ -13,7 +13,8 @@ public class EntityController : EntitySprite, IComparable<EntityController>
 
     [SerializeField]
     protected Entity current;
-    protected List<Spell> moveList;
+    [HideInInspector]
+    public List<Spell> moveList;
     public List<EntityController> allies { get; set; }
     public List<EntityController> enemies { get; set; }
     public List<EntityController> target { get; set; }
