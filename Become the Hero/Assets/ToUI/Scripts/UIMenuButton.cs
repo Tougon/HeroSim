@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Purchasing;
 
 namespace ToUI
 {
@@ -22,6 +23,18 @@ namespace ToUI
 
             OnConfirm.Invoke();
             OnConfirmRuntime?.Invoke();
+        }
+
+
+        public override void OnCancelPressed()
+        {
+            if (!this.enabled) return;
+
+            AnimationSource?.PlayAnimation("Press");
+
+            base.OnCancelPressed();
+
+            OnCancel.Invoke();
         }
     }
 }

@@ -391,7 +391,8 @@ public class Effect : SerializedScriptableObject
 
         dialogue = DialogueUtilities.ReplacePlaceholderWithEntityName(dialogue, current.user.param, "[user]");
         dialogue = DialogueUtilities.ReplacePlaceholderWithEntityName(dialogue, current.target.param, "[target]");
-        dialogue = DialogueUtilities.ReplacePlaceholderWithText(dialogue, current.spell.spell.spellName, "[spell]");
+        dialogue = DialogueUtilities.ReplacePlaceholderWithText(dialogue, current.spellOverride ? 
+            current.spellOverride.spellName : current.spell.spell.spellName, "[spell]");
         dialogue = DialogueUtilities.ReplacePlaceholderWithText(dialogue, 
             Mathf.Abs(current.user.lastHit).ToString(), "[udamage]");
         dialogue = DialogueUtilities.ReplacePlaceholderWithText(dialogue, 
@@ -769,6 +770,7 @@ public class EffectInstance: IComparable<EffectInstance>
     public EntityController target;
 
     public SpellCast spell;
+    public Spell spellOverride;
 
 
     #region Checks

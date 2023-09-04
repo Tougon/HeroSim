@@ -17,7 +17,7 @@ MonoBehaviour:
     article: 
     useArticle: 0
     entityHP: 100
-    entityMP: 100
+    entityMP: 150
     entityAtk: 40
     entityDef: 75
     entityMgAtk: 40
@@ -47,4 +47,5 @@ MonoBehaviour:
   - id: 5
     spell: {fileID: 11400000, guid: 9c15ac8e0093e7d4f8bd444d686b9c7d, type: 2}
     level: 0
+  seals: []
   behavior: {fileID: 0}

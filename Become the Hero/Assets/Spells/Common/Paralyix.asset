@@ -21,6 +21,9 @@ MonoBehaviour:
     the target paralyzed.
   spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 0}
+  flags:
+  - {fileID: 2692884222497398793, guid: d130a4aee1b4fc64db3380848d900a8b, type: 2}
+  - {fileID: 7523868912659646136, guid: d130a4aee1b4fc64db3380848d900a8b, type: 2}
   spellAnimation: {fileID: 11400000, guid: bae0192f89103744880dd0970191f17a, type: 2}
   spellEffectsOnHit:
   - chance: 1

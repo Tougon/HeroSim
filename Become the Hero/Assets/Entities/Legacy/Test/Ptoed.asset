@@ -41,4 +41,13 @@ MonoBehaviour:
   - id: 3
     spell: {fileID: 11400000, guid: b9cd063829c2a7c46819f98dea0e11e1, type: 2}
     level: 0
+  seals:
+  - id: 0
+    seal: {fileID: 11400000, guid: ebdb816044751ef438e432f43af5f539, type: 2}
+  - id: 1
+    seal: {fileID: 11400000, guid: ebdb816044751ef438e432f43af5f539, type: 2}
+  - id: 2
+    seal: {fileID: 11400000, guid: ebdb816044751ef438e432f43af5f539, type: 2}
+  - id: 3
+    seal: {fileID: 11400000, guid: ebdb816044751ef438e432f43af5f539, type: 2}
   behavior: {fileID: 0}

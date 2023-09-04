@@ -21,6 +21,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     public EntityParams param { get; private set; }
 
     public Spell action { get; protected set; }
+    public bool sealing { get; protected set; }
     public List<SpellCast> actionResult { get; set; }
     public bool ready { get; set; }
     public bool dead { get; protected set; }
@@ -50,6 +51,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     private Dictionary<string, float> accuracyModifiers = new Dictionary<string, float>();
     private List<EffectInstance> effects = new List<EffectInstance>();
     private List<EffectInstance> properties = new List<EffectInstance>();
+    protected Dictionary<Spell, Effect> spellToSeal = new Dictionary<Spell, Effect>();
 
     protected static AnimationSequenceObject spawn;
     protected static AnimationSequenceObject defeat;
@@ -120,8 +122,7 @@ public class EntityController : EntitySprite, IComparable<EntityController>
             accuracyStage = 0;
 
             // Update the move list
-            // TODO: calculate level instead of defaulting to 50
-            moveList = current.GetMoveList(50);
+            CreateMoveList();
 
             // Reset ID. If we add save data, we'll need a check here
             isIdentified = false;
@@ -142,6 +143,13 @@ public class EntityController : EntitySprite, IComparable<EntityController>
             if (entityUI != null)
                 entityUI.ResetUI(this, maxHP, maxMP);
         }
+    }
+
+
+    protected virtual void CreateMoveList()
+    {
+        // TODO: calculate level instead of defaulting to 50
+        moveList = current.GetMoveList(50);
     }
 
 
@@ -263,6 +271,8 @@ public class EntityController : EntitySprite, IComparable<EntityController>
                 i--;
             }
         }
+
+        turnManager?.SealManager.OnEntityDefeated(this);
     }
 
 
@@ -426,6 +436,12 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     }
 
 
+    public virtual void SetSealing(bool value)
+    {
+        sealing = value;
+    }
+
+
     public virtual void SelectAction(string name)
     {
         foreach(var move in moveList)
@@ -449,6 +465,17 @@ public class EntityController : EntitySprite, IComparable<EntityController>
     public void SetAction(Spell a)
     {
         action = a;
+        sealing = false;
+    }
+
+
+    public Effect GetSealEffect(Spell a)
+    {
+        Effect e = null;
+
+        spellToSeal.TryGetValue(a, out e);
+
+        return e;
     }
 
     #endregion

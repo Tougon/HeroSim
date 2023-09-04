@@ -741,7 +741,6 @@ namespace ToUI
         public override void OnAux1Pressed()
         {
             if (!bAllowInput) return;
-            Debug.Log("Pressed");
 
             if (CurrentSelection != null)
                 CurrentSelection.OnAux1Pressed();
@@ -753,7 +752,6 @@ namespace ToUI
         public override void OnAux2Pressed()
         {
             if (!bAllowInput) return;
-            Debug.Log("Pressed");
 
             if (CurrentSelection != null)
                 CurrentSelection.OnAux2Pressed();

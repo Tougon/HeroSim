@@ -21,6 +21,7 @@ MonoBehaviour:
     the next five turns.
   spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 0}
+  flags: []
   spellAnimation: {fileID: 11400000, guid: 451295b4f8c8f704382112e1e8a2bad5, type: 2}
   spellEffectsOnHit:
   - chance: 1

@@ -36,6 +36,7 @@ MonoBehaviour:
   boolEvents: []
   intEvents:
   - {fileID: 11400000, guid: d798f78b05bc05547b4eb1116a43a4cd, type: 2}
+  - {fileID: 11400000, guid: 3fbc53a262ef09747b818196b9eae466, type: 2}
   stringEvents:
   - {fileID: 11400000, guid: cdd0cbf797edc8447ade98e44d354157, type: 2}
   - {fileID: 11400000, guid: 52686083d3b447148820254640828d17, type: 2}

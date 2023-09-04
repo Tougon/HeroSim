@@ -376,6 +376,7 @@ MonoBehaviour:
   text: {fileID: 6700799042440564181}
   cost: {fileID: 6888978461205120263}
   current: {fileID: 0}
+  canSeal: 1
 --- !u!114 &5692368233729131992
 MonoBehaviour:
   m_ObjectHideFlags: 0

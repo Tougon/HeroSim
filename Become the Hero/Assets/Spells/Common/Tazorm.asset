@@ -21,6 +21,10 @@ MonoBehaviour:
     It may also leave the foe paralyzed.
   spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 11400000, guid: ffd02528707febe4292305ce9a514eef, type: 2}
+  flags:
+  - {fileID: 963818153022499272, guid: d130a4aee1b4fc64db3380848d900a8b, type: 2}
+  - {fileID: 1642122825228690251, guid: d130a4aee1b4fc64db3380848d900a8b, type: 2}
+  - {fileID: 7523868912659646136, guid: d130a4aee1b4fc64db3380848d900a8b, type: 2}
   spellAnimation: {fileID: 11400000, guid: 8e449f3e5a935a14c86820bb0642c731, type: 2}
   spellEffectsOnHit:
   - chance: 1
@@ -30,6 +34,9 @@ MonoBehaviour:
   spellEffectsOnSuccess: []
   spellProperties: []
   spellPower: 120
+  spellAttackType: 0
+  varyDefenseType: 0
+  spellDefenseType: 0
   checkAccuracy: 1
   spellAccuracy: 80
   accuracyPerHit: 100

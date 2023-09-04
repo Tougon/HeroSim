@@ -9,6 +9,8 @@ public class UIInputProcessor : MonoBehaviour
     private InputAction MovementAction;
     private InputAction ConfirmAction;
     private InputAction CancelAction;
+    private InputAction Aux1Action;
+    private InputAction Aux2Action;
 
     void Awake()
     {
@@ -22,6 +24,8 @@ public class UIInputProcessor : MonoBehaviour
         MovementAction = PlayerInput.actions["Movement"];
         ConfirmAction = PlayerInput.actions["Confirm"];
         CancelAction = PlayerInput.actions["Cancel"];
+        Aux1Action = PlayerInput.actions["Aux 1"];
+        Aux2Action = PlayerInput.actions["Aux 2"];
     }
 
 
@@ -43,6 +47,14 @@ public class UIInputProcessor : MonoBehaviour
         else if (CancelAction.WasPressedThisFrame())
         {
             ToUI.UIScreenQueue.Instance?.CurrentScreen?.OnCancelPressed();
+        }
+        else if (Aux1Action.WasPressedThisFrame())
+        {
+            ToUI.UIScreenQueue.Instance?.CurrentScreen?.OnAux1Pressed();
+        }
+        else if (Aux2Action.WasPressedThisFrame())
+        {
+            ToUI.UIScreenQueue.Instance?.CurrentScreen?.OnAux2Pressed();
         }
     }
 }

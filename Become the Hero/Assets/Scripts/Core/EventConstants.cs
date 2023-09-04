@@ -38,6 +38,7 @@ public static class EventConstants
 
     #region Int Event Constants
     public const string SPELL_SELECTED = "SpellSelected";
+    public const string SPELL_SEALED = "SpellSealed";
     #endregion
 
     #region String Event Constants

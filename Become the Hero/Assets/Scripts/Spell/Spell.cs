@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 using UnityEngine.Serialization;
+using UnityEditor;
+using UnityEditor.ShaderGraph.Internal;
 
 #if UNITY_EDITOR
 using Hero.SpellEditor;
@@ -15,6 +17,8 @@ using Hero.SpellEditor;
 public class Spell : ScriptableObject
 {
     #region Variables
+
+    public const float SEAL_COST_MULTIPLIER = 1.5f;
 
     public enum SpellType { Other, Attack, Status, Buff, Debuff, Heal }
     public enum SpellTarget { SingleEnemy, RandomEnemy, AllEnemy, Self, SingleParty, AllParty, All }
@@ -31,9 +35,30 @@ public class Spell : ScriptableObject
     [PropertyOrder(3)] [GUIColor(0.98f, 0.95f, 0.5f)] public string spellDescription;
     [PropertyOrder(4)] [GUIColor(0.98f, 0.95f, 0.5f)] public string spellCastMessage = "[user] casts [name]!";
     [PropertyOrder(5)] [GUIColor(0.98f, 0.95f, 0.5f)] public string spellFailMessage { get; protected set; }
+    // Largely vestigal. Should we remove? Flags will supercede this almost entirely.
     [PropertyOrder(6)] [InlineEditor] [GUIColor(0.80f, 0.65f, 0.98f)] public SpellFamily spellFamily;
 
+    [PropertyOrder(5)] [GUIColor(0.80f, 0.65f, 0.98f)]
+    [ValueDropdown("GetFlags")]
+    public List<TFlag> flags = new List<TFlag>();
+
 #if UNITY_EDITOR
+
+    private static IEnumerable<TFlag> GetFlags()
+    {
+        var globalFlags = AssetDatabase.LoadAssetAtPath<TFlagManager>("Assets/Resources/Global Flag Manager.asset");
+
+        if (!globalFlags)
+        {
+            Debug.LogError($"ERROR: No Global Flag Manager exists in Resources.");
+            return new List<TFlag>();
+        }
+        else
+        {
+            return globalFlags.GetFlags();
+        }
+
+    }
 
     private string spellFamilyButtonName = "Create New Spell Family";
 
@@ -251,9 +276,13 @@ public class Spell : ScriptableObject
     /// </summary>
     public virtual bool CheckMP(EntityController user)
     {
-        if(user.GetCurrentMP() >= spellCost)
+        int cost = spellCost;
+
+        if (user.sealing) cost = Mathf.RoundToInt(cost * SEAL_COST_MULTIPLIER);
+
+        if(user.GetCurrentMP() >= cost)
         {
-            user.ModifyMP(-spellCost);
+            user.ModifyMP(-cost);
             return true;
         }
 

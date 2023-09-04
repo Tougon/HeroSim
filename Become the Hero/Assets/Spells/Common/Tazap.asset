@@ -14,24 +14,59 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellName: Tazap
   spellType: 1
+  spellTarget: 0
   spellCost: 10
   spellPriority: 0
   spellDescription: The user calls forth a bolt of lightning to zap the target. It
     may also leave the foe paralyzed.
   spellCastMessage: '[user] casts [name]!'
   spellFamily: {fileID: 11400000, guid: ffd02528707febe4292305ce9a514eef, type: 2}
+  flags:
+  - {fileID: 963818153022499272, guid: d130a4aee1b4fc64db3380848d900a8b, type: 2}
+  - {fileID: 1642122825228690251, guid: d130a4aee1b4fc64db3380848d900a8b, type: 2}
+  - {fileID: 7523868912659646136, guid: d130a4aee1b4fc64db3380848d900a8b, type: 2}
   spellAnimation: {fileID: 11400000, guid: 20ba52d95a6d42542aef986f3a49a602, type: 2}
-  spellEffects:
+  spellEffectsOnHit:
   - chance: 0.2
     effects:
     - chance: 1
       effect: {fileID: 11400000, guid: b1a76c56a64f8d647a76450857f0a289, type: 2}
+  spellEffectsOnSuccess: []
   spellProperties: []
   spellPower: 40
+  spellAttackType: 0
+  varyDefenseType: 0
+  spellDefenseType: 0
   checkAccuracy: 1
   spellAccuracy: 100
+  accuracyPerHit: 100
+  checkAccuracyPerHit: 1
   minNumberOfHits: 1
   maxNumberOfHits: 1
   varyHitCount: 0
+  hitCountCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   canCritical: 1
   criticalHitChance: 16

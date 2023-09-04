@@ -9,6 +9,7 @@ using ToUI;
 public class UISpellButton : UIMenuButton
 {
     // Time the button must be held down before info is displayed
+    // Currently deprecated but may see use later
     private const float infoHoldTime = 0.75f;
 
     [SerializeField]
@@ -24,6 +25,8 @@ public class UISpellButton : UIMenuButton
 
     [SerializeField]
     private Spell current;
+    [SerializeField] private bool canSeal = false;
+    private bool canSealCurrent = false;
 
 
     protected override void Awake()
@@ -35,22 +38,25 @@ public class UISpellButton : UIMenuButton
     }
 
 
-    public void InitializeButton(Spell s, int i, int mp)
+    public void InitializeButton(RuntimeDynamicSpell s, int i, int mp)
     {
         if(s == null)
         {
             Debug.LogError($"ERROR: INITIALIZING WITH NULL SPELL {this.name}");
         }
 
-        current = s;
-        text.text = s.spellName;
-        cost.text = s.spellCost.ToString();
+        current = s.spell;
+        text.text = s.spell.spellName;
+        cost.text = s.spell.spellCost.ToString();
         index = i;
+
+        canSealCurrent = canSeal && Mathf.RoundToInt(s.spell.spellCost *
+            Spell.SEAL_COST_MULTIPLIER) <= mp; 
 
         //var data = controller.GetButtonData(s.GetSpellType());
 
         
-        this.enabled = s.spellCost <= mp ? true : false;
+        this.enabled = s.spell.spellCost <= mp ? true : false;
 
         /*if (this.enabled)
             image.color = data.color;
@@ -86,6 +92,12 @@ public class UISpellButton : UIMenuButton
     }
 
 
+    public void SelectSpellSeal()
+    {
+        EventManager.Instance.RaiseIntEvent(EventConstants.SPELL_SEALED, index);
+    }
+
+
     // Archived code that may be useful again someday.
     /*public void ButtonReleaseForInfo()
     {
@@ -103,5 +115,25 @@ public class UISpellButton : UIMenuButton
             EventManager.Instance.RaiseSpellGameEvent(EventConstants.SPELL_INFO_DISPLAY, current);
             EventManager.Instance.RaiseRectTransformGameEvent(EventConstants.ON_SPELL_INFO_APPEAR, rect);
         }
-    }*/   
+    }*/
+
+
+    #region Input Responses
+
+    public override void OnAux1Pressed()
+    {
+        if (!canSeal) return;
+        if (!canSealCurrent) return;
+
+        // TODO: Maybe don't just have it be a button press?
+        // I'm thinking the best way to do this would be to swap the menu outright?
+        // Could give more info too.
+        // The above check will also become redundant if this happens.
+
+        // TODO: Check if same spell was already attempted to be sealed by another entity in the party
+        base.OnAux1Pressed();
+        SelectSpellSeal();
+    }
+
+    #endregion
 }

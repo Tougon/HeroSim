@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Hero.Core;
-using UnityEditor.Experimental.GraphView;
-using static UnityEngine.GraphicsBuffer;
 
 public class TurnManager : MonoBehaviour
 {
@@ -14,6 +12,10 @@ public class TurnManager : MonoBehaviour
     private IEnumerator current;
     private int playerIndex;
     public int TurnNumber { get; private set; }
+
+    [SerializeField] private SealManager sealManager;
+    public SealManager SealManager { get => sealManager; }
+
 
     void Awake()
     {
@@ -35,6 +37,7 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.GetGameEvent(EventConstants.ATTACK_SELECTED).AddListener(SetActionToAttack);
         EventManager.Instance.GetGameEvent(EventConstants.DEFEND_SELECTED).AddListener(SetActionToDefend);
         EventManager.Instance.GetIntEvent(EventConstants.SPELL_SELECTED).AddListener(SetActionToSpell);
+        EventManager.Instance.GetIntEvent(EventConstants.SPELL_SEALED).AddListener(SetActionToSealedSpell);
 
         // Placeholder. The TurnManager WILL NOT handle scene transitions in the final game.
         EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_OUT_COMPLETE).AddListener(Reload);
@@ -45,6 +48,7 @@ public class TurnManager : MonoBehaviour
     {
         // Begin Battle through event
         EventManager.Instance.RaiseGameEvent(EventConstants.ON_BATTLE_BEGIN);
+        SealManager.OnBattleStart();
     }
 
 
@@ -282,25 +286,36 @@ public class TurnManager : MonoBehaviour
 
     public void SetActionToSpell(int index)
     {
+        SetActionToSpell_Internal(index, false);
+    }
+
+    public void SetActionToSealedSpell(int index)
+    {
+        SetActionToSpell_Internal(index, true);
+    }
+
+    public void SetActionToSpell_Internal(int index, bool sealing)
+    {
         if (playerIndex >= players.Count)
             return;
 
         players[playerIndex].SelectAction(index);
-        
+        players[playerIndex].SetSealing(sealing);
+
         EventManager.Instance.RaiseUIGameEvent(EventConstants.HIDE_ALL_SCREENS,
             new UIOpenCloseCall
-        {
-            Callback = () =>
             {
-                EventManager.Instance.RaiseEntityControllerEvent
-                    (EventConstants.INITIALIZE_TARGET_MENU, players[playerIndex]);
-                EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
-                    new UIOpenCloseCall
+                Callback = () =>
                 {
-                    MenuName = ScreenConstants.TargetMenu.ToString()
-                });
-            }
-        });
+                    EventManager.Instance.RaiseEntityControllerEvent
+                        (EventConstants.INITIALIZE_TARGET_MENU, players[playerIndex]);
+                    EventManager.Instance.RaiseUIGameEvent(EventConstants.SHOW_SCREEN,
+                        new UIOpenCloseCall
+                        {
+                            MenuName = ScreenConstants.TargetMenu.ToString()
+                        });
+                }
+            });
     }
 
 
@@ -431,6 +446,9 @@ public class TurnManager : MonoBehaviour
         // Execute each entity's action
         foreach(EntityController ec in turnOrder)
         {
+            // When the entity moves, increment all their seals
+            SealManager.OnEntityMove(ec);
+
             // We need to check for target death later.
             if (ec.dead)
                 continue;
@@ -458,6 +476,7 @@ public class TurnManager : MonoBehaviour
 
             List<string> preAnimDialogue = new List<string>();
             List<string> postAnimDialogue = new List<string>();
+
             // Originally checked for a spell success state before animating. May restore this, but should be separate
             bool bWillPlayAnimation = true;
             bool bAnySpellSucceed = false;
@@ -474,7 +493,10 @@ public class TurnManager : MonoBehaviour
 
                 if (!cast.GetFailMessage().Equals(""))
                 {
-                    postAnimDialogue.Add(cast.GetFailMessage());
+                    if (!ec.sealing)
+                    {
+                        postAnimDialogue.Add(cast.GetFailMessage());
+                    }
                 }
 
                 if(cast.spell is OffensiveSpell)
@@ -501,6 +523,15 @@ public class TurnManager : MonoBehaviour
                         }
                     }
                 }
+
+                if (ec.sealing && SealManager.CanSealSpell(ec.action))
+                {
+                    string sealSeq = $"{ec.param.GetEntityName()} claims {ec.action.name}!";
+                    postAnimDialogue.Add(sealSeq);
+
+                    // Enact the seal
+                    SealManager.CreateSealInstance(ec, ec.action, ec.GetSealEffect(ec.action), players.Contains(ec));
+                }
             }
 
             foreach(var msg in preAnimDialogue)
@@ -514,6 +545,9 @@ public class TurnManager : MonoBehaviour
 
             foreach (var msg in postAnimDialogue)
                 EventManager.Instance.RaiseStringEvent(EventConstants.ON_DIALOGUE_QUEUE, msg);
+
+            // Check if action is sealed
+            SealManager.CheckForSeal(ec, players.Contains(ec));
 
             // Start the sequence
             sequencer.StartSequence();
@@ -685,6 +719,7 @@ public class TurnManager : MonoBehaviour
         EventManager.Instance.GetGameEvent(EventConstants.ATTACK_SELECTED).RemoveListener(SetActionToAttack);
         EventManager.Instance.GetGameEvent(EventConstants.DEFEND_SELECTED).RemoveListener(SetActionToDefend);
         EventManager.Instance.GetIntEvent(EventConstants.SPELL_SELECTED).RemoveListener(SetActionToSpell);
+        EventManager.Instance.GetIntEvent(EventConstants.SPELL_SEALED).RemoveListener(SetActionToSealedSpell);
 
         // Placeholder. The TurnManager WILL NOT handle scene transitions in the final game.
         EventManager.Instance.GetGameEvent(EventConstants.ON_TRANSITION_OUT_COMPLETE).RemoveListener(Reload);

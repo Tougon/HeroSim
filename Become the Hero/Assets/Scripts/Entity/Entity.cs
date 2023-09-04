@@ -17,8 +17,15 @@ public class Entity : ScriptableObject
 
     [Title("Moveset and AI Behavior")]
     [ListDrawerSettings(DraggableItems = true, ShowPaging = false, AlwaysAddDefaultValue = true)]
-    [OnValueChanged("AssignIDs", true)]
+    [OnValueChanged("AssignMoveIDs", true)]
     public List<SpellLevel> moveListLevel;
+
+    [PropertySpace(5)]
+    [ListDrawerSettings(DraggableItems = true, ShowPaging = false, AlwaysAddDefaultValue = true)]
+    [OnValueChanged("AssignSealIDs", true)]
+    public List<SealData> seals;
+
+    [PropertySpace(5)]
     public EntityBehaviorObject behavior;
 
     public List<Spell> GetMoveList(int level)
@@ -34,13 +41,24 @@ public class Entity : ScriptableObject
     }
 
 
-    private void AssignIDs()
+    private void AssignMoveIDs()
     {
         for(int i=0; i<moveListLevel.Count; i++)
         {
             var data = moveListLevel[i];
             data.id = i;
             moveListLevel[i] = data;
+        }
+    }
+
+
+    private void AssignSealIDs()
+    {
+        for (int i = 0; i < seals.Count; i++)
+        {
+            var data = seals[i];
+            data.id = i;
+            seals[i] = data;
         }
     }
 }
@@ -88,4 +106,16 @@ public struct SpellLevel
     public Spell spell;
     [HorizontalGroup("Primary")]
     public int level;
+}
+
+
+
+[System.Serializable]
+public struct SealData
+{
+    [ReadOnly]
+    [HorizontalGroup("Primary")]
+    public int id;
+    [HorizontalGroup("Primary")]
+    public Effect seal;
 }

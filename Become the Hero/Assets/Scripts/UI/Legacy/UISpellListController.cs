@@ -57,7 +57,7 @@ public class UISpellListController : UIDynamicMenu
     {
         //May need to refresh all
         currentEntity = ec;
-        SetMaxItems(currentEntity.moveList.Count);
+        SetMaxItems((currentEntity as PlayerController).dynamicMoves.Count);
         RefreshAllData();
     }
 
@@ -68,9 +68,9 @@ public class UISpellListController : UIDynamicMenu
 
         if(index >= 0)
         {
-            if(Item is UISpellButton && currentEntity != null)
+            if(Item is UISpellButton && currentEntity != null && currentEntity is PlayerController)
             {
-                (Item as UISpellButton).InitializeButton(currentEntity.moveList[index],
+                (Item as UISpellButton).InitializeButton((currentEntity as PlayerController).dynamicMoves[index],
                     index, currentEntity.GetCurrentMP());
             }
         }

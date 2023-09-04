@@ -17,6 +17,9 @@ public class PlayerController : EntityController
     [SerializeField]
     private int amountMPGainPerTurn = 5;
 
+    [HideInInspector]
+    public List<RuntimeDynamicSpell> dynamicMoves;
+
 
     protected override void Awake()
     {
@@ -35,6 +38,36 @@ public class PlayerController : EntityController
 
         // initialize the player 
         EventManager.Instance.RaiseEntityControllerEvent(EventConstants.ON_PLAYER_INITIALIZE, this);
+    }
+
+
+    protected override void CreateMoveList()
+    {
+        moveList.Clear();
+
+        // TODO: Load the dynamic spell list from saved data per character
+        // Temp Code
+        var tempMoves = current.GetMoveList(50);
+        dynamicMoves = new List<RuntimeDynamicSpell>();
+
+        for (int i=0; i<tempMoves.Count; i++)
+        {
+            var dynamicMove = new RuntimeDynamicSpell()
+            {
+                spell = tempMoves[i],
+                overrideName = tempMoves[i].spellName,
+                seal = i < current.seals.Count ? current.seals[i].seal : null
+            };
+
+            dynamicMoves.Add(dynamicMove);
+        }
+        // End Temp
+
+        foreach (var spell in dynamicMoves)
+        {
+            moveList.Add(spell.spell);
+            spellToSeal.Add(spell.spell, spell.seal);
+        }
     }
 
 
@@ -74,7 +107,7 @@ public class PlayerController : EntityController
 
     public override void SelectAction(int index)
     {
-        index = Mathf.Clamp(index, 0, availableSpells.Length);
+        index = Mathf.Clamp(index, 0, moveList.Count);
         action = moveList[index];
     }
 
